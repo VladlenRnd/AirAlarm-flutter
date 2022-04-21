@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:alarm/src/main/main_screan.dart';
-import 'package:alarm/src/service/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 
-import 'src/service/baground_service.dart';
-import 'src/service/shered_preferences.dart';
+import 'screen/main/main_screan.dart';
+import 'service/baground_service.dart';
+import 'service/notification_service.dart';
+import 'service/shered_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MainScrean(),
+      home: MainScreen(),
     );
   }
 }
