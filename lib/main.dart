@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 
-import 'screen/main/main_screan.dart';
+import 'screen/main/main_screen.dart';
 import 'service/baground_service.dart';
 import 'service/notification_service.dart';
 import 'service/shered_preferences.dart';
@@ -15,9 +15,7 @@ void main() async {
 
   await NotificationService.init();
   await SheredPreferencesService.init();
-
   await BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
-
   _backgroundServiceInitData();
 
   runApp(MyApp());
@@ -28,7 +26,6 @@ void _backgroundServiceInitData() {
     FlutterBackgroundService().on('serviceReady').listen((event) {
       try {
         var data = jsonDecode(SheredPreferencesService.preferences.getString("serviceData")!);
-        print("onLOad === $data");
         FlutterBackgroundService().invoke("initServiceData", {"data": data});
       } catch (e) {
         print(e);
@@ -37,7 +34,6 @@ void _backgroundServiceInitData() {
   }
 
   FlutterBackgroundService().on('saveData').listen((event) {
-    print("onSAVE === $event");
     SheredPreferencesService.preferences.setString("serviceData", json.encode(event!["data"]));
   });
 }

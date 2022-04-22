@@ -6,12 +6,12 @@ class UpdateRespose {
   });
   late final String newVersion;
   late final String url;
-  late final String descroption;
+  late final List<String> descroption;
 
   UpdateRespose.fromJson(Map<String, dynamic> json) {
     newVersion = json['newVersion'];
     url = json['url'];
-    descroption = json['descroption'];
+    descroption = List.castFrom<dynamic, String>(json['descroption']);
   }
 
   Map<String, dynamic> toJson() {

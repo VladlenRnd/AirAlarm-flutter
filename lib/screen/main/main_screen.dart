@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import '../settings/settings.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import '../../dialog/update_dialog.dart';
+import '../../tools/connection/connection.dart';
+import '../../tools/update_info.dart';
+import '../settings/settings_screen.dart';
 import 'bloc/main_bloc.dart';
 import 'tools/color.dart';
 import 'tools/region_model.dart';
@@ -15,6 +20,33 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final MainBloc _bloc = MainBloc();
+
+  Future<bool> _isUpdateCheck() async {
+    bool result = false;
+    try {
+      UpdateInfo.infoUpdate = await Conectrion.chekUpdate();
+      PackageInfo infoApp = await PackageInfo.fromPlatform();
+
+      if (infoApp.version != UpdateInfo.infoUpdate.newVersion) {
+        result = true;
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return result;
+  }
+
+  @override
+  void initState() {
+    SchedulerBinding.instance!.addPostFrameCallback((_) async {
+      UpdateInfo.isNewVersion = await _isUpdateCheck();
+      if (UpdateInfo.isNewVersion) {
+        showUpdateDialog(context);
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
