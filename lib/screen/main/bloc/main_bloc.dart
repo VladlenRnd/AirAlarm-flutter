@@ -10,7 +10,6 @@ import 'dart:async';
 
 import '../../../tools/connection/response/alarm_response.dart';
 import '/../service/shered_preferences.dart';
-import '/../tools/alarm_sound.dart';
 import '/../tools/connection/connection.dart';
 import '../tools/eregion.dart';
 import '../tools/region_model.dart';
@@ -42,7 +41,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       }
     });
 
-    AlarmSound.init();
     _initAlarmData();
     _initListenUpdate();
   }
