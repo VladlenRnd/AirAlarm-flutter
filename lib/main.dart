@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 
 import 'screen/main/main_screen.dart';
 import 'service/baground_service.dart';
@@ -23,17 +22,16 @@ void main() async {
 
 void _backgroundServiceInitData() {
   if (!SheredPreferencesService.preferences.getBool("backgroundSercive")!) {
-    FlutterBackgroundService().on('serviceReady').listen((event) {
+    BackgroundService.on('serviceReady').listen((event) {
       try {
-        var data = jsonDecode(SheredPreferencesService.preferences.getString("serviceData")!);
-        FlutterBackgroundService().invoke("initServiceData", {"data": data});
+        BackgroundService.invoke("initServiceData", arg: {"data": SheredPreferencesService.preferences.getString("serviceData")});
       } catch (e) {
         print(e);
       }
     });
   }
 
-  FlutterBackgroundService().on('saveData').listen((event) {
+  BackgroundService.on('saveData').listen((event) {
     SheredPreferencesService.preferences.setString("serviceData", json.encode(event!["data"]));
   });
 }
@@ -47,10 +45,10 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (!SheredPreferencesService.preferences.getBool("backgroundSercive")!) {
       if (state == AppLifecycleState.paused) {
-        FlutterBackgroundService().invoke("stopService");
+        BackgroundService.invoke("stopService");
       }
       if (state == AppLifecycleState.resumed) {
-        if (!await FlutterBackgroundService().isRunning()) {
+        if (!await BackgroundService.isRunning) {
           BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
         }
       }

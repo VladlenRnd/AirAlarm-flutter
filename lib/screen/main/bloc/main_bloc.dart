@@ -1,16 +1,11 @@
-import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
-import 'dart:async';
 
+import '../../../service/baground_service.dart';
 import '../../../tools/connection/response/alarm_response.dart';
-import '/../service/shered_preferences.dart';
-import '/../tools/connection/connection.dart';
 import '../tools/eregion.dart';
 import '../tools/region_model.dart';
 import '../tools/region_title.dart';
@@ -18,11 +13,7 @@ import '../tools/region_title.dart';
 part 'main_event.dart';
 part 'main_state.dart';
 
-//TODO Добавить предупреждения о разрыве соеденения
-
 class MainBloc extends Bloc<MainEvent, MainState> {
-  late final Timer _timer;
-
   int oldDataTry = 0;
 
   MainBloc() : super(MainInitialState()) {
@@ -40,8 +31,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         }
       }
     });
-
-    _initAlarmData();
     _initListenUpdate();
   }
 
@@ -86,18 +75,8 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     return null;
   }
 
-  void _initAlarmData() async {
-    if (SheredPreferencesService.preferences.getBool("backgroundSercive")!) {
-      FlutterBackgroundService().invoke("getData");
-    } else {
-      FlutterBackgroundService().on('serviceReady').listen((event) {
-        FlutterBackgroundService().invoke("getData");
-      });
-    }
-  }
-
   void _initListenUpdate() {
-    FlutterBackgroundService().on('update').listen((event) {
+    BackgroundService.on('update').listen((event) {
       try {
         AlarmRespose alarm = AlarmRespose.fromJson(event!["alarm"]);
         add(MainUpdateEvent(alarm: alarm));
@@ -106,14 +85,18 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       }
     });
 
-    FlutterBackgroundService().on('error').listen((event) {
+    BackgroundService.on('error').listen((event) {
       add(MainErrorEvent());
     });
 
-    // _timer = Timer.periodic(const Duration(seconds: 10), (timer) async {
-    //   print("PERIOD UPDATE+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    //   _setEvent();
-    // });
+    _initAlarmData();
+  }
+
+  void _initAlarmData() async {
+    BackgroundService.invoke("getData");
+    BackgroundService.on('serviceReady').listen((event) {
+      BackgroundService.invoke("getData");
+    });
   }
 
   String? _formatData(String? data) {
@@ -121,14 +104,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       return DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(data).toLocal());
     }
     return null;
-  }
-
-  Future<AlarmRespose> _getAlarm() async {
-    try {
-      return await Conectrion.getAlarm();
-    } catch (e) {
-      throw Exception("Not data Alarm");
-    }
   }
 }
 

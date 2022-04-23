@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../service/baground_service.dart';
 import '../../service/shered_preferences.dart';
 import '../main/tools/color.dart';
 
@@ -87,9 +87,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> _bagroundLogic(SharedPreferences sh, bool value) async {
     if (value == false) {
-      FlutterBackgroundService().invoke("setAsBackground");
+      BackgroundService.invoke("setAsBackground");
     } else {
-      FlutterBackgroundService().invoke("setAsForeground");
+      BackgroundService.invoke("setAsForeground");
     }
 
     setState(() {

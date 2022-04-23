@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -10,7 +11,7 @@ import '../tools/connection/connection.dart';
 import '../tools/connection/response/alarm_response.dart';
 import 'notification_service.dart';
 
-enum StatusNotification {
+enum _StatusNotification {
   notShow,
   showWarning,
   showCanceled,
@@ -18,8 +19,14 @@ enum StatusNotification {
 
 class BackgroundService {
   static final FlutterBackgroundService _service = FlutterBackgroundService();
+  static int _countError = 0;
+  static Map<String, dynamic> _oldWarningMap = {};
 
-  static Map<String, bool> _oldWarningMap = {};
+  static Future<bool> get isRunning async => await _service.isRunning();
+
+  static void invoke(String method, {Map<String, dynamic>? arg}) => _service.invoke(method, arg);
+
+  static Stream<Map<String, dynamic>?> on(String method) => _service.on(method);
 
   static Future<void> initializeService(bool isForegroundMode) async {
     await _service.configure(
@@ -45,45 +52,43 @@ class BackgroundService {
     return true;
   }
 
-  static int _countError = 0;
-
   static Future<void> _isShowNotification(States states, bool initData) async {
     //  States statesv
-    StatusNotification data = _isChekSubscribe(ERegion.dnepr, states.dnipro.enabled, initData);
+    _StatusNotification data = _isChekSubscribe(ERegion.dnepr, states.dnipro.enabled, initData);
 
     switch (data) {
-      case StatusNotification.notShow:
+      case _StatusNotification.notShow:
+        print("==DONT SHOW MESSAGE==");
         break;
-      case StatusNotification.showWarning:
+      case _StatusNotification.showWarning:
         await NotificationService.showAlertNotification(body: RegionTitle.getRegionByEnum(ERegion.dnepr), notificationId: ERegion.dnepr.index);
         break;
-      case StatusNotification.showCanceled:
+      case _StatusNotification.showCanceled:
         await NotificationService.showCanceledAlertNotification(
             body: RegionTitle.getRegionByEnum(ERegion.dnepr), notificationId: ERegion.dnepr.index);
         break;
     }
   }
 
-  static StatusNotification _isChekSubscribe(ERegion region, bool isAlarm, bool initData) {
-    StatusNotification result = StatusNotification.notShow;
+  static _StatusNotification _isChekSubscribe(ERegion region, bool isAlarm, bool initData) {
+    _StatusNotification result = _StatusNotification.notShow;
 
     bool? oldState = _oldWarningMap[region.name];
-    print(initData);
     if (!initData) {
       if (oldState != null) {
         if (oldState != isAlarm) {
           if (isAlarm) {
             print("SHOW WARNING ALARM");
-            result = StatusNotification.showWarning;
+            result = _StatusNotification.showWarning;
           } else {
             print("SHOW CANCELED WARNING ALARM");
-            result = StatusNotification.showCanceled;
+            result = _StatusNotification.showCanceled;
           }
         }
       } else {
         if (isAlarm) {
           print("SHOW WARNING ALARM INIT");
-          result = StatusNotification.showWarning;
+          result = _StatusNotification.showWarning;
         }
       }
     }
@@ -95,7 +100,9 @@ class BackgroundService {
   static void _onStart(ServiceInstance service) async {
     if (service is AndroidServiceInstance) {
       service.on('initServiceData').listen((event) {
-        _oldWarningMap = event!["data"];
+        if (event != null) {
+          _oldWarningMap = jsonDecode(event["data"]) as Map<String, dynamic>;
+        }
       });
 
       service.on('setAsForeground').listen((event) {
@@ -168,106 +175,3 @@ class BackgroundService {
     }
   }
 }
-
-
-      
-
-    //   /// you can see this log in logcat
-    //   // print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
-
-    //   // test using external plugin
-
-    //   // service.invoke(
-    //   //   'update',
-    //   //   {
-    //   //     "current_date": DateTime.now().toIso8601String(),
-    //   //     "device": "Data Invoke",
-    //   //   },
-    //   // );
-    // });
-  
-
-
-
-
-
-
-// class MyApp extends StatefulWidget {
-//   const MyApp({Key? key}) : super(key: key);
-
-//   @override
-//   _MyAppState createState() => _MyAppState();
-// }
-
-// class _MyAppState extends State<MyApp> {
-//   String text = "Stop Service";
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: const Text('Service App'),
-//         ),
-//         body: Column(
-//           children: [
-//             StreamBuilder<Map<String, dynamic>?>(
-//               stream: FlutterBackgroundService().on('update'),
-//               builder: (context, snapshot) {
-//                 if (!snapshot.hasData) {
-//                   return const Center(
-//                     child: CircularProgressIndicator(),
-//                   );
-//                 }
-
-//                 final data = snapshot.data!;
-//                 String? device = data["device"];
-//                 DateTime? date = DateTime.tryParse(data["current_date"]);
-//                 return Column(
-//                   children: [
-//                     Text(device ?? 'Unknown'),
-//                     Text(date.toString()),
-//                   ],
-//                 );
-//               },
-//             ),
-//             ElevatedButton(
-//               child: const Text("Foreground Mode"),
-//               onPressed: () {
-//                 FlutterBackgroundService().invoke("setAsForeground");
-//               },
-//             ),
-//             ElevatedButton(
-//               child: const Text("Background Mode"),
-//               onPressed: () {
-//                 FlutterBackgroundService().invoke("setAsBackground");
-//               },
-//             ),
-//             ElevatedButton(
-//               child: Text(text),
-//               onPressed: () async {
-//                 final service = FlutterBackgroundService();
-//                 var isRunning = await service.isRunning();
-//                 if (isRunning) {
-//                   service.invoke("stopService");
-//                 } else {
-//                   service.startService();
-//                 }
-
-//                 if (!isRunning) {
-//                   text = 'Stop Service';
-//                 } else {
-//                   text = 'Start Service';
-//                 }
-//                 setState(() {});
-//               },
-//             ),
-//           ],
-//         ),
-//         floatingActionButton: FloatingActionButton(
-//           onPressed: () {},
-//           child: const Icon(Icons.play_arrow),
-//         ),
-//       ),
-//     );
-//   }
-// }
