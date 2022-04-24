@@ -27,18 +27,19 @@ class NotificationService {
   static Future<void> showCanceledAlertNotification({String body = "", required int notificationId}) async {
     cancelNotification(notificationId: notificationId);
     //Notification seting
-    NotificationDetails _platformChannelSpecifics = const NotificationDetails(
+    NotificationDetails _platformChannelSpecifics = NotificationDetails(
         android: AndroidNotificationDetails(
       "1",
       "Отмена воздушной тревоги",
       fullScreenIntent: true,
       importance: Importance.high,
-      sound: RawResourceAndroidNotificationSound("alarm"),
+      sound: const RawResourceAndroidNotificationSound("alarm"),
       playSound: false,
       priority: Priority.high,
       enableLights: true,
       subText: "Внимание!",
       autoCancel: true,
+      color: CustomColor.green,
       timeoutAfter: 30000,
       icon: "ic_cancel_alarm",
     ));
@@ -70,6 +71,7 @@ class NotificationService {
       priority: Priority.high,
       subText: "Внимание!",
       icon: "ic_start_alarm",
+      color: CustomColor.red,
       vibrationPattern: vibrationPattern,
       autoCancel: false,
     ));

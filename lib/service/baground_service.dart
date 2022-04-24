@@ -100,6 +100,7 @@ class BackgroundService {
 
   static void _onStart(ServiceInstance service) async {
     Timer? timer;
+
     if (service is AndroidServiceInstance) {
       service.on('initServiceData').listen((event) {
         print("INIT SERVICE");
