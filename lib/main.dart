@@ -16,15 +16,15 @@ void main() async {
 
   await NotificationService.init();
   await SheredPreferencesService.init();
-  await BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
+  //await BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
   _backgroundServiceInitData();
 
   Future.delayed(Duration(seconds: 5), () {
-    NotificationService.showAlertNotification(notificationId: 33);
+    NotificationService.showAlertNotification(notificationId: 1, body: "AAAAA");
   });
 
   Future.delayed(Duration(seconds: 10), () {
-    NotificationService.showCanceledAlertNotification(notificationId: 444);
+    NotificationService.showCanceledAlertNotification(notificationId: 444, body: "BBBBB");
   });
 
   runApp(MyApp());
