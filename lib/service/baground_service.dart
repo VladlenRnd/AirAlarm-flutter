@@ -18,7 +18,7 @@ enum _StatusNotification {
 }
 
 class BackgroundService {
-  static final FlutterBackgroundService _service = FlutterBackgroundService();
+  static late FlutterBackgroundService _service;
   static int _countError = 0;
   static Map<String, dynamic> _oldWarningMap = {};
 
@@ -29,6 +29,7 @@ class BackgroundService {
   static Stream<Map<String, dynamic>?> on(String method) => _service.on(method);
 
   static Future<void> initializeService(bool isForegroundMode) async {
+    _service = FlutterBackgroundService();
     await _service.configure(
       androidConfiguration: AndroidConfiguration(
         onStart: _onStart,
@@ -98,9 +99,12 @@ class BackgroundService {
   }
 
   static void _onStart(ServiceInstance service) async {
+    Timer? timer;
     if (service is AndroidServiceInstance) {
       service.on('initServiceData').listen((event) {
+        print("INIT SERVICE");
         if (event != null) {
+          print(event["data"]);
           _oldWarningMap = jsonDecode(event["data"]) as Map<String, dynamic>;
         }
       });
@@ -113,8 +117,9 @@ class BackgroundService {
         service.setAsBackgroundService();
       });
 
-      service.on('stopService').listen((event) {
-        service.stopSelf();
+      service.on('stopService').listen((event) async {
+        timer?.cancel();
+        await service.stopSelf();
       });
 
       service.setForegroundNotificationInfo(
@@ -128,7 +133,7 @@ class BackgroundService {
 
       service.invoke('serviceReady');
 
-      Timer.periodic(const Duration(seconds: 10), (timer) async {
+      timer = Timer.periodic(const Duration(seconds: 10), (timer) async {
         _updateAlarmDataService(service);
       });
     }

@@ -1,12 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'screen/main/main_screen.dart';
 import 'service/baground_service.dart';
 import 'service/notification_service.dart';
 import 'service/shered_preferences.dart';
+
+StreamSubscription? serviceReadyListener;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,12 +19,21 @@ void main() async {
   await BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
   _backgroundServiceInitData();
 
+  Future.delayed(Duration(seconds: 5), () {
+    NotificationService.showAlertNotification(notificationId: 33);
+  });
+
+  Future.delayed(Duration(seconds: 10), () {
+    NotificationService.showCanceledAlertNotification(notificationId: 444);
+  });
+
   runApp(MyApp());
 }
 
 void _backgroundServiceInitData() {
   if (!SheredPreferencesService.preferences.getBool("backgroundSercive")!) {
-    BackgroundService.on('serviceReady').listen((event) {
+    serviceReadyListener?.cancel();
+    serviceReadyListener = BackgroundService.on('serviceReady').listen((event) {
       try {
         BackgroundService.invoke("initServiceData", arg: {"data": SheredPreferencesService.preferences.getString("serviceData")});
       } catch (e) {
@@ -49,7 +60,8 @@ class MyApp extends StatelessWidget with WidgetsBindingObserver {
       }
       if (state == AppLifecycleState.resumed) {
         if (!await BackgroundService.isRunning) {
-          BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
+          await BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
+          _backgroundServiceInitData();
         }
       }
     }
