@@ -134,7 +134,7 @@ class BackgroundService {
 
       service.invoke('serviceReady');
 
-      timer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+      timer = Timer.periodic(const Duration(seconds: 12), (timer) async {
         _updateAlarmDataService(service);
       });
     }
