@@ -81,14 +81,8 @@ class _MainScreenState extends State<MainScreen> {
                 ? ListView.builder(
                     itemCount: state.listRegions.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Dismissible(
-                        key: Key(state.listRegions[index].region.name),
-                        child: _buildCardWidget(state.listRegions[index]),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (DismissDirection der) {
-                          print(state.listRegions[index].region.name);
-                        },
-                      );
+                      //TODO Add dismisible
+                      return _buildCardWidget(state.listRegions[index]);
                     })
                 : _buildEmptyList();
           }
