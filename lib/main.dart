@@ -19,14 +19,6 @@ void main() async {
   await BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
   _backgroundServiceInitData();
 
-  Future.delayed(Duration(seconds: 5), () {
-    NotificationService.showAlertNotification(notificationId: 444, body: "AAAA");
-  });
-
-  Future.delayed(Duration(seconds: 15), () {
-    NotificationService.showCanceledAlertNotification(notificationId: 444, body: "BBBBBBBBBB");
-  });
-
   runApp(MyApp());
 }
 

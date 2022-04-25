@@ -33,14 +33,14 @@ class NotificationService {
       "Отмена воздушной тревоги",
       fullScreenIntent: true,
       importance: Importance.high,
-      sound: const RawResourceAndroidNotificationSound("alarm"),
-      playSound: false,
+      sound: const RawResourceAndroidNotificationSound("cancel_alarm"),
+      playSound: true,
       priority: Priority.high,
       enableLights: true,
       subText: "Внимание!",
       autoCancel: true,
       color: CustomColor.green,
-      timeoutAfter: 30000,
+      timeoutAfter: 60000,
       icon: "ic_cancel_alarm",
     ));
 

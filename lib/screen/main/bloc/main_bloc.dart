@@ -106,16 +106,3 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     return null;
   }
 }
-
-
-  // MainLoadDataState _selectRegionData(Alarm alarm) {
-
-  //   // //TODO Добавить выбор области
-  //   // if (alarm.states.dnipro.enabled) {
-  //   //   AlarmSound.startAlarm();
-  //   // } else {
-  //   //   AlarmSound.stopAparm();
-  //   // }
-
-  //   return
-  // }
