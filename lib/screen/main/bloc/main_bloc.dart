@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
 import '../../../service/baground_service.dart';
+import '../../../service/shered_preferences.dart';
 import '../../../tools/connection/response/alarm_response.dart';
 import '../tools/eregion.dart';
 import '../tools/region_model.dart';
@@ -22,6 +23,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         oldDataTry = 0;
         emit.call(MainLoadDataState(listRegions: _getListRegion(event.alarm.states)));
       }
+      if (event is MainUpdateAlarmEvent) {
+        BackgroundService.invoke("getData");
+      }
       if (event is MainErrorEvent) {
         if (state is MainLoadDataState && oldDataTry < 4) {
           oldDataTry++;
@@ -38,32 +42,31 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     //TODO проверить какие регионы отслеживать Пока все!
     List<RegionModel> result = [];
 
-    result.add(_getRegionModel(states.dnipro, ERegion.dnipro));
-    result.add(_getRegionModel(states.harkiv, ERegion.harkiv));
-    result.add(_getRegionModel(states.kyiv, ERegion.kyiv));
-    result.add(_getRegionModel(states.lugan, ERegion.lugan));
-    result.add(_getRegionModel(states.zapor, ERegion.zapor));
-
-    result.add(_getRegionModel(states.donetsk, ERegion.donetsk));
-    result.add(_getRegionModel(states.jitomer, ERegion.jitomer));
-    result.add(_getRegionModel(states.zakarpatska, ERegion.zakarpatska));
-    result.add(_getRegionModel(states.ivanoFrankowsk, ERegion.ivanoFrankowsk));
-    result.add(_getRegionModel(states.kirovograd, ERegion.kirovograd));
-    result.add(_getRegionModel(states.lvow, ERegion.lvow));
-    result.add(_getRegionModel(states.mikolaev, ERegion.mikolaev));
-    result.add(_getRegionModel(states.odesa, ERegion.odesa));
-    result.add(_getRegionModel(states.poltava, ERegion.poltava));
-    result.add(_getRegionModel(states.rivno, ERegion.rivno));
-    result.add(_getRegionModel(states.sumska, ERegion.sumska));
-    result.add(_getRegionModel(states.ternopil, ERegion.ternopil));
-    result.add(_getRegionModel(states.herson, ERegion.herson));
-    result.add(_getRegionModel(states.hmelnytsk, ERegion.hmelnytsk));
-
-    result.add(_getRegionModel(states.cherkasy, ERegion.cherkasy));
-    result.add(_getRegionModel(states.chernigev, ERegion.chernigev));
-    result.add(_getRegionModel(states.chernivets, ERegion.chernivets));
-    result.add(_getRegionModel(states.vinetsk, ERegion.vinetsk));
-    result.add(_getRegionModel(states.volinska, ERegion.volinska));
+    for (var subs in SheredPreferencesService.preferences.getStringList("subscribe")!) {
+      if (subs == ERegion.dnipro.name) result.add(_getRegionModel(states.dnipro, ERegion.dnipro));
+      if (subs == ERegion.harkiv.name) result.add(_getRegionModel(states.harkiv, ERegion.harkiv));
+      if (subs == ERegion.kyiv.name) result.add(_getRegionModel(states.kyiv, ERegion.kyiv));
+      if (subs == ERegion.lugan.name) result.add(_getRegionModel(states.lugan, ERegion.lugan));
+      if (subs == ERegion.zapor.name) result.add(_getRegionModel(states.zapor, ERegion.zapor));
+      if (subs == ERegion.donetsk.name) result.add(_getRegionModel(states.donetsk, ERegion.donetsk));
+      if (subs == ERegion.jitomer.name) result.add(_getRegionModel(states.jitomer, ERegion.jitomer));
+      if (subs == ERegion.zakarpatska.name) result.add(_getRegionModel(states.zakarpatska, ERegion.zakarpatska));
+      if (subs == ERegion.ivanoFrankowsk.name) result.add(_getRegionModel(states.ivanoFrankowsk, ERegion.ivanoFrankowsk));
+      if (subs == ERegion.kirovograd.name) result.add(_getRegionModel(states.kirovograd, ERegion.kirovograd));
+      if (subs == ERegion.lvow.name) result.add(_getRegionModel(states.lvow, ERegion.lvow));
+      if (subs == ERegion.mikolaev.name) result.add(_getRegionModel(states.mikolaev, ERegion.mikolaev));
+      if (subs == ERegion.odesa.name) result.add(_getRegionModel(states.odesa, ERegion.odesa));
+      if (subs == ERegion.rivno.name) result.add(_getRegionModel(states.rivno, ERegion.rivno));
+      if (subs == ERegion.sumska.name) result.add(_getRegionModel(states.sumska, ERegion.sumska));
+      if (subs == ERegion.ternopil.name) result.add(_getRegionModel(states.ternopil, ERegion.ternopil));
+      if (subs == ERegion.herson.name) result.add(_getRegionModel(states.herson, ERegion.herson));
+      if (subs == ERegion.hmelnytsk.name) result.add(_getRegionModel(states.hmelnytsk, ERegion.hmelnytsk));
+      if (subs == ERegion.cherkasy.name) result.add(_getRegionModel(states.cherkasy, ERegion.cherkasy));
+      if (subs == ERegion.chernigev.name) result.add(_getRegionModel(states.chernigev, ERegion.chernigev));
+      if (subs == ERegion.chernivets.name) result.add(_getRegionModel(states.chernivets, ERegion.chernivets));
+      if (subs == ERegion.vinetsk.name) result.add(_getRegionModel(states.vinetsk, ERegion.vinetsk));
+      if (subs == ERegion.volinska.name) result.add(_getRegionModel(states.volinska, ERegion.volinska));
+    }
 
     return result;
   }
@@ -73,13 +76,14 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       title: RegionTitle.getRegionByEnum(titleRegion),
       isAlarm: region.enabled,
       region: titleRegion,
-      timeDuration: _getTimerStarted(region.enabledAt),
+      timeDurationAlarm: _getTimer(region.enabledAt),
+      timeDurationCancelAlarm: _getTimer(region.disabledAt),
       timeEnd: _formatData(region.disabledAt),
       timeStart: _formatData(region.enabledAt),
     );
   }
 
-  String? _getTimerStarted(String? startedAlarmTime) {
+  String? _getTimer(String? startedAlarmTime) {
     if (startedAlarmTime != null) {
       Duration duration = DateTime.now().difference(DateTime.parse(startedAlarmTime).toLocal());
 

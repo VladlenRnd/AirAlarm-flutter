@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../service/baground_service.dart';
 import '../../service/shered_preferences.dart';
-import '../main/tools/color.dart';
+import '../main/tools/custom_color.dart';
+import '../select_region/select_region_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -41,29 +42,10 @@ class _SettingScreenState extends State<SettingScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  _buildBagroundSetting(),
+                  Divider(color: CustomColor.primaryGreen.withOpacity(0.6)),
+                  _buildRegionaAdd(),
                   Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Оповещения в \nфоновом режиме",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: CustomColor.textColor,
-                            )),
-                        Switch(
-                          activeColor: CustomColor.primaryGreen,
-                          value: snapshot.data!.pref.getBool("backgroundSercive")!,
-                          onChanged: (bool value) async {
-                            await _bagroundLogic(snapshot.data!.pref, value);
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 0,
                     child: _buildAppVersion(snapshot.data!.packageInfo),
                   )
                 ],
@@ -78,10 +60,67 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
+  Widget _buildRegionaAdd() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Выбор области",
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              fontSize: 17,
+              color: CustomColor.textColor,
+            ),
+          ),
+          MaterialButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRegionScreen()));
+            },
+            color: CustomColor.greenBox,
+            child: Text(
+              "Выбрать",
+              style: TextStyle(color: CustomColor.primaryGreen),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBagroundSetting() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Оповещения в \nфоновом режиме",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 17,
+                color: CustomColor.textColor,
+              )),
+          Switch(
+            activeColor: CustomColor.primaryGreen,
+            value: SheredPreferencesService.preferences.getBool("backgroundSercive")!,
+            onChanged: (bool value) async {
+              await _bagroundLogic(SheredPreferencesService.preferences, value);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _buildAppVersion(PackageInfo info) {
-    return Text(
-      "Версия: ${info.version}",
-      style: TextStyle(color: CustomColor.textColor, fontSize: 18),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Text(
+        "Версия: ${info.version}",
+        style: TextStyle(color: CustomColor.textColor, fontSize: 18),
+      ),
     );
   }
 

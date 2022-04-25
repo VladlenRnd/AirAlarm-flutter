@@ -6,9 +6,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../dialog/update_dialog.dart';
 import '../../tools/connection/connection.dart';
 import '../../tools/update_info.dart';
+import '../select_region/select_region_screen.dart';
 import '../settings/settings_screen.dart';
 import 'bloc/main_bloc.dart';
-import 'tools/color.dart';
+import 'tools/custom_color.dart';
 import 'tools/region_model.dart';
 
 class MainScreen extends StatefulWidget {
@@ -58,11 +59,9 @@ class _MainScreenState extends State<MainScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingScreen()),
-                );
+              onPressed: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingScreen()));
+                _bloc.add(MainUpdateAlarmEvent());
               },
               icon: const Icon(Icons.settings))
         ],
@@ -78,19 +77,72 @@ class _MainScreenState extends State<MainScreen> {
             );
           }
           if (state is MainLoadDataState) {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 24, left: 24, right: 24),
-                child: Column(
-                  children: state.listRegions.map((model) => _buildCardWidget(model)).toList(),
-                ),
-              ),
-            );
+            return state.listRegions.isNotEmpty
+                ? ListView.builder(
+                    itemCount: state.listRegions.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Dismissible(
+                        key: Key(state.listRegions[index].region.name),
+                        child: _buildCardWidget(state.listRegions[index]),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (DismissDirection der) {
+                          print(state.listRegions[index].region.name);
+                        },
+                      );
+                    })
+                : _buildEmptyList();
           }
 
           return _buildErrorWidget();
         },
       ),
+    );
+  }
+
+  Widget _buildEmptyList() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Center(
+          child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+        decoration: BoxDecoration(
+          color: CustomColor.systemTextBox,
+          borderRadius: const BorderRadius.all(Radius.circular(18)),
+          boxShadow: [
+            BoxShadow(
+              color: CustomColor.systemSecondary.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        width: double.infinity,
+        height: 250,
+        child: Column(
+          children: [
+            Text(
+              "Добавьте области для отслеживания воздушной тревоги",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: CustomColor.textColor, fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
+            ElevatedButton(
+              onPressed: () async {
+                if (await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRegionScreen()))) {
+                  _bloc.add(MainUpdateAlarmEvent());
+                }
+              },
+              child: const Icon(Icons.add, size: 35),
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all(const CircleBorder()),
+                padding: MaterialStateProperty.all(const EdgeInsets.all(20)),
+                backgroundColor: MaterialStateProperty.all(CustomColor.systemSecondary), // <-- Button color
+              ),
+            )
+          ],
+        ),
+      )),
     );
   }
 
@@ -140,7 +192,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildCardWidget(RegionModel model) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
       child: SizedBox(
         height: 200,
         child: Container(
@@ -177,36 +229,49 @@ class _MainScreenState extends State<MainScreen> {
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
           Expanded(
-            child: model.isAlarm
-                ? Text("Воздушная тревога",
-                    style: TextStyle(
-                      fontSize: 22,
-                      color: CustomColor.red,
-                    ))
-                : Center(child: Text("Тревоги нет", style: TextStyle(fontSize: 22, color: CustomColor.green))),
+            child: _buildAlarm(model.isAlarm),
           ),
-          Expanded(
-            child: model.timeDuration != null
-                ? Text("Тревога длится: \n ${model.timeDuration}",
-                    textAlign: TextAlign.center, style: TextStyle(fontSize: 22, color: CustomColor.red))
-                : const SizedBox.shrink(),
-          ),
+          _buildTimer(model.timeDurationAlarm, model.timeDurationCancelAlarm),
           const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          model.timeStart != null
-              ? Text(
-                  "Начало тревоги: ${model.timeStart}",
-                  style: TextStyle(color: CustomColor.textColor),
-                )
-              : const SizedBox.shrink(),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          model.timeEnd != null
-              ? Text(
-                  "Конец тревоги: ${model.timeEnd}",
-                  style: TextStyle(color: CustomColor.textColor),
-                )
-              : const SizedBox.shrink(),
+          _buildDate(model.timeStart, model.timeEnd),
         ],
       ),
     );
+  }
+
+  Widget _buildAlarm(bool isAlarm) {
+    return Text(isAlarm ? "Воздушная тревога" : "Тревоги нет",
+        style: TextStyle(
+          fontSize: 22,
+          color: isAlarm ? CustomColor.red : CustomColor.green,
+        ));
+  }
+
+  Widget _buildDate(String? timeStart, String? timeEnd) {
+    if (timeStart != null) {
+      return Text(
+        "Начало тревоги: $timeStart",
+        style: TextStyle(color: CustomColor.textColor),
+      );
+    } else if (timeEnd != null) {
+      return Text(
+        "Конец тревоги: $timeEnd",
+        style: TextStyle(color: CustomColor.textColor),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildTimer(String? startAlarm, String? endAlarm) {
+    if (startAlarm != null) {
+      return Expanded(
+          child: Text("Тревога длится: \n $startAlarm", textAlign: TextAlign.center, style: TextStyle(fontSize: 22, color: CustomColor.red)));
+    } else if (endAlarm != null) {
+      return Expanded(
+          child: Text("Без тревоги: \n $endAlarm", textAlign: TextAlign.center, style: TextStyle(fontSize: 22, color: CustomColor.green)));
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 }

@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../screen/main/tools/eregion.dart';
+
 class SheredPreferencesService {
   static late final SharedPreferences _preferences;
 
@@ -12,5 +14,6 @@ class SheredPreferencesService {
 
   static void _initDefaultData() {
     _preferences.getBool("backgroundSercive") ?? SheredPreferencesService.preferences.setBool("backgroundSercive", true);
+    _preferences.getStringList("subscribe") ?? _preferences.setStringList("subscribe", [ERegion.dnipro.name]);
   }
 }
