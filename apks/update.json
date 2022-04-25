@@ -1,5 +1,5 @@
 {
-    "newVersion": "1.1.0",
-    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.1.0.apk",
-    "descroption": []
+    "newVersion": "1.1.5",
+    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.1.5.apk",
+    "descroption": ["Исправлена ошибка обновления данных при старте приложения","Изменены иконки приложения","Изменена иконка приложения","Добавлен звук уведомления отмены тревоги"]
 }
