@@ -38,11 +38,32 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     //TODO проверить какие регионы отслеживать Пока все!
     List<RegionModel> result = [];
 
-    result.add(_getRegionModel(states.dnipro, ERegion.dnepr));
+    result.add(_getRegionModel(states.dnipro, ERegion.dnipro));
     result.add(_getRegionModel(states.harkiv, ERegion.harkiv));
     result.add(_getRegionModel(states.kyiv, ERegion.kyiv));
-    result.add(_getRegionModel(states.lugan, ERegion.lugansk));
+    result.add(_getRegionModel(states.lugan, ERegion.lugan));
     result.add(_getRegionModel(states.zapor, ERegion.zapor));
+
+    result.add(_getRegionModel(states.donetsk, ERegion.donetsk));
+    result.add(_getRegionModel(states.jitomer, ERegion.jitomer));
+    result.add(_getRegionModel(states.zakarpatska, ERegion.zakarpatska));
+    result.add(_getRegionModel(states.ivanoFrankowsk, ERegion.ivanoFrankowsk));
+    result.add(_getRegionModel(states.kirovograd, ERegion.kirovograd));
+    result.add(_getRegionModel(states.lvow, ERegion.lvow));
+    result.add(_getRegionModel(states.mikolaev, ERegion.mikolaev));
+    result.add(_getRegionModel(states.odesa, ERegion.odesa));
+    result.add(_getRegionModel(states.poltava, ERegion.poltava));
+    result.add(_getRegionModel(states.rivno, ERegion.rivno));
+    result.add(_getRegionModel(states.sumska, ERegion.sumska));
+    result.add(_getRegionModel(states.ternopil, ERegion.ternopil));
+    result.add(_getRegionModel(states.herson, ERegion.herson));
+    result.add(_getRegionModel(states.hmelnytsk, ERegion.hmelnytsk));
+
+    result.add(_getRegionModel(states.cherkasy, ERegion.cherkasy));
+    result.add(_getRegionModel(states.chernigev, ERegion.chernigev));
+    result.add(_getRegionModel(states.chernivets, ERegion.chernivets));
+    result.add(_getRegionModel(states.vinetsk, ERegion.vinetsk));
+    result.add(_getRegionModel(states.volinska, ERegion.volinska));
 
     return result;
   }

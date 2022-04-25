@@ -55,18 +55,18 @@ class BackgroundService {
 
   static Future<void> _isShowNotification(States states, bool initData) async {
     //  States statesv
-    _StatusNotification data = _isChekSubscribe(ERegion.dnepr, states.dnipro.enabled, initData);
+    _StatusNotification data = _isChekSubscribe(ERegion.dnipro, states.dnipro.enabled, initData);
 
     switch (data) {
       case _StatusNotification.notShow:
         print("==DONT SHOW MESSAGE==");
         break;
       case _StatusNotification.showWarning:
-        await NotificationService.showAlertNotification(body: RegionTitle.getRegionByEnum(ERegion.dnepr), notificationId: ERegion.dnepr.index);
+        await NotificationService.showAlertNotification(body: RegionTitle.getRegionByEnum(ERegion.dnipro), notificationId: ERegion.dnipro.index);
         break;
       case _StatusNotification.showCanceled:
         await NotificationService.showCanceledAlertNotification(
-            body: RegionTitle.getRegionByEnum(ERegion.dnepr), notificationId: ERegion.dnepr.index);
+            body: RegionTitle.getRegionByEnum(ERegion.dnipro), notificationId: ERegion.dnipro.index);
         break;
     }
   }

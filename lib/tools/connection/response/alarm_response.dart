@@ -27,6 +27,25 @@ class States {
   late final Region kyiv;
   late final Region lugan;
   late final Region harkiv;
+  late final Region donetsk;
+  late final Region jitomer;
+  late final Region zakarpatska;
+  late final Region ivanoFrankowsk;
+  late final Region kirovograd;
+  late final Region lvow;
+  late final Region mikolaev;
+  late final Region odesa;
+  late final Region poltava;
+  late final Region rivno;
+  late final Region sumska;
+  late final Region ternopil;
+  late final Region herson;
+  late final Region hmelnytsk;
+  late final Region cherkasy;
+  late final Region chernigev;
+  late final Region chernivets;
+  late final Region vinetsk;
+  late final Region volinska;
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
@@ -35,39 +54,58 @@ class States {
     _data['Київська область'] = kyiv.toJson();
     _data['Луганська область'] = lugan.toJson();
     _data['Харківська область'] = harkiv.toJson();
+    _data['Донецька область'] = donetsk.toJson();
+    _data['Житомирська область'] = jitomer.toJson();
+    _data['Закарпатська область'] = zakarpatska.toJson();
+    _data['Івано-Франківська облать'] = ivanoFrankowsk.toJson();
+    _data['Кіровоградська область'] = kirovograd.toJson();
+    _data['Львівська область'] = lvow.toJson();
+    _data['Миколаївська область'] = mikolaev.toJson();
+    _data['Одеська область'] = odesa.toJson();
+    _data['Полтавська область'] = poltava.toJson();
+    _data['Рівненська область'] = rivno.toJson();
+    _data['Сумська область'] = sumska.toJson();
+    _data['Тернопільська область'] = ternopil.toJson();
+    _data['Херсонська область'] = herson.toJson();
+    _data['Хмельницька область'] = hmelnytsk.toJson();
+    _data['Черкаська область'] = cherkasy.toJson();
+    _data['Чернівецька область'] = chernigev.toJson();
+    _data['Чернігівська область'] = chernigev.toJson();
+    _data['Вінницька область'] = vinetsk.toJson();
+    _data['Волинська область'] = volinska.toJson();
 
     return _data;
   }
 
   States.fromJson(Map<String, dynamic> json) {
-    // Вінницька область = Вінницька область.fromJson(json['Вінницька область']);
-    // Волинська область = Волинська область.fromJson(json['Волинська область']);
     dnipro = Region.fromJson(json['Дніпропетровська область']);
     zapor = Region.fromJson(json['Запорізька область']);
     kyiv = Region.fromJson(json['Київська область']);
     lugan = Region.fromJson(json['Луганська область']);
     harkiv = Region.fromJson(json['Харківська область']);
-    // Донецька область = Донецька область.fromJson(json['Донецька область']);
-    // Житомирська область = Житомирська область.fromJson(json['Житомирська область']);
-    // Закарпатська область = Закарпатська область.fromJson(json['Закарпатська область']);
-    // Запорізька область = Запорізька область.fromJson(json['Запорізька область']);
-    // Івано-Франківська область = Івано-Франківська область.fromJson(json['Івано-Франківська область']);
-    // Київська область = Київська область.fromJson(json['Київська область']);
-    // Кіровоградська область = Кіровоградська область.fromJson(json['Кіровоградська область']);
-    // Луганська область = Луганська область.fromJson(json['Луганська область']);
-    // Львівська область = Львівська область.fromJson(json['Львівська область']);
-    // Миколаївська область = Миколаївська область.fromJson(json['Миколаївська область']);
-    // Одеська область = Одеська область.fromJson(json['Одеська область']);
-    // Полтавська область = Полтавська область.fromJson(json['Полтавська область']);
-    // Рівненська область = Рівненська область.fromJson(json['Рівненська область']);
-    // Сумська область = Сумська область.fromJson(json['Сумська область']);
-    // Тернопільська область = Тернопільська область.fromJson(json['Тернопільська область']);
-    // Харківська область = Харківська область.fromJson(json['Харківська область']);
-    // Херсонська область = Херсонська область.fromJson(json['Херсонська область']);
-    // Хмельницька область = Хмельницька область.fromJson(json['Хмельницька область']);
-    // Черкаська область = Черкаська область.fromJson(json['Черкаська область']);
-    // Чернівецька область = Чернівецька область.fromJson(json['Чернівецька область']);
-    // Чернігівська область = Чернігівська область.fromJson(json['Чернігівська область']);
+    donetsk = Region.fromJson(json['Донецька область']);
+    jitomer = Region.fromJson(json['Житомирська область']);
+    zakarpatska = Region.fromJson(json['Закарпатська область']);
+
+    ivanoFrankowsk = Region.fromJson(json['Івано-Франківська область'] ?? json['Івано-Франківська облать']);
+
+    kirovograd = Region.fromJson(json['Кіровоградська область']);
+    lvow = Region.fromJson(json['Львівська область']);
+    mikolaev = Region.fromJson(json['Миколаївська область']);
+    odesa = Region.fromJson(json['Одеська область']);
+    poltava = Region.fromJson(json['Полтавська область']);
+    rivno = Region.fromJson(json['Рівненська область']);
+    sumska = Region.fromJson(json['Сумська область']);
+    ternopil = Region.fromJson(json['Тернопільська область']);
+    herson = Region.fromJson(json['Херсонська область']);
+    hmelnytsk = Region.fromJson(json['Хмельницька область']);
+    cherkasy = Region.fromJson(json['Черкаська область']);
+    chernivets = Region.fromJson(json['Чернівецька область']);
+    chernigev = Region.fromJson(json['Чернігівська область']);
+    vinetsk = Region.fromJson(json['Вінницька область']);
+    volinska = Region.fromJson(json['Волинська область']);
+
+    // Волинська область = Волинська область.fromJson(json['Волинська область']);
     // м. Київ = м. Київ.fromJson(json['м. Київ']);
   }
 }
