@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../service/baground_service.dart';
+import '../../service/permission_service.dart';
 import '../../service/shered_preferences.dart';
 import '../main/tools/custom_color.dart';
 import '../select_region/select_region_screen.dart';
@@ -125,15 +127,17 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   Future<void> _bagroundLogic(SharedPreferences sh, bool value) async {
-    if (value == false) {
-      BackgroundService.invoke("setAsBackground");
-    } else {
-      BackgroundService.invoke("setAsForeground");
-    }
+    if (await PermissonService.permissionBattary()) {
+      if (value == false) {
+        BackgroundService.invoke("setAsBackground");
+      } else {
+        BackgroundService.invoke("setAsForeground");
+      }
 
-    setState(() {
-      sh.setBool("backgroundSercive", value);
-    });
+      setState(() {
+        sh.setBool("backgroundSercive", value);
+      });
+    }
   }
 }
 

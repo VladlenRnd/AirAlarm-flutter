@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -134,7 +135,7 @@ class BackgroundService {
 
       service.invoke('serviceReady');
 
-      timer = Timer.periodic(const Duration(seconds: 12), (timer) async {
+      timer = Timer.periodic(const Duration(seconds: 9), (timer) async {
         _updateAlarmDataService(service);
       });
     }
@@ -161,6 +162,7 @@ class BackgroundService {
       );
       _countError = 0;
     } catch (e) {
+      print("EXEPTION");
       _countError++;
       if (_countError > 4) {
         service.setForegroundNotificationInfo(
