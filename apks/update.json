@@ -1,9 +1,5 @@
 {
-    "newVersion": "1.2.0",
-    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.2.0.apk",
-    "descroption": ["Доступна вся Украина",
-                    "Небольшое изменение в дизайне",
-                    "Добавлен таймер с момента отключения тревоги",
-                    "Добавленно окно выбора областей в настройках и на главном экране если не выбрано ничего",
-                    "Уведомления пока приходят только для Днепропетровской области"]
+    "newVersion": "1.2.2",
+    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.2.2.apk",
+    "descroption": ["Исправлены фоновые оповещения"]
 }
