@@ -127,12 +127,19 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   Future<void> _bagroundLogic(SharedPreferences sh, bool value) async {
-    if (await PermissonService.permissionBattary()) {
+    if (!value) {
       if (value == false) {
         BackgroundService.invoke("setAsBackground");
-      } else {
-        BackgroundService.invoke("setAsForeground");
       }
+
+      setState(() {
+        sh.setBool("backgroundSercive", value);
+      });
+      return;
+    }
+
+    if (await PermissonService.permissionBattary()) {
+      BackgroundService.invoke("setAsForeground");
 
       setState(() {
         sh.setBool("backgroundSercive", value);
