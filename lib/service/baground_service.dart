@@ -56,7 +56,8 @@ class BackgroundService {
 
   static Future<void> _isShowNotification(States states, bool initData) async {
     //  States statesv
-    _StatusNotification data = _isChekSubscribe(ERegion.dnipro, states.dnipro.enabled, initData);
+    // states.dnipro.enabled
+    _StatusNotification data = _isChekSubscribe(ERegion.dnipro, onData, initData);
 
     switch (data) {
       case _StatusNotification.notShow:
@@ -98,6 +99,9 @@ class BackgroundService {
     _oldWarningMap[region.name] = isAlarm;
     return result;
   }
+
+  static bool onData = false;
+  static int data = 0;
 
   static void _onStart(ServiceInstance service) async {
     Timer? timer;
@@ -153,6 +157,12 @@ class BackgroundService {
       );
 
       await _isShowNotification(alarm.states, initData);
+
+      if ((data % 10) == 0) {
+        onData = !onData;
+      }
+
+      data++;
 
       service.invoke('saveData', {"data": _oldWarningMap});
 
