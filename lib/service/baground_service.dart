@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -55,9 +54,7 @@ class BackgroundService {
   }
 
   static Future<void> _isShowNotification(States states, bool initData) async {
-    //  States statesv
-    // states.dnipro.enabled
-    _StatusNotification data = _isChekSubscribe(ERegion.dnipro, onData, initData);
+    _StatusNotification data = _isChekSubscribe(ERegion.dnipro, states.dnipro.enabled, initData);
 
     switch (data) {
       case _StatusNotification.notShow:
@@ -157,12 +154,6 @@ class BackgroundService {
       );
 
       await _isShowNotification(alarm.states, initData);
-
-      if ((data % 10) == 0) {
-        onData = !onData;
-      }
-
-      data++;
 
       service.invoke('saveData', {"data": _oldWarningMap});
 
