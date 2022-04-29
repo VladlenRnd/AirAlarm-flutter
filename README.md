@@ -8,4 +8,6 @@ Version 1.1.5 https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAla
 
 Version 1.2.0 https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.2.0.apk
 
-Version 1.2.2 https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.2.2.apk
+Version 1.2.3 https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.2.3.apk
+
+Version 1.3.0 https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.3.0.apk
