@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../service/alert_data_service.dart';
 import '../../service/permission_service.dart';
 import '../../service/shered_preferences_service.dart';
-import '../../tools/background_hendler.dart';
 import '../../tools/custom_color.dart';
 import '../select_region/select_region_screen.dart';
 
