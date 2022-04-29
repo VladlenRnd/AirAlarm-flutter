@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
           IconButton(
               onPressed: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingScreen()));
-                _bloc.add(MainUpdateAlarmEvent());
+                _bloc.add(MainForcedUpdateEvent());
               },
               icon: const Icon(Icons.settings))
         ],
@@ -125,7 +125,7 @@ class _MainScreenState extends State<MainScreen> {
             ElevatedButton(
               onPressed: () async {
                 if (await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRegionScreen()))) {
-                  _bloc.add(MainUpdateAlarmEvent());
+                  _bloc.add(MainForcedUpdateEvent());
                 }
               },
               child: const Icon(Icons.add, size: 35),

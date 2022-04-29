@@ -11,4 +11,4 @@ class MainUpdateEvent extends MainEvent {
 
 class MainErrorEvent extends MainEvent {}
 
-class MainUpdateAlarmEvent extends MainEvent {}
+class MainForcedUpdateEvent extends MainEvent {}

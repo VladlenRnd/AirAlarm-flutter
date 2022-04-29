@@ -29,6 +29,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         oldDataTry = 0;
         emit.call(MainLoadDataState(listRegions: _getListRegion(event.alarm.states)));
       }
+      if (event is MainForcedUpdateEvent) {
+        _getData();
+      }
       if (event is MainErrorEvent) {
         if (state is MainLoadDataState && oldDataTry < 3) {
           oldDataTry++;
