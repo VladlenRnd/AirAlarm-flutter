@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:alarm/screen/main/tools/custom_color.dart';
+import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
@@ -22,6 +22,26 @@ class NotificationService {
 
   static void cancelNotification({required int notificationId}) async {
     await _flutterLocalNotificationsPlugin.cancel(notificationId);
+  }
+
+  static Future<void> showTestNotification({String body = "", required int notificationId}) async {
+    cancelNotification(notificationId: notificationId);
+    //Notification seting
+    NotificationDetails _platformChannelSpecifics = const NotificationDetails(
+        android: AndroidNotificationDetails(
+      "2",
+      "Тестовое оповещение",
+      fullScreenIntent: true,
+      importance: Importance.max,
+      playSound: true,
+      priority: Priority.max,
+      enableLights: true,
+      autoCancel: true,
+      visibility: NotificationVisibility.public,
+      timeoutAfter: 10000,
+    ));
+
+    await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Тестовое оповещение", body, _platformChannelSpecifics, payload: 'test');
   }
 
   static Future<void> showCanceledAlertNotification({String body = "", required int notificationId}) async {

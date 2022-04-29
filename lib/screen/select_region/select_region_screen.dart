@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../service/shered_preferences.dart';
-import '../main/tools/custom_color.dart';
-import '../main/tools/eregion.dart';
-import '../main/tools/region_title.dart';
+import '../../service/shered_preferences_service.dart';
+import '../../tools/custom_color.dart';
+import '../../tools/eregion.dart';
+import '../../tools/region_title.dart';
 
 class SelectRegionScreen extends StatefulWidget {
   const SelectRegionScreen({Key? key}) : super(key: key);

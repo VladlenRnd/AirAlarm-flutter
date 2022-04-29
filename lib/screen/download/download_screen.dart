@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:alarm/screen/main/tools/custom_color.dart';
+import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';

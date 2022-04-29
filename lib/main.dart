@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screen/main/main_screen.dart';
-import 'service/baground_service.dart';
 import 'service/notification_service.dart';
-import 'service/shered_preferences.dart';
-
-StreamSubscription? serviceReadyListener;
+import 'service/shered_preferences_service.dart';
+import 'tools/background_hendler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,48 +15,21 @@ void main() async {
 
   await NotificationService.init();
   await SheredPreferencesService.init();
-  await BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
-  _backgroundServiceInitData();
+  _initFirebaseService();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-void _backgroundServiceInitData() {
-  if (!SheredPreferencesService.preferences.getBool("backgroundSercive")!) {
-    serviceReadyListener?.cancel();
-    serviceReadyListener = BackgroundService.on('serviceReady').listen((event) {
-      try {
-        BackgroundService.invoke("initServiceData", arg: {"data": SheredPreferencesService.preferences.getString("serviceData")});
-      } catch (e) {
-        print(e);
-      }
-    });
-  }
+Future<void> _initFirebaseService() async {
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  await FirebaseMessaging.instance.subscribeToTopic("allDevices");
 
-  BackgroundService.on('saveData').listen((event) {
-    SheredPreferencesService.preferences.setString("serviceData", json.encode(event!["data"]));
-  });
+  String? token = await FirebaseMessaging.instance.getToken();
 }
 
-class MyApp extends StatelessWidget with WidgetsBindingObserver {
-  MyApp({Key? key}) : super(key: key) {
-    WidgetsBinding.instance?.addObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (!SheredPreferencesService.preferences.getBool("backgroundSercive")!) {
-      if (state == AppLifecycleState.paused) {
-        BackgroundService.invoke("stopService");
-      }
-      if (state == AppLifecycleState.resumed) {
-        if (!await BackgroundService.isRunning) {
-          await BackgroundService.initializeService(SheredPreferencesService.preferences.getBool("backgroundSercive")!);
-          _backgroundServiceInitData();
-        }
-      }
-    }
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

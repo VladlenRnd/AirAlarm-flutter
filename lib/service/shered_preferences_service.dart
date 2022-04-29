@@ -1,7 +1,6 @@
-import 'package:alarm/service/permission_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../screen/main/tools/eregion.dart';
+import '../tools/eregion.dart';
 
 class SheredPreferencesService {
   static late final SharedPreferences _preferences;
@@ -14,8 +13,6 @@ class SheredPreferencesService {
   }
 
   static Future<void> _initDefaultData() async {
-    _preferences.getBool("backgroundSercive") ?? await _preferences.setBool("backgroundSercive", await PermissonService.permissionBattary());
-
     _preferences.getStringList("subscribe") ?? await _preferences.setStringList("subscribe", [ERegion.dnipro.name]);
   }
 }

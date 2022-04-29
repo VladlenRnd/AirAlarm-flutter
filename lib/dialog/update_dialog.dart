@@ -1,4 +1,4 @@
-import 'package:alarm/screen/main/tools/custom_color.dart';
+import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 
 import '../screen/download/download_screen.dart';

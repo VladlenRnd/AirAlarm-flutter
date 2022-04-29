@@ -1,15 +1,21 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
-import '../../../service/baground_service.dart';
-import '../../../service/shered_preferences.dart';
+import '../../../service/alert_data_service.dart';
+import '../../../service/shered_preferences_service.dart';
+import '../../../tools/background_hendler.dart';
 import '../../../tools/connection/response/alarm_response.dart';
-import '../tools/eregion.dart';
-import '../tools/region_model.dart';
-import '../tools/region_title.dart';
+import '../../../tools/eregion.dart';
+import '../../../tools/region_model.dart';
+import '../../../tools/region_title.dart';
+import '../../../tools/internet_conection.dart';
 
 part 'main_event.dart';
 part 'main_state.dart';
@@ -23,11 +29,8 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         oldDataTry = 0;
         emit.call(MainLoadDataState(listRegions: _getListRegion(event.alarm.states)));
       }
-      if (event is MainUpdateAlarmEvent) {
-        BackgroundService.invoke("getData");
-      }
       if (event is MainErrorEvent) {
-        if (state is MainLoadDataState && oldDataTry < 4) {
+        if (state is MainLoadDataState && oldDataTry < 3) {
           oldDataTry++;
           emit.call(state);
         } else {
@@ -35,7 +38,33 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         }
       }
     });
-    _initListenUpdate();
+    _internetConnection();
+    _getData();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
+      print("==========FOREGROUND MESSAGE============");
+      testNotification(event.data);
+      await _getData();
+      print("========================================");
+    });
+  }
+
+  void _internetConnection() {
+    Timer.periodic(const Duration(seconds: 5), (timer) async {
+      if (await internetConnectionCheker()) {
+      } else {
+        add(MainErrorEvent());
+      }
+    });
+  }
+
+  Future<void> _getData() async {
+    try {
+      AlarmRespose alarm = await AlertDataService.runDataService();
+      add(MainUpdateEvent(alarm: alarm));
+    } catch (e) {
+      add(MainErrorEvent());
+    }
   }
 
   List<RegionModel> _getListRegion(States states) {
@@ -98,30 +127,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       }
     }
     return null;
-  }
-
-  void _initListenUpdate() {
-    BackgroundService.on('update').listen((event) {
-      try {
-        AlarmRespose alarm = AlarmRespose.fromJson(event!["alarm"]);
-        add(MainUpdateEvent(alarm: alarm));
-      } catch (e) {
-        add(MainErrorEvent());
-      }
-    });
-
-    BackgroundService.on('error').listen((event) {
-      add(MainErrorEvent());
-    });
-
-    _initAlarmData();
-  }
-
-  void _initAlarmData() async {
-    BackgroundService.invoke("getData");
-    BackgroundService.on('serviceReady').listen((event) {
-      BackgroundService.invoke("getData");
-    });
   }
 
   String? _formatData(String? data) {

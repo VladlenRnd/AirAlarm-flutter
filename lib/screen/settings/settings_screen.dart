@@ -1,12 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../service/baground_service.dart';
+import '../../service/alert_data_service.dart';
 import '../../service/permission_service.dart';
-import '../../service/shered_preferences.dart';
-import '../main/tools/custom_color.dart';
+import '../../service/shered_preferences_service.dart';
+import '../../tools/background_hendler.dart';
+import '../../tools/custom_color.dart';
 import '../select_region/select_region_screen.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -44,8 +46,8 @@ class _SettingScreenState extends State<SettingScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _buildBagroundSetting(),
-                  Divider(color: CustomColor.primaryGreen.withOpacity(0.6)),
+                  // _buildBagroundSetting(),
+                  //  Divider(color: CustomColor.primaryGreen.withOpacity(0.6)),
                   _buildRegionaAdd(),
                   Expanded(
                     child: _buildAppVersion(snapshot.data!.packageInfo),
@@ -128,9 +130,20 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> _bagroundLogic(SharedPreferences sh, bool value) async {
     if (!value) {
-      if (value == false) {
-        BackgroundService.invoke("setAsBackground");
-      }
+      await FirebaseMessaging.instance.deleteToken();
+    } else {
+      Firebase.initializeApp();
+      await FirebaseMessaging.instance.getToken();
+    }
+
+    setState(() {
+      sh.setBool("backgroundSercive", value);
+    });
+
+    return;
+
+    if (!value) {
+      if (value == false) {}
 
       setState(() {
         sh.setBool("backgroundSercive", value);
@@ -139,8 +152,6 @@ class _SettingScreenState extends State<SettingScreen> {
     }
 
     if (await PermissonService.permissionBattary()) {
-      BackgroundService.invoke("setAsForeground");
-
       setState(() {
         sh.setBool("backgroundSercive", value);
       });

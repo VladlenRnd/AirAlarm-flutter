@@ -5,12 +5,12 @@ import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../dialog/update_dialog.dart';
 import '../../tools/connection/connection.dart';
+import '../../tools/region_model.dart';
 import '../../tools/update_info.dart';
 import '../select_region/select_region_screen.dart';
 import '../settings/settings_screen.dart';
 import 'bloc/main_bloc.dart';
-import 'tools/custom_color.dart';
-import 'tools/region_model.dart';
+import '../../tools/custom_color.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final MainBloc _bloc = MainBloc();
+  late final MainBloc _bloc;
 
   Future<bool> _isUpdateCheck() async {
     bool result = false;
@@ -40,6 +40,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
+    _bloc = MainBloc();
     SchedulerBinding.instance!.addPostFrameCallback((_) async {
       UpdateInfo.isNewVersion = await _isUpdateCheck();
       if (UpdateInfo.isNewVersion) {
