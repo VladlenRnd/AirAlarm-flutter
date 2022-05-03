@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
-import '../../../service/alert_data_service.dart';
+import '../../../service/notification_service.dart';
 import '../../../service/shered_preferences_service.dart';
 import '../../../tools/background_hendler.dart';
+import '../../../tools/connection/connection.dart';
 import '../../../tools/connection/response/alarm_response.dart';
 import '../../../tools/eregion.dart';
 import '../../../tools/region_model.dart';
 import '../../../tools/region_title.dart';
-import '../../../tools/internet_conection.dart';
 
 part 'main_event.dart';
 part 'main_state.dart';
@@ -30,7 +30,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         emit.call(MainLoadDataState(listRegions: _getListRegion(event.alarm.states)));
       }
       if (event is MainForcedUpdateEvent) {
-        _getData();
+        _getForceUpdate();
       }
       if (event is MainErrorEvent) {
         if (state is MainLoadDataState && oldDataTry < 3) {
@@ -41,32 +41,40 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         }
       }
     });
-    _internetConnection();
-    _getData();
+    _initTimerData();
+    _getForceUpdate();
 
     FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
       print("==========FOREGROUND MESSAGE============");
       testNotification(event.data);
-      await _getData();
+      NotificationService.showNotification(event.data["isAlarm"].toLowerCase() == 'true', event.data["region"]);
       print("========================================");
     });
   }
 
-  void _internetConnection() {
-    Timer.periodic(const Duration(seconds: 5), (timer) async {
-      if (await internetConnectionCheker()) {
-      } else {
+  void _getForceUpdate() async {
+    try {
+      add(MainUpdateEvent(alarm: await _getData()));
+    } catch (e) {
+      add(MainErrorEvent());
+    }
+  }
+
+  void _initTimerData() async {
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
+      try {
+        add(MainUpdateEvent(alarm: await _getData()));
+      } catch (e) {
         add(MainErrorEvent());
       }
     });
   }
 
-  Future<void> _getData() async {
+  Future<AlarmRespose> _getData() async {
     try {
-      AlarmRespose alarm = await AlertDataService.runDataService();
-      add(MainUpdateEvent(alarm: alarm));
+      return await Conectrion.getAlarm();
     } catch (e) {
-      add(MainErrorEvent());
+      throw Exception("Not data Alarm");
     }
   }
 

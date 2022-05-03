@@ -20,6 +20,10 @@ class NotificationService {
     // );
   }
 
+  static Future<void> showNotification(bool isAlarm, String region) async {
+    isAlarm ? await _showAlertNotification(notificationId: 1, body: region) : await _showCanceledAlertNotification(notificationId: 100, body: region);
+  }
+
   static void cancelNotification({required int notificationId}) async {
     await _flutterLocalNotificationsPlugin.cancel(notificationId);
   }
@@ -44,7 +48,7 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Тестовое оповещение", body, _platformChannelSpecifics, payload: 'test');
   }
 
-  static Future<void> showCanceledAlertNotification({String body = "", required int notificationId}) async {
+  static Future<void> _showCanceledAlertNotification({String body = "", required int notificationId}) async {
     cancelNotification(notificationId: notificationId);
     //Notification seting
     NotificationDetails _platformChannelSpecifics = NotificationDetails(
@@ -68,7 +72,7 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Отмена воздушной тревоги", body, _platformChannelSpecifics, payload: 'test');
   }
 
-  static Future<void> showAlertNotification({String body = "", required int notificationId}) async {
+  static Future<void> _showAlertNotification({String body = "", required int notificationId}) async {
     cancelNotification(notificationId: notificationId + 100);
     final Int64List vibrationPattern = Int64List(6);
     vibrationPattern[0] = 0;

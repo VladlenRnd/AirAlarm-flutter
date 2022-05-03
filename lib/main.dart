@@ -23,7 +23,7 @@ void main() async {
 Future<void> _initFirebaseService() async {
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  await FirebaseMessaging.instance.subscribeToTopic("allDevices");
+  await FirebaseMessaging.instance.subscribeToTopic("all");
 
   String? token = await FirebaseMessaging.instance.getToken();
 }

@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import '../service/alert_data_service.dart';
 import '../service/notification_service.dart';
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -11,11 +10,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   testNotification(message.data);
 
-  try {
-    await AlertDataService.runDataService();
-  } catch (e) {
-    print(e);
-  }
+  NotificationService.showNotification(message.data["isAlarm"].toLowerCase() == 'true', message.data["region"]);
+
   print("___________________________________________");
 }
 
