@@ -1,16 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../dialog/update_dialog.dart';
 import '../../tools/connection/connection.dart';
 import '../../tools/region_model.dart';
+import '../../tools/ukrain_svg.dart';
 import '../../tools/update_info.dart';
 import '../select_region/select_region_screen.dart';
 import '../settings/settings_screen.dart';
 import 'bloc/main_bloc.dart';
 import '../../tools/custom_color.dart';
+import 'widget/card_list_widget.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -19,7 +23,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   late final MainBloc _bloc;
 
   Future<bool> _isUpdateCheck() async {
@@ -56,7 +60,13 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: CustomColor.background,
       appBar: AppBar(
         backgroundColor: CustomColor.backgroundLight,
-        title: const Text("Воздушная тревога"),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+        elevation: 0.0,
+        title: const Text("Карта воздушных тревог"),
         centerTitle: true,
         actions: [
           IconButton(
@@ -78,14 +88,26 @@ class _MainScreenState extends State<MainScreen> {
             );
           }
           if (state is MainLoadDataState) {
-            return state.listRegions.isNotEmpty
-                ? ListView.builder(
-                    itemCount: state.listRegions.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      //TODO Add dismisible
-                      return _buildCardWidget(state.listRegions[index]);
-                    })
-                : _buildEmptyList();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  color: CustomColor.background,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    child: SvgPicture.string(UkrainSvg.getSvgStr(regions: state.allRegion),
+                        alignment: Alignment.topCenter, placeholderBuilder: (BuildContext context) => Container()),
+                  ),
+                  height: 230,
+                ),
+                Container(
+                  height: 5,
+                  color: CustomColor.backgroundLight,
+                ),
+                state.listRegions.isNotEmpty ? Expanded(child: _buildList(state.listRegions)) : _buildEmptyList(),
+              ],
+            );
           }
 
           return _buildErrorWidget();
@@ -94,179 +116,100 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _buildEmptyList() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Center(
-          child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-        decoration: BoxDecoration(
-          color: CustomColor.systemTextBox,
-          borderRadius: const BorderRadius.all(Radius.circular(18)),
-          boxShadow: [
-            BoxShadow(
-              color: CustomColor.systemSecondary.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        width: double.infinity,
-        height: 250,
-        child: Column(
-          children: [
-            Text(
-              "Добавьте области для отслеживания воздушной тревоги",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: CustomColor.textColor, fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-            ElevatedButton(
-              onPressed: () async {
-                if (await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRegionScreen()))) {
-                  _bloc.add(MainForcedUpdateEvent());
-                }
-              },
-              child: const Icon(Icons.add, size: 35),
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all(const CircleBorder()),
-                padding: MaterialStateProperty.all(const EdgeInsets.all(20)),
-                backgroundColor: MaterialStateProperty.all(CustomColor.systemSecondary), // <-- Button color
+  Widget _buildList(List<RegionModel> listRegions) {
+    return ColoredBox(
+      color: CustomColor.background,
+      child: ReorderableListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              key: ValueKey(listRegions[index].region),
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: CardList(
+                key: ValueKey(listRegions[index].region),
+                model: listRegions[index],
               ),
-            )
-          ],
+            );
+          },
+          itemCount: listRegions.length,
+          onReorder: (int oldIndex, int newIndex) async {
+            if (newIndex > oldIndex) {
+              newIndex = newIndex - 1;
+            }
+            _bloc.add(MainReorderableEvent(oldIndex: oldIndex, newIndex: newIndex));
+
+            listRegions.insert(newIndex, listRegions.removeAt(oldIndex));
+          }),
+    );
+  }
+
+  Widget _buildEmptyList() {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: CustomColor.listCardColor.withOpacity(0.4),
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
         ),
-      )),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                "Добавить область",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: CustomColor.textColor, fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+              Icon(Icons.add_circle_outline_sharp, size: 40, color: CustomColor.textColor),
+            ],
+          ),
+        ),
+      ),
+      onPressed: () async {
+        if (await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRegionScreen()))) {
+          _bloc.add(MainForcedUpdateEvent());
+        }
+      },
     );
   }
 
   Widget _buildErrorWidget() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Center(
-          child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white70,
-          borderRadius: const BorderRadius.all(Radius.circular(18)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        height: 230,
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Потерянно соединение с сервером",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 25),
-            ),
-            const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-            const Text(
-              "проверьте интернет-соединение",
-              style: TextStyle(fontSize: 19),
-            ),
-            Lottie.asset(
-              'assets/lottie/load.json',
-              width: 100,
-              height: 100,
-            ),
-          ],
-        ),
-      )),
-    );
-  }
-
-  Widget _buildCardWidget(RegionModel model) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
-      child: SizedBox(
-        height: 200,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Container(
-          width: double.infinity,
+          height: 230,
           decoration: BoxDecoration(
-            color: model.isAlarm ? CustomColor.redBox : CustomColor.greenBox,
-            borderRadius: const BorderRadius.all(Radius.circular(18)),
-            boxShadow: [
-              BoxShadow(
-                color: model.isAlarm ? CustomColor.redBox.withOpacity(0.6) : CustomColor.greenBox.withOpacity(0.6),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3), // changes position of shadow
-              ),
-            ],
+            color: CustomColor.listCardColor.withOpacity(0.4),
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
           ),
-          child: _buildInfoData(model),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Потерянно соединение с сервером",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 25),
+                ),
+                const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                const Text(
+                  "проверьте интернет-соединение",
+                  style: TextStyle(fontSize: 19),
+                ),
+                Lottie.asset(
+                  'assets/lottie/load.json',
+                  width: 100,
+                  height: 100,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
-  }
-
-  Widget _buildInfoData(RegionModel model) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-      child: Column(
-        children: [
-          Text(
-            model.title,
-            style: TextStyle(
-              fontSize: 16,
-              color: CustomColor.textColor,
-            ),
-          ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-          Expanded(
-            child: _buildAlarm(model.isAlarm),
-          ),
-          _buildTimer(model.timeDurationAlarm, model.timeDurationCancelAlarm),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          _buildDate(model.timeStart, model.timeEnd),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAlarm(bool isAlarm) {
-    return Text(isAlarm ? "Воздушная тревога" : "Тревоги нет",
-        style: TextStyle(
-          fontSize: 22,
-          color: isAlarm ? CustomColor.red : CustomColor.green,
-        ));
-  }
-
-  Widget _buildDate(String? timeStart, String? timeEnd) {
-    if (timeStart != null) {
-      return Text(
-        "Начало тревоги: $timeStart",
-        style: TextStyle(color: CustomColor.textColor),
-      );
-    } else if (timeEnd != null) {
-      return Text(
-        "Конец тревоги: $timeEnd",
-        style: TextStyle(color: CustomColor.textColor),
-      );
-    } else {
-      return const SizedBox.shrink();
-    }
-  }
-
-  Widget _buildTimer(String? startAlarm, String? endAlarm) {
-    if (startAlarm != null) {
-      return Expanded(
-          child: Text("Тревога длится: \n $startAlarm", textAlign: TextAlign.center, style: TextStyle(fontSize: 22, color: CustomColor.red)));
-    } else if (endAlarm != null) {
-      return Expanded(
-          child: Text("Без тревоги: \n $endAlarm", textAlign: TextAlign.center, style: TextStyle(fontSize: 22, color: CustomColor.green)));
-    } else {
-      return const SizedBox.shrink();
-    }
   }
 }

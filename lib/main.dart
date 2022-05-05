@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:alarm/tools/custom_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -33,9 +34,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MainScreen(),
-    );
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const MainScreen(),
+        theme: ThemeData(
+            colorScheme: ThemeData.dark().colorScheme.copyWith(
+                  secondary: CustomColor.backgroundLight.withOpacity(0.1),
+                )));
   }
 }

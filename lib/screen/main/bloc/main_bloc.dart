@@ -27,10 +27,13 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     on<MainEvent>((event, emit) {
       if (event is MainUpdateEvent) {
         oldDataTry = 0;
-        emit.call(MainLoadDataState(listRegions: _getListRegion(event.alarm.states)));
+        emit.call(MainLoadDataState(listRegions: _getListRegion(event.alarm.states), allRegion: _getAllRegion(event.alarm.states)));
       }
       if (event is MainForcedUpdateEvent) {
         _getForceUpdate();
+      }
+      if (event is MainReorderableEvent) {
+        _reorderable(event.oldIndex, event.newIndex);
       }
       if (event is MainErrorEvent) {
         if (state is MainLoadDataState && oldDataTry < 3) {
@@ -60,6 +63,12 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     }
   }
 
+  void _reorderable(int oldIndex, int newIndex) async {
+    List<String> strList = SheredPreferencesService.preferences.getStringList("subscribe")!;
+    strList.insert(newIndex, strList.removeAt(oldIndex));
+    await SheredPreferencesService.preferences.setStringList("subscribe", strList);
+  }
+
   void _initTimerData() async {
     Timer.periodic(const Duration(seconds: 10), (timer) async {
       try {
@@ -76,6 +85,36 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     } catch (e) {
       throw Exception("Not data Alarm");
     }
+  }
+
+  List<RegionModel> _getAllRegion(States states) {
+    return [
+      _getRegionModel(states.dnipro, ERegion.dnipro),
+      _getRegionModel(states.dnipro, ERegion.dnipro),
+      _getRegionModel(states.harkiv, ERegion.harkiv),
+      _getRegionModel(states.kyiv, ERegion.kyiv),
+      _getRegionModel(states.lugan, ERegion.lugan),
+      _getRegionModel(states.zapor, ERegion.zapor),
+      _getRegionModel(states.donetsk, ERegion.donetsk),
+      _getRegionModel(states.jitomer, ERegion.jitomer),
+      _getRegionModel(states.zakarpatska, ERegion.zakarpatska),
+      _getRegionModel(states.ivanoFrankowsk, ERegion.ivanoFrankowsk),
+      _getRegionModel(states.kirovograd, ERegion.kirovograd),
+      _getRegionModel(states.lvow, ERegion.lvow),
+      _getRegionModel(states.mikolaev, ERegion.mikolaev),
+      _getRegionModel(states.odesa, ERegion.odesa),
+      _getRegionModel(states.rivno, ERegion.rivno),
+      _getRegionModel(states.sumska, ERegion.sumska),
+      _getRegionModel(states.ternopil, ERegion.ternopil),
+      _getRegionModel(states.herson, ERegion.herson),
+      _getRegionModel(states.hmelnytsk, ERegion.hmelnytsk),
+      _getRegionModel(states.cherkasy, ERegion.cherkasy),
+      _getRegionModel(states.chernigev, ERegion.chernigev),
+      _getRegionModel(states.chernivets, ERegion.chernivets),
+      _getRegionModel(states.vinetsk, ERegion.vinetsk),
+      _getRegionModel(states.volinska, ERegion.volinska),
+      _getRegionModel(states.poltava, ERegion.poltava),
+    ];
   }
 
   List<RegionModel> _getListRegion(States states) {
@@ -106,6 +145,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       if (subs == ERegion.chernivets.name) result.add(_getRegionModel(states.chernivets, ERegion.chernivets));
       if (subs == ERegion.vinetsk.name) result.add(_getRegionModel(states.vinetsk, ERegion.vinetsk));
       if (subs == ERegion.volinska.name) result.add(_getRegionModel(states.volinska, ERegion.volinska));
+      if (subs == ERegion.poltava.name) result.add(_getRegionModel(states.poltava, ERegion.poltava));
     }
 
     return result;
