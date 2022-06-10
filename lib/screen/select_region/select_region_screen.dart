@@ -25,11 +25,15 @@ class _SelectRegionScreenState extends State<SelectRegionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: ERegion.values.length,
-        itemBuilder: (BuildContext context, int item) {
-          return _buildCard(ERegion.values[item], ERegion.values[item].name);
-        });
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: ListView.builder(
+          itemCount: ERegion.values.length,
+          itemBuilder: (BuildContext context, int item) {
+            return _buildCard(ERegion.values[item], ERegion.values[item].name);
+          }),
+    );
   }
 
   Widget _buildCard(ERegion region, String regionName) {

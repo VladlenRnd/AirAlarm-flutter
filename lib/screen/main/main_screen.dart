@@ -12,7 +12,6 @@ import '../../tools/ui_tools.dart';
 import '../../tools/ukrain_svg.dart';
 import '../../tools/update_info.dart';
 import '../drawer/drawer_screen.dart';
-import '../select_region/select_region_screen.dart';
 import 'bloc/main_bloc.dart';
 import '../../tools/custom_color.dart';
 import 'widget/card_list_small_widget.dart';
@@ -115,7 +114,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                         AnimatedPositioned(
                           top: sizeAllListTop,
                           curve: Curves.easeOutCirc,
-                          height: sizeAllListHeight ?? (UiTools.getAlarmRegion(state.listRegions).isEmpty ? 340 : 215),
+                          height: sizeAllListHeight ?? _getHeightAllRegion(context, false, UiTools.getAlarmRegion(state.listRegions).isNotEmpty),
                           width: MediaQuery.of(context).size.width,
                           child: _buildAllRegion(state.listRegions),
                           duration: const Duration(milliseconds: 600),
@@ -171,52 +170,49 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                 maxScale: 3,
                 minScale: 1,
                 child: Container(
-                  alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width,
-                  color: CustomColor.backgroundLight,
-                  child: SizedBox(
-                    height: 300,
-                    width: 360,
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              top: 30,
-                              child: SvgPicture.string(
-                                UkrainSvg.getSvgStr(regions: allRegion),
-                                height: 330,
-                                placeholderBuilder: (BuildContext context) => Container(),
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width,
+                    color: CustomColor.backgroundLight,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 300, maxWidth: 360, minHeight: 300, minWidth: 360),
+                      child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                top: 30,
+                                child: SvgPicture.string(
+                                  UkrainSvg.getSvgStr(regions: allRegion),
+                                  placeholderBuilder: (BuildContext context) => Container(),
+                                ),
                               ),
-                            ),
-                            Positioned(child: _buildMapText("Днепропетровск"), top: 150, left: 203),
-                            Positioned(child: _buildMapText("Луганск"), top: 130, left: 285),
-                            Positioned(child: _buildMapText("Донецк"), top: 163, left: 263),
-                            Positioned(child: _buildMapText("Запорожье"), top: 183, left: 223),
-                            Positioned(child: _buildMapText("Херсон"), top: 195, left: 190),
-                            Positioned(child: _buildMapText("Харьков", fontSize: 9), top: 115, left: 239),
-                            Positioned(child: _buildMapText("Полтава", fontSize: 9), top: 115, left: 190),
-                            Positioned(child: _buildMapText("Сумы", fontSize: 9), top: 80, left: 200),
-                            Positioned(child: _buildMapText("Чернигов", fontSize: 8), top: 70, left: 154),
-                            Positioned(child: _buildMapText("Киев", fontSize: 11), top: 95, left: 138),
-                            Positioned(child: _buildMapText("Черкасы", fontSize: 8), top: 130, left: 145),
-                            Positioned(child: _buildMapText("Кировоград"), top: 150, left: 155),
-                            Positioned(child: _buildMapText("Николаев", fontSize: 6), top: 180, left: 162),
-                            Positioned(child: _buildMapText("Одесса", fontSize: 6), top: 180, left: 133),
-                            Positioned(child: _buildMapText("Житомир", fontSize: 7), top: 90, left: 95),
-                            Positioned(child: _buildMapText("Винница", fontSize: 7), top: 135, left: 100),
-                            Positioned(child: _buildMapText("Ровно", fontSize: 7), top: 70, left: 70),
-                            Positioned(child: _buildMapText("Луцк", fontSize: 10), top: 70, left: 37),
-                            Positioned(child: _buildMapText("Хмель-\nницкий", fontSize: 7), top: 115, left: 74),
-                            Positioned(child: _buildMapText("Терно-\nполь", fontSize: 6), top: 120, left: 51),
-                            Positioned(child: _buildMapText("Львов", fontSize: 8), top: 110, left: 20),
-                            Positioned(child: _buildMapText("Ужгород", fontSize: 6.5), top: 150, left: 5),
-                            Positioned(child: _buildMapText("Ивано-\nФранковск", fontSize: 5), top: 140, left: 34),
-                            Positioned(child: _buildMapText("Черновцы", fontSize: 5), top: 156, left: 53),
-                          ],
-                        )),
-                  ),
-                ),
+                              Positioned.fill(child: _buildMapText("Днепропетровск"), top: 150, left: 145),
+                              Positioned.fill(child: _buildMapText("Луганск"), top: 130, left: 275),
+                              Positioned.fill(child: _buildMapText("Донецк"), top: 163, left: 232),
+                              Positioned.fill(child: _buildMapText("Запорожье"), top: 183, left: 168),
+                              Positioned.fill(child: _buildMapText("Херсон"), top: 195, left: 93),
+                              Positioned.fill(child: _buildMapText("Харьков", fontSize: 9), top: 115, left: 200),
+                              Positioned.fill(child: _buildMapText("Полтава", fontSize: 9), top: 115, left: 100),
+                              Positioned.fill(child: _buildMapText("Сумы", fontSize: 9), top: 80, left: 110),
+                              Positioned.fill(child: _buildMapText("Чернигов", fontSize: 8), top: 70, left: 25),
+                              Positioned.fill(child: _buildMapText("Киев", fontSize: 11), top: 95, left: -20),
+                              Positioned.fill(child: _buildMapText("Черкасы", fontSize: 8), top: 130, left: 0),
+                              Positioned.fill(child: _buildMapText("Кировоград"), top: 150, left: 30),
+                              Positioned.fill(child: _buildMapText("Николаев", fontSize: 6), top: 180, left: 30),
+                              Positioned.fill(child: _buildMapText("Одесса", fontSize: 6), top: 180, left: -35),
+                              Positioned.fill(child: _buildMapText("Житомир", fontSize: 7), top: 90, left: -100),
+                              Positioned.fill(child: _buildMapText("Винница", fontSize: 7), top: 135, left: -93),
+                              Positioned.fill(child: _buildMapText("Ровно", fontSize: 7), top: 70, left: -163),
+                              Positioned.fill(child: _buildMapText("Луцк", fontSize: 10), top: 70, left: -230),
+                              Positioned.fill(child: _buildMapText("Хмель-\nницкий", fontSize: 7), top: 115, left: -153),
+                              Positioned.fill(child: _buildMapText("Терно-\nполь", fontSize: 6), top: 120, left: -205),
+                              Positioned.fill(child: _buildMapText("Львов", fontSize: 8), top: 110, left: -260),
+                              Positioned.fill(child: _buildMapText("Ужгород", fontSize: 6.5), top: 150, left: -290),
+                              Positioned.fill(child: _buildMapText("Ивано-\nФранковск", fontSize: 5), top: 140, left: -230),
+                              Positioned.fill(child: _buildMapText("Черновцы", fontSize: 5), top: 156, left: -200),
+                            ],
+                          )),
+                    )),
               ),
               Positioned(
                 child: Container(
@@ -254,6 +250,13 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     );
   }
 
+  double _getHeightAllRegion(BuildContext context, bool isOpen, bool isAlarmBloc) {
+    if (isAlarmBloc) {
+      return MediaQuery.of(context).size.height - (50 + 120 + 40 + (isOpen ? 0 : 339));
+    }
+    return MediaQuery.of(context).size.height - (50 + 30 + (isOpen ? 0 : 339));
+  }
+
   Widget _buildAllRegion(List<RegionModel> allRegion) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
@@ -284,11 +287,13 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                             setState(() {
                               if (sizeAllListTop == 332) {
                                 sizeAllListTop = -5;
-                                sizeAllListHeight = MediaQuery.of(context).size.height - (UiTools.getAlarmRegion(allRegion).isEmpty ? 80 : 205);
+                                sizeAllListHeight = _getHeightAllRegion(context, true, UiTools.getAlarmRegion(allRegion).isNotEmpty);
+                                //- (UiTools.getAlarmRegion(allRegion).isEmpty ? 80 : 205);
                                 _controller.forward();
                               } else {
                                 sizeAllListTop = 332;
-                                sizeAllListHeight = (UiTools.getAlarmRegion(allRegion).isEmpty ? 335 : 210);
+                                sizeAllListHeight = _getHeightAllRegion(context, false, UiTools.getAlarmRegion(allRegion).isNotEmpty);
+                                //- 576; //(UiTools.getAlarmRegion(allRegion).isEmpty ? 0 : 0);
                                 _controller.reverse();
                               }
                             });
@@ -392,38 +397,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         },
         itemCount: listRegions.length,
       ),
-    );
-  }
-
-  Widget _buildEmptyList() {
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      child: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: CustomColor.listCardColor.withOpacity(0.4),
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                "Добавить область",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: CustomColor.textColor, fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-              Icon(Icons.add_circle_outline_sharp, size: 40, color: CustomColor.textColor),
-            ],
-          ),
-        ),
-      ),
-      onPressed: () async {
-        if (await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectRegionScreen()))) {
-          _bloc.add(MainForcedUpdateEvent());
-        }
-      },
     );
   }
 
