@@ -40,6 +40,9 @@ dependencies:
   firebase_messaging: ^11.2.15
   firebase_core: ^1.15.0
   flutter_svg: ^1.0.3
+  expandable: ^5.0.1
+  audioplayers: ^0.20.1
+
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +58,8 @@ flutter:
 
   assets:
     - assets/lottie/
+    - assets/song/cancel/
+    - assets/song/alarm/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

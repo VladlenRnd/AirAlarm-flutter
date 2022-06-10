@@ -71,7 +71,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
           ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             child: LinearProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(CustomColor.primaryGreen),
+              valueColor: const AlwaysStoppedAnimation<Color>(CustomColor.primaryGreen),
               color: CustomColor.primaryGreen,
               backgroundColor: CustomColor.backgroundLight,
               minHeight: 15,

@@ -16,7 +16,8 @@ void main() async {
 
   await NotificationService.init();
   await SheredPreferencesService.init();
-  _initFirebaseService();
+
+  await _initFirebaseService();
 
   runApp(const MyApp());
 }
@@ -24,8 +25,8 @@ void main() async {
 Future<void> _initFirebaseService() async {
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  await FirebaseMessaging.instance.subscribeToTopic("all");
-
+  FirebaseMessaging.instance.subscribeToTopic(SheredPreferencesService.preferences.getString("subscribeRegion")!);
+  FirebaseMessaging.instance.subscribeToTopic("test");
   String? token = await FirebaseMessaging.instance.getToken();
 }
 

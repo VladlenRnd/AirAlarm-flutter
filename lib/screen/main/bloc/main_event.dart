@@ -12,10 +12,3 @@ class MainUpdateEvent extends MainEvent {
 class MainErrorEvent extends MainEvent {}
 
 class MainForcedUpdateEvent extends MainEvent {}
-
-class MainReorderableEvent extends MainEvent {
-  final int oldIndex;
-  final int newIndex;
-
-  MainReorderableEvent({required this.oldIndex, required this.newIndex});
-}

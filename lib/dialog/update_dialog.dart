@@ -84,7 +84,7 @@ Widget _buildTitle() {
           width: 80,
           height: 30,
           decoration: BoxDecoration(
-            color: CustomColor.green,
+            color: CustomColor.primaryGreen.withOpacity(0.5),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Center(

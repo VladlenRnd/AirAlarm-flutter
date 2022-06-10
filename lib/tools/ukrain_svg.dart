@@ -2,7 +2,7 @@ import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 
 import 'eregion.dart';
-import 'region_model.dart';
+import '../models/region_model.dart';
 
 class UkrainSvg {
   static String getSvgStr({

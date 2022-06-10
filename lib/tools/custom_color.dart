@@ -23,4 +23,6 @@ class CustomColor {
   static const Color colorMapClear = Color(0xFF2bca72);
 
   static Color listCardColor = const Color(0xFF171b26);
+
+  static Color drawerItemNotification = Colors.orangeAccent;
 }
