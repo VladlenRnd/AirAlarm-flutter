@@ -1,15 +1,19 @@
 import 'dart:io';
-
+import 'package:byte_converter/byte_converter.dart';
 import 'package:flutter/foundation.dart';
 
 class DownloadService {
   static String? filePath;
 
-  static Function(int percent)? downloadStatusCallback;
+  static Function(int percent, String mByteDownload, String mByteTotal)? downloadStatusCallback;
 
   static int _getPercent(int total, int cumulative) {
     int onePercent = total ~/ 100;
     return cumulative ~/ onePercent;
+  }
+
+  static String _getMbyte(int bytes) {
+    return ByteConverter(bytes.toDouble()).megaBytes.toStringAsFixed(1);
   }
 
   static Future<String> downloadFile(String url, String fileName, String dir) async {
@@ -24,7 +28,7 @@ class DownloadService {
         var bytes = await consolidateHttpClientResponseBytes(
           response,
           onBytesReceived: (cumulative, total) {
-            downloadStatusCallback?.call(_getPercent(total!, cumulative));
+            downloadStatusCallback?.call(_getPercent(total!, cumulative), _getMbyte(cumulative), _getMbyte(total));
           },
         );
         filePath = '$dir/$fileName';

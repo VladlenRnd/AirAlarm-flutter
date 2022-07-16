@@ -138,13 +138,13 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       Duration duration = DateTime.now().difference(DateTime.parse(startedAlarmTime).toLocal());
 
       String day = duration.inDays.toString();
-      String hors = (duration.inHours % 24).toString().padLeft(2, '0');
+      String hors = (duration.inHours % 24).toString().padLeft(1, '0');
       String min = (duration.inMinutes % 60).toString().padLeft(2, '0');
 
       if (day == '0') {
-        return "$horsч:$minм";
+        return "$hors:$min";
       } else {
-        return "$dayд $horsч:$minм";
+        return "$dayд $hors:$min";
       }
     }
     return null;
@@ -152,7 +152,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   String? _formatData(String? data) {
     if (data != null) {
-      return DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(data).toLocal());
+      return DateFormat('dd.MM.yyyy HH:mm:ss').format(DateTime.parse(data).toLocal());
     }
     return null;
   }

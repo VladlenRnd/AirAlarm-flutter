@@ -11,7 +11,7 @@ class CardListSmall extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 130,
+        width: 140,
         height: 50,
         decoration: BoxDecoration(
           gradient: LinearGradient(

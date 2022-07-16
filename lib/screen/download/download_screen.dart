@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -18,6 +19,8 @@ class DownloadScreen extends StatefulWidget {
 
 class _DownloadScreenState extends State<DownloadScreen> {
   double valueLoadFile = 0;
+  String mByteDownloadStr = "0.0";
+  String mByteTotalStr = "0.0";
 
   @override
   void initState() {
@@ -27,8 +30,10 @@ class _DownloadScreenState extends State<DownloadScreen> {
   }
 
   void _initDownloadCallback() {
-    DownloadService.downloadStatusCallback = (int percent) {
+    DownloadService.downloadStatusCallback = (int percent, String mByteDownload, String mByteTotal) {
       setState(() {
+        mByteDownloadStr = mByteDownload;
+        mByteTotalStr = mByteTotal;
         valueLoadFile = percent * 0.01;
       });
     };
@@ -46,51 +51,77 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
   Widget _buildBody() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "ЗАГРУЗКА ОБНОВЛЕНИЯ",
-            style: TextStyle(
-              fontSize: 23,
-              color: CustomColor.textColor,
-              fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            Positioned(
+              child: Lottie.asset(
+                'assets/lottie/download.json',
+                width: 700,
+                height: 700,
+                frameRate: FrameRate(60),
+              ),
             ),
-          ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-          Text(
-            "Не закрывайте приложение",
-            style: TextStyle(
-              fontSize: 15,
-              color: CustomColor.textColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 15)),
-          ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            child: LinearProgressIndicator(
-              valueColor: const AlwaysStoppedAnimation<Color>(CustomColor.primaryGreen),
-              color: CustomColor.primaryGreen,
-              backgroundColor: CustomColor.backgroundLight,
-              minHeight: 15,
-              value: valueLoadFile,
-            ),
-          )
-        ],
-      ),
-    );
+            Positioned(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 180),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "ЗАГРУЗКА ОБНОВЛЕНИЯ",
+                      style: TextStyle(
+                        fontSize: 23,
+                        color: CustomColor.textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                    Text(
+                      "Не закрывайте приложение",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: CustomColor.textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                    Text(
+                      "${mByteDownloadStr}MB / ${mByteTotalStr}MB",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: CustomColor.textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 7)),
+                    ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      child: LinearProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(CustomColor.primaryGreen.withOpacity(0.8)),
+                        color: CustomColor.primaryGreen,
+                        backgroundColor: CustomColor.backgroundLight,
+                        minHeight: 15,
+                        value: valueLoadFile,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ));
   }
 
   Future<void> _runUpdate() async {
     Directory? tempDir = await getExternalStorageDirectory();
-    Directory dd = Directory(tempDir!.path);
+    Directory direct = Directory(tempDir!.path);
 
-    if (!await dd.exists()) {
-      await dd.create();
+    if (!await direct.exists()) {
+      await direct.create();
     }
-    String _localPathAA = dd.path;
+    String _localPathAA = direct.path;
 
     String pathToFile = await DownloadService.downloadFile(UpdateInfo.infoUpdate.url, "flightAlarmUpdate.apk", _localPathAA);
 
@@ -105,7 +136,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
       return;
     }
 
-    OpenFile.open(pathToFile, type: "application/vnd.android.package-archive");
+    await OpenFile.open(pathToFile, type: "application/vnd.android.package-archive");
     await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
   }
 }

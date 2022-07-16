@@ -78,18 +78,20 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     );
   }
 
-  double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MainBloc, MainState>(
       bloc: _bloc,
       builder: (BuildContext context, MainState state) {
         if (state is MainLoadedDataState || state is MainInitialState) {
-          return _buildScaffold(
-            const Center(
-              child: CircularProgressIndicator(
-                color: Colors.indigo,
+          return Scaffold(
+            backgroundColor: CustomColor.background,
+            body: Center(
+              child: Lottie.asset(
+                'assets/lottie/load2.json',
+                width: 250,
+                height: 250,
+                frameRate: FrameRate(60),
               ),
             ),
           );
@@ -128,9 +130,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
             allRegion: state.listRegions,
           );
         }
-        return Scaffold(
-          body: _buildErrorWidget(),
-        );
+        return Scaffold(body: _buildErrorWidget());
       },
     );
   }
@@ -187,15 +187,15 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                                   placeholderBuilder: (BuildContext context) => Container(),
                                 ),
                               ),
-                              Positioned.fill(child: _buildMapText("Днепропетровск"), top: 150, left: 143),
-                              Positioned.fill(child: _buildMapText("Луганск"), top: 130, left: 275),
+                              Positioned.fill(child: _buildMapText("Днепропетровск", fontSize: 6), top: 150, left: 143),
+                              Positioned.fill(child: _buildMapText("Луганск", fontSize: 6), top: 130, left: 278),
                               Positioned.fill(child: _buildMapText("Донецк"), top: 163, left: 232),
-                              Positioned.fill(child: _buildMapText("Запорожье"), top: 183, left: 163),
+                              Positioned.fill(child: _buildMapText("Запорожье", fontSize: 6.5), top: 183, left: 163),
                               Positioned.fill(child: _buildMapText("Херсон"), top: 195, left: 93),
                               Positioned.fill(child: _buildMapText("Харьков", fontSize: 9), top: 115, left: 195),
                               Positioned.fill(child: _buildMapText("Полтава", fontSize: 9), top: 115, left: 100),
                               Positioned.fill(child: _buildMapText("Сумы", fontSize: 9), top: 80, left: 110),
-                              Positioned.fill(child: _buildMapText("Чернигов", fontSize: 8), top: 70, left: 25),
+                              Positioned.fill(child: _buildMapText("Чернигов", fontSize: 7), top: 70, left: 25),
                               Positioned.fill(child: _buildMapText("Киев", fontSize: 11), top: 95, left: -20),
                               Positioned.fill(child: _buildMapText("Черкасы", fontSize: 8), top: 130, left: 0),
                               Positioned.fill(child: _buildMapText("Кировоград"), top: 150, left: 30),
@@ -205,10 +205,10 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                               Positioned.fill(child: _buildMapText("Винница", fontSize: 7), top: 135, left: -93),
                               Positioned.fill(child: _buildMapText("Ровно", fontSize: 7), top: 70, left: -163),
                               Positioned.fill(child: _buildMapText("Луцк", fontSize: 10), top: 70, left: -230),
-                              Positioned.fill(child: _buildMapText("Хмель-\nницкий", fontSize: 7), top: 115, left: -150),
+                              Positioned.fill(child: _buildMapText("Хмель-\nницкий", fontSize: 6), top: 115, left: -150),
                               Positioned.fill(child: _buildMapText("Терно-\nполь", fontSize: 6), top: 120, left: -200),
                               Positioned.fill(child: _buildMapText("Львов", fontSize: 8), top: 110, left: -257),
-                              Positioned.fill(child: _buildMapText("Ужгород", fontSize: 6.5), top: 150, left: -285),
+                              Positioned.fill(child: _buildMapText("Ужгород", fontSize: 6), top: 150, left: -285),
                               Positioned.fill(child: _buildMapText("Ивано-\nФранковск", fontSize: 5), top: 140, left: -230),
                               Positioned.fill(child: _buildMapText("Черновцы", fontSize: 5), top: 156, left: -200),
                             ],
@@ -403,39 +403,27 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
 
   Widget _buildErrorWidget() {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Container(
-          height: 230,
-          decoration: BoxDecoration(
-            color: CustomColor.listCardColor.withOpacity(0.4),
-            borderRadius: const BorderRadius.all(Radius.circular(15)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.asset(
+            'assets/lottie/no-connect.json',
+            width: 240,
+            height: 240,
+            frameRate: FrameRate(60),
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Потерянно соединение с сервером",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 25),
-                ),
-                const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                const Text(
-                  "проверьте интернет-соединение",
-                  style: TextStyle(fontSize: 19),
-                ),
-                Lottie.asset(
-                  'assets/lottie/load.json',
-                  width: 100,
-                  height: 100,
-                ),
-              ],
-            ),
+          const Text(
+            "Потерянно соединение",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22),
           ),
-        ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+          const Text(
+            "проверьте интернет-соединение",
+            style: TextStyle(fontSize: 19),
+          )
+        ],
       ),
     );
   }

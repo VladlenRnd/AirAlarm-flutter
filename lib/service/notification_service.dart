@@ -66,7 +66,6 @@ class NotificationService {
         android: AndroidNotificationDetails(
       pathSong + isSound.toString(),
       "Отмена воздушной тревоги",
-      fullScreenIntent: true,
       importance: Importance.max,
       sound: RawResourceAndroidNotificationSound(pathSong),
       playSound: isSound,

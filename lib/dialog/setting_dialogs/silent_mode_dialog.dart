@@ -76,6 +76,7 @@ Widget _buildSaveLoad() {
                 'assets/lottie/load.json',
                 width: 100,
                 height: 100,
+                frameRate: FrameRate(60),
               ),
             )
           ],

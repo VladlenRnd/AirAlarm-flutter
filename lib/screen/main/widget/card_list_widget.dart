@@ -17,7 +17,7 @@ class _CardListState extends State<CardList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150,
+      height: 155,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -42,15 +42,14 @@ class _CardListState extends State<CardList> {
                     RegionTitleTools.getRegionByEnum(widget.model.region),
                     style: TextStyle(
                       color: CustomColor.textColor,
-                      fontSize: 15,
+                      fontSize: 13,
                     ),
                   ),
                   Text(
                     widget.model.isAlarm ? "Воздушная тревога" : "Тревоги нет",
                     style: TextStyle(
                       color: widget.model.isAlarm ? CustomColor.red : CustomColor.green,
-                      fontSize: 23,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                   const Padding(padding: EdgeInsets.symmetric(vertical: 2)),
@@ -90,9 +89,9 @@ class _CardListState extends State<CardList> {
 
   Widget _buildTimer(String? startAlarm, String? endAlarm) {
     if (startAlarm != null) {
-      return Text("Тревога длится: $startAlarm", textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, color: CustomColor.red));
+      return Text("Тревога длится: \n$startAlarm", textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.red));
     } else if (endAlarm != null) {
-      return Text("Без тревоги: $endAlarm", textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, color: CustomColor.green));
+      return Text("Без тревоги: \n$endAlarm", textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.green));
     } else {
       return const SizedBox.shrink();
     }

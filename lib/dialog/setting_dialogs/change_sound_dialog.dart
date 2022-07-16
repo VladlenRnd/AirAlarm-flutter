@@ -60,38 +60,36 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
 }
 
 Widget _buildItem(String title, String fileName, void Function(Function()) setState) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10),
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      height: 50,
-      color: Colors.grey.withOpacity(0.2),
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: () {
-          setState(() {
-            _selectValue = fileName;
-          });
-        },
-        child: Row(
-          children: [
-            fileName == _selectValue ? const Icon(Icons.done, color: CustomColor.green, size: 24) : const SizedBox(height: 24, width: 24),
-            const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-            Text(
-              title,
-              style: TextStyle(fontSize: 15, color: CustomColor.textColor),
-            ),
-            const Spacer(),
-            IconButton(
-              onPressed: () async {
-                await _controller?.stop();
-                _controller = await _player?.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
-              },
-              splashRadius: 25,
-              icon: Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
-            )
-          ],
-        ),
+  return Container(
+    margin: const EdgeInsets.symmetric(vertical: 5),
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    height: 50,
+    color: CustomColor.backgroundLight,
+    child: CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: () {
+        setState(() {
+          _selectValue = fileName;
+        });
+      },
+      child: Row(
+        children: [
+          fileName == _selectValue ? const Icon(Icons.done, color: CustomColor.green, size: 24) : const SizedBox(height: 24, width: 24),
+          const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+          Text(
+            title,
+            style: TextStyle(fontSize: 15, color: CustomColor.textColor, fontFamily: "Days"),
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: () async {
+              await _controller?.stop();
+              _controller = await _player?.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
+            },
+            splashRadius: 25,
+            icon: Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
+          )
+        ],
       ),
     ),
   );
@@ -121,6 +119,7 @@ Widget _buildSaveLoad() {
                 'assets/lottie/load.json',
                 width: 100,
                 height: 100,
+                frameRate: FrameRate(60),
               ),
             )
           ],
