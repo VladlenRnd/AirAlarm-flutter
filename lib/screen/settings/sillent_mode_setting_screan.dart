@@ -137,6 +137,7 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
         Text(
           _isSilentModeOn ? "Режим тишины включен" : "Режим тишины выключен",
           style: TextStyle(fontSize: 17, color: _isSilentModeOn ? Colors.green.withOpacity(0.7) : Colors.red.withOpacity(0.7)),
+          textAlign: TextAlign.center,
         ),
         const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
         _isSilentModeOn
