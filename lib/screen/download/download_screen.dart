@@ -71,8 +71,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
                   children: [
                     Text(
                       "ЗАГРУЗКА ОБНОВЛЕНИЯ",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 23,
+                        fontSize: 21,
                         color: CustomColor.textColor,
                         fontWeight: FontWeight.bold,
                       ),
@@ -80,6 +81,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                     const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                     Text(
                       "Не закрывайте приложение",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15,
                         color: CustomColor.textColor,
