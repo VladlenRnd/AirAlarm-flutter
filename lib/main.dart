@@ -28,9 +28,10 @@ Future<void> _initFirebaseService() async {
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   FirebaseMessaging.instance.subscribeToTopic(SheredPreferencesService.preferences.getString("subscribeRegion")!);
+  FirebaseMessaging.instance.subscribeToTopic("update");
 
   if (kDebugMode) {
-    FirebaseMessaging.instance.subscribeToTopic("debug");
+    await FirebaseMessaging.instance.subscribeToTopic("debug");
   }
 }
 

@@ -37,17 +37,20 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
   Widget build(BuildContext context) {
     _isSilentModeOn = (startList.isNotEmpty && endList.isNotEmpty);
     _getInChangeTime = (silentStart != null && silentEnd != null);
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: Text("Режим тишины", textAlign: TextAlign.center, style: TextStyle(fontSize: 24)),
-          ),
-          _buildDescription(),
-          _buildBody(context),
-        ],
+    return ColoredBox(
+      color: CustomColor.background,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text("Режим тишины", textAlign: TextAlign.center, style: TextStyle(fontSize: 24)),
+            ),
+            _buildDescription(),
+            _buildBody(context),
+          ],
+        ),
       ),
     );
   }
@@ -163,7 +166,7 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
 
   Widget _buildDescription() {
     return const ColoredBox(
-      color: CustomColor.background,
+      color: CustomColor.backgroundLight,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         child: Text(

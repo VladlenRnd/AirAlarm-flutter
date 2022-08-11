@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../service/notification_service.dart';
 import '../../../service/shered_preferences_service.dart';
@@ -55,12 +56,18 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       String alertSong = SheredPreferencesService.preferences.getString("alarmSong")!;
       String cancelSong = SheredPreferencesService.preferences.getString("cancelSong")!;
 
+      if (event.data.isNotEmpty && event.data["update"] != null) {
+        PackageInfo infoApp = await PackageInfo.fromPlatform();
+        if (infoApp.version != event.data["update"]) NotificationService.showUpdateNotification(notificationId: 222, body: "${event.data["update"]}");
+        return;
+      }
+
       if (event.data.isNotEmpty && event.data["test"] != null) {
         testNotification(event.data);
-      } else {
-        NotificationService.showNotification(
-            event.data["isAlarm"].toLowerCase() == 'true', event.data["region"], alertSong, cancelSong, isSoundNotification());
+        return;
       }
+      NotificationService.showNotification(
+          event.data["isAlarm"].toLowerCase() == 'true', event.data["region"], alertSong, cancelSong, isSoundNotification());
 
       print("========================================");
     });

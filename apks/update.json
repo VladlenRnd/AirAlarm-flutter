@@ -1,7 +1,10 @@
 {
-    "newVersion": "1.4.1",
-    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.4.1.apk",
+    "newVersion": "1.4.2",
+    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/raw/dev/apks/airAlarm%20v1.4.2.apk",
     "descroption": [
-        "Добавленны графические обновления"
+        "Небольшие графичиские обновления",
+        "Добавленна вкладка 'События'",
+        "Добавлены уведомления о новых обновлениях",
+        "При тревоги и отмене больше не открывается приложение если телефон был заблокирован"
     ]
 }

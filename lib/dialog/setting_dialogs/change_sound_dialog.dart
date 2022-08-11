@@ -25,6 +25,7 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
           if (!_isSave) {
             return AlertDialog(
               title: Text(isAlarmSound ? "Звук тревоги" : "Звук отмены тревоги", textAlign: TextAlign.center),
+              backgroundColor: CustomColor.background,
               contentPadding: const EdgeInsets.only(top: 15),
               content: _buildSelectSound(isAlarmSound, setState),
               actionsAlignment: MainAxisAlignment.spaceBetween,

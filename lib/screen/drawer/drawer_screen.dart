@@ -1,3 +1,4 @@
+import 'package:alarm/screen/news/news_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -37,6 +38,11 @@ class CustomDrawer extends StatelessWidget {
                 _buildItemButton(context, "Режим тишины", Icons.notifications_paused_rounded, Colors.blueGrey, () {
                   showSilentModeDialog(context);
                 }),
+                const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                _buildItemButton(context, "События", Icons.newspaper, Colors.deepOrange, () async {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const NewsScreen()));
+                }),
                 const Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 25),
@@ -58,9 +64,11 @@ class CustomDrawer extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 30),
             const Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white),
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white),
+              ),
             ),
           ],
         ),

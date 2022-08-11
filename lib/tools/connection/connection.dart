@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:alarm/tools/connection/response/alarm_response.dart';
+import 'package:alarm/tools/connection/response/news_response.dart';
 import 'package:http/http.dart' as http;
 
 import 'response/update_responce.dart';
@@ -24,5 +25,19 @@ class Conectrion {
     } else {
       throw Exception('Failed to load update JSON');
     }
+  }
+
+  static Future<NewsResponce> getNews() async {
+    final response = await http.get(Uri.parse('https://liveuamap.com/ru'));
+
+    if (response.statusCode == 200) {
+      return NewsResponce.fromHtml(response.body);
+    } else {
+      throw Exception('Failed to load news');
+    }
+
+    //String sdf = element.children
+
+    // return AlarmRespose.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
   }
 }

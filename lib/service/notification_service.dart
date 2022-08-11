@@ -42,7 +42,6 @@ class NotificationService {
         android: AndroidNotificationDetails(
       pathSong + isSound.toString(),
       "Воздушная тревога",
-      fullScreenIntent: true,
       importance: Importance.max,
       sound: RawResourceAndroidNotificationSound(pathSong),
       playSound: isSound,
@@ -82,12 +81,34 @@ class NotificationService {
     await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Отмена воздушной тревоги", body, _platformChannelSpecifics, payload: 'test');
   }
 
+  static Future<void> showUpdateNotification({String body = "", required int notificationId}) async {
+    cancelNotification(notificationId: notificationId);
+    //Notification seting
+    NotificationDetails _platformChannelSpecifics = const NotificationDetails(
+        android: AndroidNotificationDetails(
+      "3",
+      "Update notification",
+      importance: Importance.max,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound("update"),
+      icon: "ic_update",
+      priority: Priority.max,
+      enableLights: true,
+      color: CustomColor.systemSecondary,
+      autoCancel: true,
+      visibility: NotificationVisibility.public,
+    ));
+
+    await _flutterLocalNotificationsPlugin.show(222, "Доступна новая версия! $body", "Доступно обновление для приложения", _platformChannelSpecifics,
+        payload: 'update');
+  }
+
   static Future<void> showTestNotification({String body = "", required int notificationId}) async {
     cancelNotification(notificationId: notificationId);
     //Notification seting
     NotificationDetails _platformChannelSpecifics = const NotificationDetails(
         android: AndroidNotificationDetails(
-      "2",
+      "234",
       "Тестовое оповещение",
       fullScreenIntent: true,
       importance: Importance.max,
