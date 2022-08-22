@@ -82,14 +82,15 @@ Widget _buildItem(String title, String fileName, void Function(Function()) setSt
             style: TextStyle(fontSize: 15, color: CustomColor.textColor, fontFamily: "Days"),
           ),
           const Spacer(),
-          IconButton(
-            onPressed: () async {
-              await _controller?.stop();
-              _controller = await _player?.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
-            },
-            splashRadius: 25,
-            icon: Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
-          )
+          if (fileName.isNotEmpty)
+            IconButton(
+              onPressed: () async {
+                await _controller?.stop();
+                _controller = await _player?.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
+              },
+              splashRadius: 25,
+              icon: Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
+            )
         ],
       ),
     ),

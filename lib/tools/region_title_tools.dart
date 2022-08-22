@@ -51,6 +51,8 @@ class RegionTitleTools {
         return "Винетская область";
       case ERegion.volinska:
         return "Волынская  область";
+      case ERegion.krim:
+        return "АР Крым";
     }
   }
 
@@ -104,6 +106,8 @@ class RegionTitleTools {
         return ERegion.vinetsk;
       case "volinska":
         return ERegion.volinska;
+      case "krim":
+        return ERegion.krim;
     }
     throw Exception("No find enum by enumName");
   }
@@ -158,6 +162,8 @@ class RegionTitleTools {
         return "Винетская область";
       case "volinska":
         return "Волынская  область";
+      case "krim":
+        return "АР Крым";
       default:
         return "";
     }

@@ -11,6 +11,7 @@ class SoundService {
 
   static List<SoundModel> _getAlarmSong() {
     return [
+      SoundModel(name: "Без звука", fileName: ""),
       SoundModel(name: "Сирена", fileName: "alarm"),
       SoundModel(name: "Филл Бот тревога", fileName: "fill_alarm"),
     ];
@@ -18,6 +19,7 @@ class SoundService {
 
   static List<SoundModel> _getCancelSong() {
     return [
+      SoundModel(name: "Без звука", fileName: ""),
       SoundModel(name: "Системная отмена", fileName: "cancel_alarm"),
       SoundModel(name: "Филл Бот отмена", fileName: "fill_cancel"),
     ];

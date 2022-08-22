@@ -2,33 +2,26 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-
-import '../../../service/notification_service.dart';
-import '../../../service/shered_preferences_service.dart';
-import '../../../tools/background_hendler.dart';
 import '../../../tools/connection/connection.dart';
 import '../../../tools/connection/response/alarm_response.dart';
 import '../../../tools/eregion.dart';
 import '../../../models/region_model.dart';
-import '../../../tools/nottification_tools.dart';
 import '../../../tools/region_title_tools.dart';
 
 part 'main_event.dart';
 part 'main_state.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
-  int oldDataTry = 0;
+  int _oldDataTry = 0;
 
   MainBloc() : super(MainInitialState()) {
     on<MainEvent>((event, emit) {
       if (event is MainUpdateEvent) {
-        oldDataTry = 0;
+        _oldDataTry = 0;
         emit.call(
           MainLoadDataState(
             listRegions: _getAllRegion(event.alarm.states),
@@ -39,8 +32,8 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         _getForceUpdate();
       }
       if (event is MainErrorEvent) {
-        if (state is MainLoadDataState && oldDataTry < 3) {
-          oldDataTry++;
+        if (state is MainLoadDataState && _oldDataTry < 3) {
+          _oldDataTry++;
           emit.call(state);
         } else {
           emit.call(MainErrorDataState());
@@ -49,28 +42,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     });
     _initTimerData();
     _getForceUpdate();
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
-      print("==========FOREGROUND MESSAGE============");
-
-      String alertSong = SheredPreferencesService.preferences.getString("alarmSong")!;
-      String cancelSong = SheredPreferencesService.preferences.getString("cancelSong")!;
-
-      if (event.data.isNotEmpty && event.data["update"] != null) {
-        PackageInfo infoApp = await PackageInfo.fromPlatform();
-        if (infoApp.version != event.data["update"]) NotificationService.showUpdateNotification(notificationId: 222, body: "${event.data["update"]}");
-        return;
-      }
-
-      if (event.data.isNotEmpty && event.data["test"] != null) {
-        testNotification(event.data);
-        return;
-      }
-      NotificationService.showNotification(
-          event.data["isAlarm"].toLowerCase() == 'true', event.data["region"], alertSong, cancelSong, isSoundNotification());
-
-      print("========================================");
-    });
   }
 
   void _getForceUpdate() async {
@@ -125,6 +96,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       _getRegionModel(states.vinetsk, ERegion.vinetsk),
       _getRegionModel(states.volinska, ERegion.volinska),
       _getRegionModel(states.poltava, ERegion.poltava),
+      _getRegionModel(states.krim, ERegion.krim),
     ];
   }
 

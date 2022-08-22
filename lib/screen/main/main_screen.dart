@@ -192,6 +192,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                               Positioned.fill(child: _buildMapText("Донецк"), top: 163, left: 232),
                               Positioned.fill(child: _buildMapText("Запорожье", fontSize: 6.5), top: 183, left: 163),
                               Positioned.fill(child: _buildMapText("Херсон"), top: 195, left: 93),
+                              Positioned.fill(child: _buildMapText("АР Крым", fontSize: 6), top: 230, left: 106),
                               Positioned.fill(child: _buildMapText("Харьков", fontSize: 9), top: 115, left: 195),
                               Positioned.fill(child: _buildMapText("Полтава", fontSize: 9), top: 115, left: 100),
                               Positioned.fill(child: _buildMapText("Сумы", fontSize: 9), top: 80, left: 110),
@@ -289,12 +290,12 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                               if (sizeAllListTop == 332) {
                                 sizeAllListTop = -5;
                                 sizeAllListHeight = _getHeightAllRegion(context, true, UiTools.getAlarmRegion(allRegion).isNotEmpty);
-                                //- (UiTools.getAlarmRegion(allRegion).isEmpty ? 80 : 205);
+
                                 _controller.forward();
                               } else {
                                 sizeAllListTop = 332;
                                 sizeAllListHeight = _getHeightAllRegion(context, false, UiTools.getAlarmRegion(allRegion).isNotEmpty);
-                                //- 576; //(UiTools.getAlarmRegion(allRegion).isEmpty ? 0 : 0);
+
                                 _controller.reverse();
                               }
                             });
@@ -342,11 +343,11 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                           _buildTitle("Тревоги"),
                           const Spacer(),
                           Container(
-                            width: 22,
-                            height: 22,
+                            width: 25,
+                            height: 25,
                             margin: const EdgeInsets.symmetric(horizontal: 5),
                             alignment: Alignment.center,
-                            child: Text(alertsRegions.length.toString(), style: const TextStyle(fontWeight: FontWeight.w800)),
+                            child: Text(alertsRegions.length.toString(), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: CustomColor.red,
