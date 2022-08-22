@@ -108,6 +108,9 @@ class UkrainSvg {
         case ERegion.volinska:
           volin = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
           break;
+        case ERegion.krim:
+          krim = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          break;
       }
     }
 

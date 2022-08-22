@@ -23,4 +23,5 @@ enum ERegion {
   chernivets,
   vinetsk,
   volinska,
+  krim,
 }
