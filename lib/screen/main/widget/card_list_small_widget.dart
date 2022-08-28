@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../tools/custom_color.dart';
 import '../../../models/region_model.dart';
-import '../../../tools/region_title_tools.dart';
 
 class CardListSmall extends StatelessWidget {
   final RegionModel region;
@@ -28,7 +27,7 @@ class CardListSmall extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Column(
             children: [
-              Text(RegionTitleTools.getRegionByEnum(region.region), style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
+              Text(region.region.title, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
               const Spacer(),
               const Text(
                 "Тревога длится",

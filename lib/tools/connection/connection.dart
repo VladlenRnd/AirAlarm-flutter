@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:alarm/tools/connection/response/alarm_response.dart';
-import 'package:alarm/tools/connection/response/news_response.dart';
 import 'package:http/http.dart' as http;
 
+import 'response/alarm_response.dart';
+import 'response/news_response.dart';
 import 'response/update_responce.dart';
 
 class Conectrion {
@@ -11,7 +11,8 @@ class Conectrion {
     final response = await http.get(Uri.parse('https://emapa.fra1.cdn.digitaloceanspaces.com/statuses.json'));
 
     if (response.statusCode == 200) {
-      return AlarmRespose.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+      var aa = AlarmRespose.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+      return aa;
     } else {
       throw Exception('Failed to load alarms');
     }

@@ -1,7 +1,7 @@
-import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 
 import '../screen/download/download_screen.dart';
+import '../tools/custom_color.dart';
 import '../tools/update_info.dart';
 
 void showUpdateDialog(BuildContext context) {

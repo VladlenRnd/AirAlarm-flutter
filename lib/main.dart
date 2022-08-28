@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:alarm/tools/custom_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -11,6 +10,7 @@ import 'screen/main/main_screen.dart';
 import 'service/notification_service.dart';
 import 'service/shered_preferences_service.dart';
 import 'tools/background_hendler.dart';
+import 'tools/custom_color.dart';
 import 'tools/nottification_tools.dart';
 
 void main() async {

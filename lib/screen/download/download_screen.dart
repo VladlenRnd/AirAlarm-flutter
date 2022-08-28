@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../service/download_service.dart';
+import '../../tools/custom_color.dart';
 import '../../tools/update_info.dart';
 import '../main/main_screen.dart';
 

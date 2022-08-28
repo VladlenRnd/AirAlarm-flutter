@@ -1,4 +1,3 @@
-import 'package:alarm/tools/custom_color.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import '../../models/sound_model.dart';
 import '../../service/notification_service.dart';
 import '../../service/shered_preferences_service.dart';
+import '../../tools/custom_color.dart';
 
 String _selectValue = "";
 AudioCache? _player;

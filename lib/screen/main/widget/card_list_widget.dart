@@ -1,8 +1,7 @@
-import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/region_model.dart';
-import '../../../tools/region_title_tools.dart';
+import '../../../tools/custom_color.dart';
 
 class CardList extends StatefulWidget {
   final RegionModel model;
@@ -39,7 +38,7 @@ class _CardListState extends State<CardList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    RegionTitleTools.getRegionByEnum(widget.model.region),
+                    widget.model.region.title,
                     style: TextStyle(
                       color: CustomColor.textColor,
                       fontSize: 13,

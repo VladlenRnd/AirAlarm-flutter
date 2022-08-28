@@ -1,3 +1,5 @@
+import '../../edistricts.dart';
+
 class AlarmRespose {
   AlarmRespose({
     required this.version,
@@ -132,67 +134,27 @@ class States {
       volinska: Region.fromJson(json['Волинська область']),
       krim: Region.fromJson(json['АР Крим']),
     );
-
-    // Волинська область = Волинська область.fromJson(json['Волинська область']);
-    // м. Київ = м. Київ.fromJson(json['м. Київ']);
   }
 }
-
-// class Districts {
-//   Districts({
-//     required this.Вінницький район,
-//     required this.Могилів-Подільський район,
-//     required this.Жмеринський район,
-//     required this.Гайсинський район,
-//     required this.Тульчинський район,
-//     required this.Хмільницький район,
-//   });
-//   late final вінницький район Вінницький район;
-//   late final могилів-Подільський район Могилів-Подільський район;
-//   late final жмеринський район Жмеринський район;
-//   late final гайсинський район Гайсинський район;
-//   late final тульчинський район Тульчинський район;
-//   late final хмільницький район Хмільницький район;
-
-//   Districts.fromJson(Map<String, dynamic> json){
-//     Вінницький район = Вінницький район.fromJson(json['Вінницький район']);
-//     Могилів-Подільський район = Могилів-Подільський район.fromJson(json['Могилів-Подільський район']);
-//     Жмеринський район = Жмеринський район.fromJson(json['Жмеринський район']);
-//     Гайсинський район = Гайсинський район.fromJson(json['Гайсинський район']);
-//     Тульчинський район = Тульчинський район.fromJson(json['Тульчинський район']);
-//     Хмільницький район = Хмільницький район.fromJson(json['Хмільницький район']);
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     final _data = <String, dynamic>{};
-//     _data['Вінницький район'] = Вінницький район.toJson();
-//     _data['Могилів-Подільський район'] = Могилів-Подільський район.toJson();
-//     _data['Жмеринський район'] = Жмеринський район.toJson();
-//     _data['Гайсинський район'] = Гайсинський район.toJson();
-//     _data['Тульчинський район'] = Тульчинський район.toJson();
-//     _data['Хмільницький район'] = Хмільницький район.toJson();
-//     return _data;
-//   }
-// }
 
 class Region {
   Region({
     required this.enabled,
     required this.type,
-    // required this.districts,
+    required this.districts,
     required this.enabledAt,
     required this.disabledAt,
   });
   late final bool enabled;
   late final String type;
-  // late final Districts districts;
+  late final List<Districts> districts;
   late final String? enabledAt;
   late final String? disabledAt;
 
   Region.fromJson(Map<String, dynamic> json) {
     enabled = json['enabled'];
     type = json['type:'];
-    //districts = Districts.fromJson(json['districts']);
+    districts = _getDistricts(json['districts']);
     enabledAt = json['enabled_at'];
     disabledAt = json['disabled_at'];
   }
@@ -201,9 +163,47 @@ class Region {
     final _data = <String, dynamic>{};
     _data['enabled'] = enabled;
     _data['type:'] = type;
-    // _data['districts'] = districts.toJson();
     _data['enabled_at'] = enabledAt;
     _data['disabled_at'] = disabledAt;
     return _data;
   }
+}
+
+class Districts {
+  Districts({
+    required this.title,
+    required this.enabled,
+    required this.type,
+    required this.enabledAt,
+    required this.disabledAt,
+  });
+  late final EDistricts title;
+  late final bool enabled;
+  late final String type;
+  late final String? enabledAt;
+  late final String? disabledAt;
+
+  Districts.fromJson(Map<String, dynamic> json, String name) {
+    title = getEDistrictsByString(name);
+    enabled = json['enabled'];
+    type = json['type'];
+    enabledAt = json['enabled_at'];
+    disabledAt = json['disabled_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['enabled'] = enabled;
+    _data['type'] = type;
+    _data['enabled_at'] = enabledAt;
+    _data['disabled_at'] = disabledAt;
+    return _data;
+  }
+}
+
+List<Districts> _getDistricts(Map<String, dynamic> data) {
+  List<Districts> result = [];
+  data.forEach((key, value) => result.add(Districts.fromJson(value, key)));
+
+  return result;
 }

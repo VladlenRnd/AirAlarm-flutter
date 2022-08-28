@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import '../tools/custom_color.dart';
 
 class NotificationService {
   //Main notification

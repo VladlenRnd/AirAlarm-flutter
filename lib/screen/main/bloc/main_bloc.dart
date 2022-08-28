@@ -8,9 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import '../../../tools/connection/connection.dart';
 import '../../../tools/connection/response/alarm_response.dart';
-import '../../../tools/eregion.dart';
+import '../../../tools/region/eregion.dart';
 import '../../../models/region_model.dart';
-import '../../../tools/region_title_tools.dart';
+import '../../../tools/region/region_title_tools.dart';
 
 part 'main_event.dart';
 part 'main_state.dart';
@@ -102,7 +102,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   RegionModel _getRegionModel(Region region, ERegion titleRegion) {
     return RegionModel(
-      title: RegionTitleTools.getRegionByEnum(titleRegion),
+      title: titleRegion.title,
       isAlarm: region.enabled,
       region: titleRegion,
       timeDurationAlarm: _getTimer(region.enabledAt),

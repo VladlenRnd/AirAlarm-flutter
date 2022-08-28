@@ -1,4 +1,4 @@
-import '../tools/eregion.dart';
+import '../tools/region/eregion.dart';
 
 class RegionModel {
   final String title;
