@@ -29,12 +29,12 @@ class CardListSmall extends StatelessWidget {
             children: [
               Text(region.region.title, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
               const Spacer(),
-              const Text(
-                "Тревога длится",
-                style: TextStyle(color: CustomColor.red),
+              Text(
+                region.timeDurationAlarm == "0:00" ? "Только что" : "Тревога длится",
+                style: const TextStyle(color: CustomColor.red),
               ),
               Text(
-                region.timeDurationAlarm ?? "",
+                region.timeDurationAlarm == "0:00" ? "" : region.timeDurationAlarm ?? "",
                 style: const TextStyle(color: CustomColor.red),
               ),
             ],

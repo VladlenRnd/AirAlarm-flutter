@@ -1,3 +1,4 @@
+import 'package:alarm/tools/region/eregion.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -8,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../dialog/update_dialog.dart';
 import '../../tools/connection/connection.dart';
 import '../../models/region_model.dart';
+import '../../tools/connection/response/config_response.dart';
 import '../../tools/ui_tools.dart';
 import '../../tools/ukrain_svg.dart';
 import '../../tools/update_info.dart';
@@ -16,6 +18,7 @@ import 'bloc/main_bloc.dart';
 import '../../tools/custom_color.dart';
 import 'widget/card_list_small_widget.dart';
 import 'widget/card_list_widget.dart';
+import 'widget/modal_top_widget.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -75,6 +78,24 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       backgroundColor: CustomColor.backgroundLight,
       elevation: 0.0,
       titleSpacing: 0,
+      actions: [_buildWarCounter()],
+    );
+  }
+
+  Widget _buildWarCounter() {
+    int warDay = DateTime.now().difference(DateTime.utc(2022, DateTime.february, 24)).inDays;
+    return FutureBuilder<ConfigResponse>(
+      future: Conectrion.getRemoteConfig(),
+      builder: ((context, snapshot) {
+        if (snapshot.data != null && snapshot.data?.war == true) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            child: Text("Война длится: $warDay ${UiTools.declinationWordByNumber(warDay, "день", "дня", "дней")}",
+                textAlign: TextAlign.center, style: const TextStyle(color: CustomColor.red)),
+          );
+        }
+        return const SizedBox.shrink();
+      }),
     );
   }
 
@@ -176,44 +197,56 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                     color: CustomColor.backgroundLight,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxHeight: 300, maxWidth: 360, minHeight: 300, minWidth: 360),
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                top: 30,
-                                child: SvgPicture.string(
-                                  UkrainSvg.getSvgStr(regions: allRegion),
-                                  placeholderBuilder: (BuildContext context) => Container(),
+                      child: LayoutBuilder(builder: ((context, constraints) {
+                        double w = constraints.maxWidth;
+                        double h = constraints.minHeight;
+                        return Stack(
+                          children: [
+                            Positioned(
+                              top: 30,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: SvgPicture.string(
+                                fit: BoxFit.fitWidth,
+                                UkrainSvg.getSvgStr(regions: allRegion),
+                                placeholderBuilder: (BuildContext context) => Center(
+                                  child: Lottie.asset('assets/lottie/load2.json', width: 250, height: 250, frameRate: FrameRate(60)),
                                 ),
                               ),
-                              Positioned.fill(child: _buildMapText("Днепропетровск", fontSize: 6), top: 150, left: 143),
-                              Positioned.fill(child: _buildMapText("Луганск", fontSize: 6), top: 130, left: 278),
-                              Positioned.fill(child: _buildMapText("Донецк"), top: 163, left: 232),
-                              Positioned.fill(child: _buildMapText("Запорожье", fontSize: 6.5), top: 183, left: 163),
-                              Positioned.fill(child: _buildMapText("Херсон"), top: 195, left: 93),
-                              Positioned.fill(child: _buildMapText("АР Крым", fontSize: 6), top: 230, left: 106),
-                              Positioned.fill(child: _buildMapText("Харьков", fontSize: 9), top: 115, left: 195),
-                              Positioned.fill(child: _buildMapText("Полтава", fontSize: 9), top: 115, left: 100),
-                              Positioned.fill(child: _buildMapText("Сумы", fontSize: 9), top: 80, left: 110),
-                              Positioned.fill(child: _buildMapText("Чернигов", fontSize: 7), top: 70, left: 25),
-                              Positioned.fill(child: _buildMapText("Киев", fontSize: 11), top: 95, left: -20),
-                              Positioned.fill(child: _buildMapText("Черкасы", fontSize: 8), top: 130, left: 0),
-                              Positioned.fill(child: _buildMapText("Кировоград"), top: 150, left: 30),
-                              Positioned.fill(child: _buildMapText("Николаев", fontSize: 6), top: 180, left: 30),
-                              Positioned.fill(child: _buildMapText("Одесса", fontSize: 6), top: 180, left: -35),
-                              Positioned.fill(child: _buildMapText("Житомир", fontSize: 7), top: 90, left: -100),
-                              Positioned.fill(child: _buildMapText("Винница", fontSize: 7), top: 135, left: -93),
-                              Positioned.fill(child: _buildMapText("Ровно", fontSize: 7), top: 70, left: -163),
-                              Positioned.fill(child: _buildMapText("Луцк", fontSize: 10), top: 70, left: -230),
-                              Positioned.fill(child: _buildMapText("Хмель-\nницкий", fontSize: 6), top: 115, left: -150),
-                              Positioned.fill(child: _buildMapText("Терно-\nполь", fontSize: 6), top: 120, left: -200),
-                              Positioned.fill(child: _buildMapText("Львов", fontSize: 8), top: 110, left: -257),
-                              Positioned.fill(child: _buildMapText("Ужгород", fontSize: 6), top: 150, left: -285),
-                              Positioned.fill(child: _buildMapText("Ивано-\nФранковск", fontSize: 5), top: 140, left: -230),
-                              Positioned.fill(child: _buildMapText("Черновцы", fontSize: 5), top: 156, left: -200),
-                            ],
-                          )),
+                            ),
+                            Positioned(child: _buildMapText("Днепропетровск", allRegion, ERegion.dnipro, fontSize: 6), top: h * 0.55, left: w * 0.64),
+                            Positioned(child: _buildMapText("Луганск", allRegion, ERegion.lugan, fontSize: 6), top: h * 0.48, left: w * 0.89),
+                            Positioned(child: _buildMapText("Донецк", allRegion, ERegion.donetsk), top: h * 0.6, left: w * 0.82),
+                            Positioned(child: _buildMapText("Запорожье", allRegion, ERegion.zapor, fontSize: 6.5), top: h * 0.66, left: w * 0.69),
+                            Positioned(child: _buildMapText("Херсон", allRegion, ERegion.herson), top: h * 0.72, left: w * 0.6),
+                            Positioned(child: _buildMapText("АР Крым", allRegion, ERegion.krim, fontSize: 6), top: h * 0.85, left: w * 0.62),
+                            Positioned(child: _buildMapText("Харьков", allRegion, ERegion.harkiv, fontSize: 9), top: h * 0.4, left: w * 0.74),
+                            Positioned(child: _buildMapText("Полтава", allRegion, ERegion.poltava, fontSize: 9), top: h * 0.4, left: w * 0.585),
+                            Positioned(child: _buildMapText("Сумы", allRegion, ERegion.sumska, fontSize: 9), top: h * 0.28, left: w * 0.62),
+                            Positioned(child: _buildMapText("Чернигов", allRegion, ERegion.chernigev, fontSize: 7), top: h * 0.24, left: w * 0.49),
+                            Positioned(child: _buildMapText("Киев", allRegion, ERegion.kyiv, fontSize: 11), top: h * 0.34, left: w * 0.43),
+                            Positioned(child: _buildMapText("Черкасы", allRegion, ERegion.cherkasy, fontSize: 8), top: h * 0.46, left: w * 0.46),
+                            Positioned(child: _buildMapText("Кировоград", allRegion, ERegion.kirovograd), top: h * 0.54, left: w * 0.48),
+                            Positioned(child: _buildMapText("Николаев", allRegion, ERegion.mikolaev, fontSize: 6), top: h * 0.64, left: w * 0.5),
+                            Positioned(child: _buildMapText("Одесса", allRegion, ERegion.odesa, fontSize: 6), top: h * 0.67, left: w * 0.41),
+                            Positioned(child: _buildMapText("Житомир", allRegion, ERegion.jitomer, fontSize: 7), top: h * 0.31, left: w * 0.29),
+                            Positioned(child: _buildMapText("Винница", allRegion, ERegion.vinetsk, fontSize: 7), top: h * 0.5, left: w * 0.31),
+                            Positioned(child: _buildMapText("Ровно", allRegion, ERegion.rivno, fontSize: 7), top: h * 0.26, left: w * 0.22),
+                            Positioned(child: _buildMapText("Луцк", allRegion, ERegion.volinska, fontSize: 10), top: h * 0.26, left: w * 0.11),
+                            Positioned(
+                                child: _buildMapText("Хмель-\nницкий", allRegion, ERegion.hmelnytsk, fontSize: 6), top: h * 0.40, left: w * 0.23),
+                            Positioned(child: _buildMapText("Терно-\nполь", allRegion, ERegion.ternopil, fontSize: 6), top: h * 0.44, left: w * 0.16),
+                            Positioned(child: _buildMapText("Львов", allRegion, ERegion.lvow, fontSize: 8), top: h * 0.4, left: w * 0.06),
+                            Positioned(child: _buildMapText("Ужгород", allRegion, ERegion.zakarpatska, fontSize: 6), top: h * 0.54, left: w * 0.01),
+                            Positioned(
+                                child: _buildMapText("Ивано-\nФранковск", allRegion, ERegion.ivanoFrankowsk, fontSize: 5),
+                                top: h * 0.51,
+                                left: w * 0.09),
+                            Positioned(child: _buildMapText("Черновцы", allRegion, ERegion.chernivets, fontSize: 5), top: h * 0.57, left: w * 0.17),
+                          ],
+                        );
+                      })),
                     )),
               ),
               Positioned(
@@ -375,11 +408,14 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildMapText(String region, {double fontSize = 7}) {
-    return Text(
-      region,
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: fontSize),
+  Widget _buildMapText(String region, List<RegionModel> regionlist, ERegion eregion, {double fontSize = 7}) {
+    return GestureDetector(
+      onTap: () async => await showDistrictDialog(context, regionlist.firstWhere((element) => eregion == element.region)),
+      child: Text(
+        region,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: fontSize),
+      ),
     );
   }
 
@@ -389,13 +425,16 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       child: ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return Padding(
-            key: ValueKey(listRegions[index].region),
-            padding: const EdgeInsets.symmetric(vertical: 3),
-            child: CardList(
               key: ValueKey(listRegions[index].region),
-              model: listRegions[index],
-            ),
-          );
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: CupertinoButton(
+                onPressed: () async => await showDistrictDialog(context, listRegions[index]),
+                padding: EdgeInsets.zero,
+                child: CardList(
+                  key: ValueKey(listRegions[index].region),
+                  model: listRegions[index],
+                ),
+              ));
         },
         itemCount: listRegions.length,
       ),

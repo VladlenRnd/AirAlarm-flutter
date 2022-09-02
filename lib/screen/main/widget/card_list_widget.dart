@@ -88,9 +88,11 @@ class _CardListState extends State<CardList> {
 
   Widget _buildTimer(String? startAlarm, String? endAlarm) {
     if (startAlarm != null) {
-      return Text("Тревога длится: \n$startAlarm", textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.red));
+      return Text(startAlarm == "0:00" ? "Только что" : "Тревога длится: \n$startAlarm",
+          textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.red));
     } else if (endAlarm != null) {
-      return Text("Без тревоги: \n$endAlarm", textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.green));
+      return Text(endAlarm == "0:00" ? "Только что" : "Без тревоги: \n$endAlarm",
+          textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.green));
     } else {
       return const SizedBox.shrink();
     }

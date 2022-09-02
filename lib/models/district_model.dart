@@ -1,23 +1,20 @@
-import '../tools/region/eregion.dart';
-import 'district_model.dart';
+import '../tools/edistricts.dart';
 
-class RegionModel {
+class DistrictModel {
   final String title;
-  final ERegion region;
+  final EDistricts districts;
   final bool isAlarm;
   final String? timeStart;
   final String? timeDurationAlarm;
   final String? timeDurationCancelAlarm;
   final String? timeEnd;
-  final List<DistrictModel> districts;
 
-  RegionModel(
+  DistrictModel(
       {required this.title,
       required this.isAlarm,
       required this.timeDurationCancelAlarm,
       required this.timeDurationAlarm,
       required this.timeEnd,
       required this.timeStart,
-      required this.districts,
-      required this.region});
+      required this.districts});
 }
