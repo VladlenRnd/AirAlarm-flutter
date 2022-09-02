@@ -1,9 +1,9 @@
 {
-    "newVersion": "1.4.3",
-    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/releases/download/v1.4.3/airAlarm.v1.4.3.apk",
+    "newVersion": "1.4.4",
+    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/releases/download/v1.4.3/airAlarm.v1.4.4.apk",
     "descroption": [
-        "Добавлен Крым",
-        "Небольшие изменения дизайна",
-        "Добавлены режимы 'Без звука'"
+        "Добавлены регионы",
+        "Добавлен новый тип угрозы 'Артобстрел'",
+        "Добавлен счетчик дней войны"
     ]
 }
