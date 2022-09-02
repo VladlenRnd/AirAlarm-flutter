@@ -13,8 +13,10 @@ class CardList extends StatefulWidget {
 
 class _CardListState extends State<CardList> {
   double boxSize = 0;
+  late bool isAlarmDistrict;
   @override
   Widget build(BuildContext context) {
+    isAlarmDistrict = widget.model.districts.any((element) => element.isAlarm);
     return Container(
       height: 155,
       decoration: BoxDecoration(
@@ -22,7 +24,11 @@ class _CardListState extends State<CardList> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            widget.model.isAlarm ? CustomColor.listCardColor.withRed(35) : CustomColor.listCardColor.withGreen(35),
+            widget.model.isAlarm
+                ? CustomColor.listCardColor.withRed(35)
+                : isAlarmDistrict
+                    ? CustomColor.listCardColor.withRed(40).withGreen(40)
+                    : CustomColor.listCardColor.withGreen(35),
             CustomColor.listCardColor,
           ],
         ),
@@ -45,9 +51,17 @@ class _CardListState extends State<CardList> {
                     ),
                   ),
                   Text(
-                    widget.model.isAlarm ? "Воздушная тревога" : "Тревоги нет",
+                    widget.model.isAlarm
+                        ? "Воздушная тревога"
+                        : isAlarmDistrict
+                            ? "Опасность артобстрела в регионе"
+                            : "Тревоги нет",
                     style: TextStyle(
-                      color: widget.model.isAlarm ? CustomColor.red : CustomColor.green,
+                      color: widget.model.isAlarm
+                          ? CustomColor.red
+                          : isAlarmDistrict
+                              ? CustomColor.colorMapAtantion
+                              : CustomColor.green,
                       fontSize: 16,
                     ),
                   ),
@@ -59,11 +73,12 @@ class _CardListState extends State<CardList> {
               ),
             ),
             Expanded(
-                flex: 2,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: _buildIcon(widget.model.isAlarm),
-                ))
+              flex: 2,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: _buildIcon(widget.model.isAlarm, isAlarmDistrict),
+              ),
+            ),
           ],
         ),
       ),
@@ -88,20 +103,24 @@ class _CardListState extends State<CardList> {
 
   Widget _buildTimer(String? startAlarm, String? endAlarm) {
     if (startAlarm != null) {
-      return Text(startAlarm == "0:00" ? "Только что" : "Тревога длится: \n$startAlarm",
+      return Text(startAlarm == "0:00" ? "Только что" : "Тревога в области длится: \n$startAlarm",
           textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.red));
     } else if (endAlarm != null) {
-      return Text(endAlarm == "0:00" ? "Только что" : "Без тревоги: \n$endAlarm",
+      return Text(endAlarm == "0:00" ? "Только что" : "Без тревоги по области: \n$endAlarm",
           textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.green));
     } else {
       return const SizedBox.shrink();
     }
   }
 
-  Widget _buildIcon(bool isAlarm) {
+  Widget _buildIcon(bool isAlarm, bool isAlarmDistrict) {
     return Icon(
-      isAlarm ? Icons.warning_amber_rounded : Icons.gpp_good_outlined,
-      color: isAlarm ? CustomColor.red : CustomColor.green,
+      isAlarm
+          ? Icons.warning_amber_rounded
+          : isAlarmDistrict
+              ? Icons.dangerous_outlined
+              : Icons.gpp_good_outlined,
+      color: isAlarm ? CustomColor.red : (isAlarmDistrict ? CustomColor.colorMapAtantion : CustomColor.green),
       size: 60,
     );
   }
