@@ -1,9 +1,9 @@
-import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../screen/settings/sillent_mode_setting_screan.dart';
 import '../../service/shered_preferences_service.dart';
+import '../../tools/custom_color.dart';
 
 Future<void> showSilentModeDialog(BuildContext context) async {
   bool _isSave = false;

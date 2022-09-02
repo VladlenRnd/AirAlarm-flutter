@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
-import '../../tools/eregion.dart';
-import '../../tools/region_title_tools.dart';
+import '../../tools/region/eregion.dart';
+import '../../tools/region/region_title_tools.dart';
 
 class SelectRegionScreen extends StatefulWidget {
   final void Function(String)? selectRegion;
@@ -54,7 +54,7 @@ class _SelectRegionScreenState extends State<SelectRegionScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              RegionTitleTools.getRegionByEnum(region),
+              region.title,
               style: TextStyle(
                 color: CustomColor.textColor,
                 fontSize: 15,

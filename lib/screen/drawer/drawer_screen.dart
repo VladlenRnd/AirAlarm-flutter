@@ -1,4 +1,3 @@
-import 'package:alarm/screen/news/news_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -9,9 +8,10 @@ import '../../dialog/setting_dialogs/silent_mode_dialog.dart';
 import '../../dialog/setting_dialogs/subscribe_notifiaction_dialog.dart';
 import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
-import '../../tools/eregion.dart';
+import '../../tools/region/eregion.dart';
 import '../../models/region_model.dart';
-import '../../tools/region_title_tools.dart';
+import '../../tools/region/region_title_tools.dart';
+import '../news/news_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   final List<RegionModel> allRegion;

@@ -1,10 +1,18 @@
-import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 
-import 'eregion.dart';
+import 'custom_color.dart';
+import 'region/eregion.dart';
 import '../models/region_model.dart';
 
 class UkrainSvg {
+  static Color _getColorMap(bool isAlarmRegion, bool isAlarmDistrict) {
+    return isAlarmRegion
+        ? CustomColor.colorMapAlert
+        : isAlarmDistrict
+            ? CustomColor.colorMapAtantion
+            : CustomColor.colorMapClear;
+  }
+
   static String getSvgStr({
     required List<RegionModel> regions,
   }) {
@@ -35,81 +43,83 @@ class UkrainSvg {
     Color krim = CustomColor.colorMap;
 
     for (RegionModel model in regions) {
+      bool isDistrictAlarm = model.districts.any((element) => element.isAlarm == true);
       switch (model.region) {
         case ERegion.dnipro:
-          dnepr = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          dnepr = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.zapor:
-          zaporija = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          zaporija = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.kyiv:
-          kiev = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          kiev = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.lugan:
-          luhansk = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          luhansk = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.harkiv:
-          kharkiv = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          kharkiv = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.donetsk:
-          donets = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          donets = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.jitomer:
-          zitomer = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          zitomer = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.zakarpatska:
-          zakarpotia = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          zakarpotia = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.ivanoFrankowsk:
-          ivanoFrankivs = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          ivanoFrankivs = _getColorMap(model.isAlarm, isDistrictAlarm);
+          ;
           break;
         case ERegion.kirovograd:
-          kirovograd = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          kirovograd = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.lvow:
-          lvov = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          lvov = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.mikolaev:
-          nikolaev = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          nikolaev = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.odesa:
-          odessa = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          odessa = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.poltava:
-          poltava = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          poltava = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.rivno:
-          rivne = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          rivne = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.sumska:
-          symi = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          symi = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.ternopil:
-          ternopil = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          ternopil = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.herson:
-          kherson = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          kherson = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.hmelnytsk:
-          hmelnitskiy = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          hmelnitskiy = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.cherkasy:
-          cherkasy = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          cherkasy = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.chernigev:
-          chernihiv = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          chernihiv = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.chernivets:
-          chernivtsi = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          chernivtsi = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.vinetsk:
-          vinetsa = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          vinetsa = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.volinska:
-          volin = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          volin = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
         case ERegion.krim:
-          krim = model.isAlarm ? CustomColor.colorMapAlert : CustomColor.colorMapClear;
+          krim = _getColorMap(model.isAlarm, isDistrictAlarm);
           break;
       }
     }

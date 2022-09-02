@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../tools/eregion.dart';
+import '../tools/region/eregion.dart';
 
 class SheredPreferencesService {
   static SharedPreferences? _preferences;

@@ -6,11 +6,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
+import '../../../models/district_model.dart';
 import '../../../tools/connection/connection.dart';
 import '../../../tools/connection/response/alarm_response.dart';
-import '../../../tools/eregion.dart';
+import '../../../tools/region/eregion.dart';
 import '../../../models/region_model.dart';
-import '../../../tools/region_title_tools.dart';
 
 part 'main_event.dart';
 part 'main_state.dart';
@@ -102,14 +102,33 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   RegionModel _getRegionModel(Region region, ERegion titleRegion) {
     return RegionModel(
-      title: RegionTitleTools.getRegionByEnum(titleRegion),
+      title: titleRegion.title,
       isAlarm: region.enabled,
       region: titleRegion,
       timeDurationAlarm: _getTimer(region.enabledAt),
       timeDurationCancelAlarm: _getTimer(region.disabledAt),
       timeEnd: _formatData(region.disabledAt),
       timeStart: _formatData(region.enabledAt),
+      districts: _getDistrictModel(region.districts),
     );
+  }
+
+  List<DistrictModel> _getDistrictModel(List<Districts> districts) {
+    List<DistrictModel> result = [];
+
+    for (Districts element in districts) {
+      result.add(DistrictModel(
+        title: element.title.title,
+        isAlarm: element.enabled,
+        districts: element.title,
+        timeDurationAlarm: _getTimer(element.enabledAt),
+        timeDurationCancelAlarm: _getTimer(element.disabledAt),
+        timeEnd: _formatData(element.disabledAt),
+        timeStart: _formatData(element.enabledAt),
+      ));
+    }
+
+    return result;
   }
 
   String? _getTimer(String? startedAlarmTime) {

@@ -1,8 +1,7 @@
-import 'package:alarm/tools/custom_color.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/region_model.dart';
-import '../../../tools/region_title_tools.dart';
+import '../../../tools/custom_color.dart';
 
 class CardList extends StatefulWidget {
   final RegionModel model;
@@ -39,7 +38,7 @@ class _CardListState extends State<CardList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    RegionTitleTools.getRegionByEnum(widget.model.region),
+                    widget.model.region.title,
                     style: TextStyle(
                       color: CustomColor.textColor,
                       fontSize: 13,
@@ -89,9 +88,11 @@ class _CardListState extends State<CardList> {
 
   Widget _buildTimer(String? startAlarm, String? endAlarm) {
     if (startAlarm != null) {
-      return Text("Тревога длится: \n$startAlarm", textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.red));
+      return Text(startAlarm == "0:00" ? "Только что" : "Тревога длится: \n$startAlarm",
+          textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.red));
     } else if (endAlarm != null) {
-      return Text("Без тревоги: \n$endAlarm", textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.green));
+      return Text(endAlarm == "0:00" ? "Только что" : "Без тревоги: \n$endAlarm",
+          textAlign: TextAlign.start, style: const TextStyle(fontSize: 14, color: CustomColor.green));
     } else {
       return const SizedBox.shrink();
     }

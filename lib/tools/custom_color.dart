@@ -21,6 +21,7 @@ class CustomColor {
 
   static const Color colorMapAlert = Color(0xFFfb6d54);
   static const Color colorMapClear = Color(0xFF2bca72);
+  static const Color colorMapAtantion = Color(0xFFfcd34d);
 
   static Color listCardColor = const Color(0xFF171b26);
 
