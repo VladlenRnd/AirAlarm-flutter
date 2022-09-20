@@ -6,7 +6,7 @@ import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
 
 Future<void> showSilentModeDialog(BuildContext context) async {
-  bool _isSave = false;
+  bool isSave = false;
   TimeOfDay? newStartTime;
   TimeOfDay? newEndTime;
 
@@ -16,7 +16,7 @@ Future<void> showSilentModeDialog(BuildContext context) async {
     builder: (context) {
       return StatefulBuilder(
         builder: ((BuildContext context, void Function(Function()) setState) {
-          if (!_isSave) {
+          if (!isSave) {
             return AlertDialog(
               titlePadding: EdgeInsets.zero,
               contentPadding: EdgeInsets.zero,
@@ -39,12 +39,12 @@ Future<void> showSilentModeDialog(BuildContext context) async {
                     )),
                 MaterialButton(
                     onPressed: () async {
-                      setState(() => _isSave = true);
+                      setState(() => isSave = true);
                       await _onSave(newStartTime, newEndTime);
                       Navigator.of(context).pop();
                     },
-                    child: const Text("Сохранить"),
-                    color: CustomColor.primaryGreen.withOpacity(0.5)),
+                    color: CustomColor.primaryGreen.withOpacity(0.5),
+                    child: const Text("Сохранить")),
               ],
             );
           }
