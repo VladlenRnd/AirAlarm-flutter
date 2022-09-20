@@ -71,7 +71,6 @@ class UkrainSvg {
           break;
         case ERegion.ivanoFrankowsk:
           ivanoFrankivs = _getColorMap(model.isAlarm, isDistrictAlarm);
-          ;
           break;
         case ERegion.kirovograd:
           kirovograd = _getColorMap(model.isAlarm, isDistrictAlarm);

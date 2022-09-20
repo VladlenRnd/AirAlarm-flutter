@@ -1,3 +1,4 @@
+import 'package:alarm/tools/ui_tools.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/region_model.dart';
@@ -54,7 +55,7 @@ class _CardListState extends State<CardList> {
                     widget.model.isAlarm
                         ? "Воздушная тревога"
                         : isAlarmDistrict
-                            ? "Опасность артобстрела в регионе"
+                            ? "Опасность артобстрела"
                             : "Тревоги нет",
                     style: TextStyle(
                       color: widget.model.isAlarm
@@ -66,7 +67,7 @@ class _CardListState extends State<CardList> {
                     ),
                   ),
                   const Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                  _buildTimer(widget.model.timeDurationAlarm, widget.model.timeDurationCancelAlarm),
+                  if (!isAlarmDistrict) _buildTimer(widget.model.timeDurationAlarm, widget.model.timeDurationCancelAlarm),
                   const Divider(),
                   _buildDate(widget.model.timeStart, widget.model.timeEnd),
                 ],
@@ -76,7 +77,7 @@ class _CardListState extends State<CardList> {
               flex: 2,
               child: Align(
                 alignment: Alignment.centerRight,
-                child: _buildIcon(widget.model.isAlarm, isAlarmDistrict),
+                child: UiTools.buildIconStatus(widget.model.isAlarm, isAlarmDistrict),
               ),
             ),
           ],
@@ -111,17 +112,5 @@ class _CardListState extends State<CardList> {
     } else {
       return const SizedBox.shrink();
     }
-  }
-
-  Widget _buildIcon(bool isAlarm, bool isAlarmDistrict) {
-    return Icon(
-      isAlarm
-          ? Icons.warning_amber_rounded
-          : isAlarmDistrict
-              ? Icons.dangerous_outlined
-              : Icons.gpp_good_outlined,
-      color: isAlarm ? CustomColor.red : (isAlarmDistrict ? CustomColor.colorMapAtantion : CustomColor.green),
-      size: 60,
-    );
   }
 }

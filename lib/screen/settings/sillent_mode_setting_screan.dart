@@ -72,7 +72,6 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
               ),
               const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
               ElevatedButton(
-                child: Text("Выбрать время", style: TextStyle(color: CustomColor.textColor)),
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.backgroundLight)),
                 onPressed: () async {
                   TimeOfDay? startTime;
@@ -109,6 +108,7 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
                     widget.onChange.call(startTime, endTime);
                   }
                 },
+                child: Text("Выбрать время", style: TextStyle(color: CustomColor.textColor)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),

@@ -11,7 +11,7 @@ class NotificationService {
   static Future<void> init() async {
     const InitializationSettings initializationSettings =
         InitializationSettings(android: AndroidInitializationSettings('ic_start_alarm'), macOS: null);
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: _selectNotification);
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
     //   requestSoundPermission: false,
@@ -39,7 +39,7 @@ class NotificationService {
     vibrationPattern[5] = 1500;
 
     //Notification seting
-    NotificationDetails _platformChannelSpecifics = NotificationDetails(
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: AndroidNotificationDetails(
       pathSong + isSound.toString(),
       "Воздушная тревога",
@@ -55,14 +55,14 @@ class NotificationService {
       autoCancel: false,
     ));
 
-    await _flutterLocalNotificationsPlugin.show(notificationId, "Воздушная тревога!", body, _platformChannelSpecifics, payload: 'test');
+    await _flutterLocalNotificationsPlugin.show(notificationId, "Воздушная тревога!", body, platformChannelSpecifics, payload: 'test');
   }
 
   static Future<void> _showCanceledAlertNotification(
       {String body = "", required int notificationId, required String pathSong, required bool isSound}) async {
     cancelNotification(notificationId: notificationId);
     //Notification seting
-    NotificationDetails _platformChannelSpecifics = NotificationDetails(
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: AndroidNotificationDetails(
       pathSong + isSound.toString(),
       "Отмена воздушной тревоги",
@@ -79,13 +79,13 @@ class NotificationService {
       icon: "ic_cancel_alarm",
     ));
 
-    await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Отмена воздушной тревоги", body, _platformChannelSpecifics, payload: 'test');
+    await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Отмена воздушной тревоги", body, platformChannelSpecifics, payload: 'test');
   }
 
   static Future<void> showUpdateNotification({String body = "", required int notificationId}) async {
     cancelNotification(notificationId: notificationId);
     //Notification seting
-    NotificationDetails _platformChannelSpecifics = const NotificationDetails(
+    NotificationDetails platformChannelSpecifics = const NotificationDetails(
         android: AndroidNotificationDetails(
       "3",
       "Update notification",
@@ -100,14 +100,14 @@ class NotificationService {
       visibility: NotificationVisibility.public,
     ));
 
-    await _flutterLocalNotificationsPlugin.show(222, "Доступна новая версия! $body", "Доступно обновление для приложения", _platformChannelSpecifics,
+    await _flutterLocalNotificationsPlugin.show(222, "Доступна новая версия! $body", "Доступно обновление для приложения", platformChannelSpecifics,
         payload: 'update');
   }
 
   static Future<void> showTestNotification({String body = "", required int notificationId}) async {
     cancelNotification(notificationId: notificationId);
     //Notification seting
-    NotificationDetails _platformChannelSpecifics = const NotificationDetails(
+    NotificationDetails platformChannelSpecifics = const NotificationDetails(
         android: AndroidNotificationDetails(
       "234",
       "Тестовое оповещение",
@@ -121,14 +121,10 @@ class NotificationService {
       timeoutAfter: 10000,
     ));
 
-    await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Тестовое оповещение", body, _platformChannelSpecifics, payload: 'test');
+    await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Тестовое оповещение", body, platformChannelSpecifics, payload: 'test');
   }
 
   static void cancelNotification({required int notificationId}) async {
     await _flutterLocalNotificationsPlugin.cancel(notificationId);
-  }
-
-  static void _selectNotification(String? payload) {
-    //TODO Bitch
   }
 }

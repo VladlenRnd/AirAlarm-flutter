@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../models/district_model.dart';
 import '../../../models/region_model.dart';
 import '../../../tools/custom_color.dart';
+import '../../../tools/ui_tools.dart';
 
 class _ModalTopWidget extends StatelessWidget {
   final RegionModel region;
@@ -56,15 +57,7 @@ Widget _buildDistrict(DistrictModel districts, bool isCount, bool isAlarmRegion)
           children: [
             Row(
               children: [
-                Icon(
-                  isAlarmRegion
-                      ? Icons.warning_amber_rounded
-                      : districts.isAlarm
-                          ? Icons.dangerous_outlined
-                          : Icons.gpp_good_outlined,
-                  size: 30,
-                  color: isAlarmRegion ? CustomColor.red : (districts.isAlarm ? CustomColor.colorMapAtantion : CustomColor.green),
-                ),
+                UiTools.buildIconStatus(isAlarmRegion, districts.isAlarm, size: 30),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -143,6 +136,8 @@ Future<void> showDistrictDialog(BuildContext context, RegionModel region) async 
           },
           key: UniqueKey(),
           child: SlideTransition(
+            position: CurvedAnimation(parent: isClose ? secondaryAnimation : animation, curve: Curves.easeOutCubic)
+                .drive(Tween<Offset>(begin: const Offset(0, -1.0), end: Offset.zero)),
             child: SingleChildScrollView(
                 child: Material(
                     color: Colors.transparent,
@@ -152,8 +147,6 @@ Future<void> showDistrictDialog(BuildContext context, RegionModel region) async 
                         children: [child],
                       ),
                     ))),
-            position: CurvedAnimation(parent: isClose ? secondaryAnimation : animation, curve: Curves.easeOutCubic)
-                .drive(Tween<Offset>(begin: const Offset(0, -1.0), end: Offset.zero)),
           ));
     },
   );

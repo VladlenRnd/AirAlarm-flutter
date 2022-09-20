@@ -14,10 +14,10 @@ class AlarmRespose {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['version'] = version;
-    _data['states'] = states.toJson();
-    return _data;
+    final data = <String, dynamic>{};
+    data['version'] = version;
+    data['states'] = states.toJson();
+    return data;
   }
 }
 
@@ -76,34 +76,34 @@ class States {
   final Region krim;
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['Дніпропетровська область'] = dnipro.toJson();
-    _data['Запорізька область'] = zapor.toJson();
-    _data['Київська область'] = kyiv.toJson();
-    _data['Луганська область'] = lugan.toJson();
-    _data['Харківська область'] = harkiv.toJson();
-    _data['Донецька область'] = donetsk.toJson();
-    _data['Житомирська область'] = jitomer.toJson();
-    _data['Закарпатська область'] = zakarpatska.toJson();
-    _data['Івано-Франківська облать'] = ivanoFrankowsk.toJson();
-    _data['Кіровоградська область'] = kirovograd.toJson();
-    _data['Львівська область'] = lvow.toJson();
-    _data['Миколаївська область'] = mikolaev.toJson();
-    _data['Одеська область'] = odesa.toJson();
-    _data['Полтавська область'] = poltava.toJson();
-    _data['Рівненська область'] = rivno.toJson();
-    _data['Сумська область'] = sumska.toJson();
-    _data['Тернопільська область'] = ternopil.toJson();
-    _data['Херсонська область'] = herson.toJson();
-    _data['Хмельницька область'] = hmelnytsk.toJson();
-    _data['Черкаська область'] = cherkasy.toJson();
-    _data['Чернівецька область'] = chernigev.toJson();
-    _data['Чернігівська область'] = chernigev.toJson();
-    _data['Вінницька область'] = vinetsk.toJson();
-    _data['Волинська область'] = volinska.toJson();
-    _data['АР Крим'] = krim.toJson();
+    final data = <String, dynamic>{};
+    data['Дніпропетровська область'] = dnipro.toJson();
+    data['Запорізька область'] = zapor.toJson();
+    data['Київська область'] = kyiv.toJson();
+    data['Луганська область'] = lugan.toJson();
+    data['Харківська область'] = harkiv.toJson();
+    data['Донецька область'] = donetsk.toJson();
+    data['Житомирська область'] = jitomer.toJson();
+    data['Закарпатська область'] = zakarpatska.toJson();
+    data['Івано-Франківська облать'] = ivanoFrankowsk.toJson();
+    data['Кіровоградська область'] = kirovograd.toJson();
+    data['Львівська область'] = lvow.toJson();
+    data['Миколаївська область'] = mikolaev.toJson();
+    data['Одеська область'] = odesa.toJson();
+    data['Полтавська область'] = poltava.toJson();
+    data['Рівненська область'] = rivno.toJson();
+    data['Сумська область'] = sumska.toJson();
+    data['Тернопільська область'] = ternopil.toJson();
+    data['Херсонська область'] = herson.toJson();
+    data['Хмельницька область'] = hmelnytsk.toJson();
+    data['Черкаська область'] = cherkasy.toJson();
+    data['Чернівецька область'] = chernigev.toJson();
+    data['Чернігівська область'] = chernigev.toJson();
+    data['Вінницька область'] = vinetsk.toJson();
+    data['Волинська область'] = volinska.toJson();
+    data['АР Крим'] = krim.toJson();
 
-    return _data;
+    return data;
   }
 
   factory States.fromJson(Map<String, dynamic> json) {
@@ -160,12 +160,12 @@ class Region {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['enabled'] = enabled;
-    _data['type:'] = type;
-    _data['enabled_at'] = enabledAt;
-    _data['disabled_at'] = disabledAt;
-    return _data;
+    final data = <String, dynamic>{};
+    data['enabled'] = enabled;
+    data['type:'] = type;
+    data['enabled_at'] = enabledAt;
+    data['disabled_at'] = disabledAt;
+    return data;
   }
 }
 
@@ -192,12 +192,12 @@ class Districts {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['enabled'] = enabled;
-    _data['type'] = type;
-    _data['enabled_at'] = enabledAt;
-    _data['disabled_at'] = disabledAt;
-    return _data;
+    final data = <String, dynamic>{};
+    data['enabled'] = enabled;
+    data['type'] = type;
+    data['enabled_at'] = enabledAt;
+    data['disabled_at'] = disabledAt;
+    return data;
   }
 }
 

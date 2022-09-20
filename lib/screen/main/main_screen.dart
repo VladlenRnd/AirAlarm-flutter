@@ -9,7 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../dialog/update_dialog.dart';
 import '../../tools/connection/connection.dart';
 import '../../models/region_model.dart';
-import '../../tools/connection/response/config_response.dart';
+import '../../tools/repository/config_repository.dart';
 import '../../tools/ui_tools.dart';
 import '../../tools/ukrain_svg.dart';
 import '../../tools/update_info.dart';
@@ -69,6 +69,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   @override
   void dispose() {
     _controller.dispose();
+    _bloc.close();
     super.dispose();
   }
 
@@ -83,20 +84,14 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildWarCounter() {
-    int warDay = DateTime.now().difference(DateTime.utc(2022, DateTime.february, 24)).inDays;
-    return FutureBuilder<ConfigResponse>(
-      future: Conectrion.getRemoteConfig(),
-      builder: ((context, snapshot) {
-        if (snapshot.data != null && snapshot.data?.war == true) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            child: Text("Война длится: $warDay ${UiTools.declinationWordByNumber(warDay, "день", "дня", "дней")}",
-                textAlign: TextAlign.center, style: const TextStyle(color: CustomColor.red)),
-          );
-        }
-        return const SizedBox.shrink();
-      }),
-    );
+    if (ConfigRepository.instance.config.war == true && ConfigRepository.instance.config.startWarDate != null) {
+      int warDay = DateTime.now().difference(ConfigRepository.instance.config.startWarDate!).inDays + 1;
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        child: Text("$warDay день войны", textAlign: TextAlign.center, style: const TextStyle(color: CustomColor.red)),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   @override
@@ -139,8 +134,8 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                           curve: Curves.easeOutCirc,
                           height: sizeAllListHeight ?? _getHeightAllRegion(context, false, UiTools.getAlarmRegion(state.listRegions).isNotEmpty),
                           width: MediaQuery.of(context).size.width,
-                          child: _buildAllRegion(state.listRegions),
                           duration: const Duration(milliseconds: 600),
+                          child: _buildAllRegion(state.listRegions),
                         ),
                       ],
                     ),
@@ -215,35 +210,35 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                                 ),
                               ),
                             ),
-                            Positioned(child: _buildMapText("Днепропетровск", allRegion, ERegion.dnipro, fontSize: 6), top: h * 0.55, left: w * 0.64),
-                            Positioned(child: _buildMapText("Луганск", allRegion, ERegion.lugan, fontSize: 6), top: h * 0.48, left: w * 0.89),
-                            Positioned(child: _buildMapText("Донецк", allRegion, ERegion.donetsk), top: h * 0.6, left: w * 0.82),
-                            Positioned(child: _buildMapText("Запорожье", allRegion, ERegion.zapor, fontSize: 6.5), top: h * 0.66, left: w * 0.69),
-                            Positioned(child: _buildMapText("Херсон", allRegion, ERegion.herson), top: h * 0.72, left: w * 0.6),
-                            Positioned(child: _buildMapText("АР Крым", allRegion, ERegion.krim, fontSize: 6), top: h * 0.85, left: w * 0.62),
-                            Positioned(child: _buildMapText("Харьков", allRegion, ERegion.harkiv, fontSize: 9), top: h * 0.4, left: w * 0.74),
-                            Positioned(child: _buildMapText("Полтава", allRegion, ERegion.poltava, fontSize: 9), top: h * 0.4, left: w * 0.585),
-                            Positioned(child: _buildMapText("Сумы", allRegion, ERegion.sumska, fontSize: 9), top: h * 0.28, left: w * 0.62),
-                            Positioned(child: _buildMapText("Чернигов", allRegion, ERegion.chernigev, fontSize: 7), top: h * 0.24, left: w * 0.49),
-                            Positioned(child: _buildMapText("Киев", allRegion, ERegion.kyiv, fontSize: 11), top: h * 0.34, left: w * 0.43),
-                            Positioned(child: _buildMapText("Черкасы", allRegion, ERegion.cherkasy, fontSize: 8), top: h * 0.46, left: w * 0.46),
-                            Positioned(child: _buildMapText("Кировоград", allRegion, ERegion.kirovograd), top: h * 0.54, left: w * 0.48),
-                            Positioned(child: _buildMapText("Николаев", allRegion, ERegion.mikolaev, fontSize: 6), top: h * 0.64, left: w * 0.5),
-                            Positioned(child: _buildMapText("Одесса", allRegion, ERegion.odesa, fontSize: 6), top: h * 0.67, left: w * 0.41),
-                            Positioned(child: _buildMapText("Житомир", allRegion, ERegion.jitomer, fontSize: 7), top: h * 0.31, left: w * 0.29),
-                            Positioned(child: _buildMapText("Винница", allRegion, ERegion.vinetsk, fontSize: 7), top: h * 0.5, left: w * 0.31),
-                            Positioned(child: _buildMapText("Ровно", allRegion, ERegion.rivno, fontSize: 7), top: h * 0.26, left: w * 0.22),
-                            Positioned(child: _buildMapText("Луцк", allRegion, ERegion.volinska, fontSize: 10), top: h * 0.26, left: w * 0.11),
+                            Positioned(top: h * 0.55, left: w * 0.64, child: _buildMapText("Днепропетровск", allRegion, ERegion.dnipro, fontSize: 6)),
+                            Positioned(top: h * 0.48, left: w * 0.89, child: _buildMapText("Луганск", allRegion, ERegion.lugan, fontSize: 6)),
+                            Positioned(top: h * 0.6, left: w * 0.82, child: _buildMapText("Донецк", allRegion, ERegion.donetsk)),
+                            Positioned(top: h * 0.66, left: w * 0.69, child: _buildMapText("Запорожье", allRegion, ERegion.zapor, fontSize: 6.5)),
+                            Positioned(top: h * 0.72, left: w * 0.6, child: _buildMapText("Херсон", allRegion, ERegion.herson)),
+                            Positioned(top: h * 0.85, left: w * 0.62, child: _buildMapText("АР Крым", allRegion, ERegion.krim, fontSize: 6)),
+                            Positioned(top: h * 0.4, left: w * 0.74, child: _buildMapText("Харьков", allRegion, ERegion.harkiv, fontSize: 9)),
+                            Positioned(top: h * 0.4, left: w * 0.585, child: _buildMapText("Полтава", allRegion, ERegion.poltava, fontSize: 9)),
+                            Positioned(top: h * 0.28, left: w * 0.62, child: _buildMapText("Сумы", allRegion, ERegion.sumska, fontSize: 9)),
+                            Positioned(top: h * 0.24, left: w * 0.49, child: _buildMapText("Чернигов", allRegion, ERegion.chernigev, fontSize: 7)),
+                            Positioned(top: h * 0.34, left: w * 0.43, child: _buildMapText("Киев", allRegion, ERegion.kyiv, fontSize: 11)),
+                            Positioned(top: h * 0.46, left: w * 0.46, child: _buildMapText("Черкасы", allRegion, ERegion.cherkasy, fontSize: 8)),
+                            Positioned(top: h * 0.54, left: w * 0.48, child: _buildMapText("Кировоград", allRegion, ERegion.kirovograd)),
+                            Positioned(top: h * 0.64, left: w * 0.5, child: _buildMapText("Николаев", allRegion, ERegion.mikolaev, fontSize: 6)),
+                            Positioned(top: h * 0.67, left: w * 0.41, child: _buildMapText("Одесса", allRegion, ERegion.odesa, fontSize: 6)),
+                            Positioned(top: h * 0.31, left: w * 0.29, child: _buildMapText("Житомир", allRegion, ERegion.jitomer, fontSize: 7)),
+                            Positioned(top: h * 0.5, left: w * 0.31, child: _buildMapText("Винница", allRegion, ERegion.vinetsk, fontSize: 7)),
+                            Positioned(top: h * 0.26, left: w * 0.22, child: _buildMapText("Ровно", allRegion, ERegion.rivno, fontSize: 7)),
+                            Positioned(top: h * 0.26, left: w * 0.11, child: _buildMapText("Луцк", allRegion, ERegion.volinska, fontSize: 10)),
                             Positioned(
-                                child: _buildMapText("Хмель-\nницкий", allRegion, ERegion.hmelnytsk, fontSize: 6), top: h * 0.40, left: w * 0.23),
-                            Positioned(child: _buildMapText("Терно-\nполь", allRegion, ERegion.ternopil, fontSize: 6), top: h * 0.44, left: w * 0.16),
-                            Positioned(child: _buildMapText("Львов", allRegion, ERegion.lvow, fontSize: 8), top: h * 0.4, left: w * 0.06),
-                            Positioned(child: _buildMapText("Ужгород", allRegion, ERegion.zakarpatska, fontSize: 6), top: h * 0.54, left: w * 0.01),
+                                top: h * 0.40, left: w * 0.23, child: _buildMapText("Хмель-\nницкий", allRegion, ERegion.hmelnytsk, fontSize: 6)),
+                            Positioned(top: h * 0.44, left: w * 0.16, child: _buildMapText("Терно-\nполь", allRegion, ERegion.ternopil, fontSize: 6)),
+                            Positioned(top: h * 0.4, left: w * 0.06, child: _buildMapText("Львов", allRegion, ERegion.lvow, fontSize: 8)),
+                            Positioned(top: h * 0.54, left: w * 0.01, child: _buildMapText("Ужгород", allRegion, ERegion.zakarpatska, fontSize: 6)),
                             Positioned(
-                                child: _buildMapText("Ивано-\nФранковск", allRegion, ERegion.ivanoFrankowsk, fontSize: 5),
                                 top: h * 0.51,
-                                left: w * 0.09),
-                            Positioned(child: _buildMapText("Черновцы", allRegion, ERegion.chernivets, fontSize: 5), top: h * 0.57, left: w * 0.17),
+                                left: w * 0.09,
+                                child: _buildMapText("Ивано-\nФранковск", allRegion, ERegion.ivanoFrankowsk, fontSize: 5)),
+                            Positioned(top: h * 0.57, left: w * 0.17, child: _buildMapText("Черновцы", allRegion, ERegion.chernivets, fontSize: 5)),
                           ],
                         );
                       })),
@@ -314,10 +309,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                       ),
                       const Spacer(),
                       CupertinoButton(
-                          child: RotationTransition(
-                            turns: Tween(begin: 0.0, end: 0.5).animate(_controller),
-                            child: const Icon(Icons.expand_less, color: Colors.white, size: 30),
-                          ),
                           onPressed: () {
                             setState(() {
                               if (sizeAllListTop == 332) {
@@ -335,6 +326,10 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                           },
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20,
+                          ),
+                          child: RotationTransition(
+                            turns: Tween(begin: 0.0, end: 0.5).animate(_controller),
+                            child: const Icon(Icons.expand_less, color: Colors.white, size: 30),
                           ))
                     ],
                   ),
@@ -380,11 +375,11 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                             height: 25,
                             margin: const EdgeInsets.symmetric(horizontal: 5),
                             alignment: Alignment.center,
-                            child: Text(alertsRegions.length.toString(), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: CustomColor.red,
                             ),
+                            child: Text(alertsRegions.length.toString(), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
                           )
                         ],
                       ),

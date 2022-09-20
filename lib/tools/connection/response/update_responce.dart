@@ -15,10 +15,10 @@ class UpdateRespose {
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['newVersion'] = newVersion;
-    _data['url'] = url;
-    _data['descroption'] = descroption;
-    return _data;
+    final data = <String, dynamic>{};
+    data['newVersion'] = newVersion;
+    data['url'] = url;
+    data['descroption'] = descroption;
+    return data;
   }
 }

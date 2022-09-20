@@ -102,11 +102,11 @@ class NewsScreen extends StatelessWidget {
             )),
           Container(
               alignment: Alignment.bottomRight,
+              padding: const EdgeInsets.only(top: 10),
               child: Text(
                 _getTextCurrent(time),
                 style: TextStyle(color: Colors.white.withOpacity(0.5)),
-              ),
-              padding: const EdgeInsets.only(top: 10)),
+              )),
         ],
       ),
     );

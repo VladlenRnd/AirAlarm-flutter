@@ -9,14 +9,14 @@ import '../../tools/custom_color.dart';
 String _selectValue = "";
 
 Future<void> showSubscribeDialog(BuildContext context) async {
-  bool _isSave = false;
+  bool isSave = false;
   await showDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) {
       return StatefulBuilder(
         builder: ((BuildContext context, void Function(Function()) setState) {
-          if (!_isSave) {
+          if (!isSave) {
             return AlertDialog(
               title: const Text("Отслеживание тревоги", textAlign: TextAlign.center),
               contentPadding: const EdgeInsets.only(top: 15),
@@ -34,14 +34,14 @@ Future<void> showSubscribeDialog(BuildContext context) async {
                     )),
                 MaterialButton(
                     onPressed: () async {
-                      setState(() => _isSave = true);
+                      setState(() => isSave = true);
 
                       await _saveSubscribe();
 
                       Navigator.of(context).pop();
                     },
-                    child: const Text("Сохранить"),
-                    color: CustomColor.primaryGreen.withOpacity(0.5)),
+                    color: CustomColor.primaryGreen.withOpacity(0.5),
+                    child: const Text("Сохранить")),
               ],
             );
           }

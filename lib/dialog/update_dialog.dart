@@ -22,8 +22,8 @@ void showUpdateDialog(BuildContext context) {
               onPressed: () {
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const DownloadScreen()), (route) => false);
               },
-              child: const Text("Обновить"),
-              color: CustomColor.primaryGreen.withOpacity(0.5)),
+              color: CustomColor.primaryGreen.withOpacity(0.5),
+              child: const Text("Обновить")),
         ],
       );
     },

@@ -123,9 +123,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
     if (!await direct.exists()) {
       await direct.create();
     }
-    String _localPathAA = direct.path;
+    String localPathAA = direct.path;
 
-    String pathToFile = await DownloadService.downloadFile(UpdateInfo.infoUpdate.url, "flightAlarmUpdate.apk", _localPathAA);
+    String pathToFile = await DownloadService.downloadFile(UpdateInfo.infoUpdate.url, "flightAlarmUpdate.apk", localPathAA);
 
     if (pathToFile == "EXEPTION") {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ошибка загрузки обновления")));
