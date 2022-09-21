@@ -40,7 +40,7 @@ class CustomDrawer extends StatelessWidget {
                         children: [
                           _buildNotificationSetting(context, setState),
                           const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                          _buildItemButton(context, "Режим тишины", Icons.notifications_paused_rounded, Colors.blueGrey, () {
+                          _buildItemButton(context, "Режим тишины", Icons.notifications_off_outlined, Colors.blueGrey, () {
                             showSilentModeDialog(context);
                           }),
                           const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
@@ -150,13 +150,23 @@ class CustomDrawer extends StatelessWidget {
     }
 
     if (await LocationService.checkPermission()) {
-      if (await LocationService.enableAutoLocation()) {
-        Navigator.of(context).pop();
-        CustomSnackBar.success(context, title: "Автоопределение включенно!");
-      } else {
-        Navigator.of(context).pop();
-        CustomSnackBar.error(context, title: "Упсс. Что то пошло не так...");
+      if (await showInfoDialog(
+        context,
+        title: "Внимание!",
+        icon: const Icon(Icons.battery_alert, size: 40),
+        actionButtonStr: "Да",
+        closeButtonStr: "Нет",
+        contenInfo: "Этот режим потребляем больше заряда аккамулятора, включить функцию автоопределение области?",
+      )) {
+        if (await LocationService.enableAutoLocation()) {
+          Navigator.of(context).pop();
+          CustomSnackBar.success(context, title: "Автоопределение включенно!");
+        } else {
+          Navigator.of(context).pop();
+          CustomSnackBar.error(context, title: "Упсс. Что то пошло не так...");
+        }
       }
+
       return;
     }
 
@@ -201,7 +211,6 @@ class CustomDrawer extends StatelessWidget {
     bool isAlarm = _isAlarmSelectRegion();
     bool isAlarmDistrict = _isAlarmDistrict();
     return Container(
-        height: 260,
         width: double.infinity,
         decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -242,13 +251,19 @@ class CustomDrawer extends StatelessWidget {
                   builder: ((context, snapshot) {
                     if (snapshot.hasData) {
                       if (!snapshot.data!) return const SizedBox.shrink();
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.location_on_outlined, color: CustomColor.green),
-                          Flexible(
-                            child: Text("Автоопределение области включено", textAlign: TextAlign.center, style: TextStyle(color: CustomColor.green)),
+                      return Column(
+                        children: [
+                          const Divider(),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.location_on_outlined, color: CustomColor.green),
+                              Flexible(
+                                child:
+                                    Text("Автоопределение области включено", textAlign: TextAlign.center, style: TextStyle(color: CustomColor.green)),
+                              )
+                            ],
                           )
                         ],
                       );

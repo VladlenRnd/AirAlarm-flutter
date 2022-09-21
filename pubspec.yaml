@@ -47,6 +47,7 @@ dependencies:
   html: ^0.15.0
   geolocator: ^9.0.1
   flutter_background_service: ^2.3.8
+  geocoding: ^2.0.5
 
 dev_dependencies:
   flutter_test:

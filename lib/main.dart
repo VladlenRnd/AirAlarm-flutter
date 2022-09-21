@@ -22,9 +22,9 @@ void main() async {
   await NotificationService.init();
   await SheredPreferencesService.init();
   await LocationService.init();
-  await _initFirebaseService();
-  await ConfigRepository.instance.init();
 
+  await ConfigRepository.instance.init();
+  await _initFirebaseService();
   runApp(const MyApp());
 }
 
@@ -63,11 +63,11 @@ Future<void> _initFirebaseService() async {
   await Firebase.initializeApp();
   _initOnMessage();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  await FirebaseMessaging.instance.subscribeToTopic(SheredPreferencesService.preferences.getString("subscribeRegion")!);
-  await FirebaseMessaging.instance.subscribeToTopic("update");
+  FirebaseMessaging.instance.subscribeToTopic(SheredPreferencesService.preferences.getString("subscribeRegion")!);
+  FirebaseMessaging.instance.subscribeToTopic("update");
 
   if (kDebugMode) {
-    await FirebaseMessaging.instance.subscribeToTopic("debug");
+    FirebaseMessaging.instance.subscribeToTopic("debug");
   }
 }
 

@@ -58,8 +58,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       vsync: this,
     );
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      UpdateInfo.isNewVersion = await _isUpdateCheck();
-      if (UpdateInfo.isNewVersion) {
+      if (await _isUpdateCheck()) {
         showUpdateDialog(context);
       }
     });

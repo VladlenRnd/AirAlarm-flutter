@@ -7,6 +7,7 @@ import '../service/notification_service.dart';
 import '../service/shered_preferences_service.dart';
 import 'nottification_tools.dart';
 
+@pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (kDebugMode) print("_____________BACKGROUND MESSAGE________________");
 
