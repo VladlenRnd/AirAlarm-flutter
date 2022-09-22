@@ -90,21 +90,117 @@ Widget _buildHeader(RegionModel region, BuildContext context) {
       Text(region.title, style: const TextStyle(fontSize: 20)),
       const SizedBox(height: 10),
       Text(
-          region.isAlarm
-              ? "Воздушная тревога в области"
-              : isDistrictsAlarm
-                  ? "Опасность в области"
-                  : "Тревоги нет",
-          style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: region.isAlarm
-                  ? CustomColor.red
-                  : isDistrictsAlarm
-                      ? CustomColor.colorMapAtantion
-                      : CustomColor.green)),
+        region.isAlarm
+            ? "Воздушная тревога в области"
+            : isDistrictsAlarm
+                ? "Опасность в области"
+                : "Тревоги нет",
+        style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: region.isAlarm
+                ? CustomColor.red
+                : isDistrictsAlarm
+                    ? CustomColor.colorMapAtantion
+                    : CustomColor.green),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
+        child: Container(
+          height: 0.5,
+          color: Colors.grey,
+          width: double.infinity,
+        ),
+      ),
+      _buildInfo(region, isDistrictsAlarm),
     ],
   );
+}
+
+Widget _buildInfo(RegionModel region, bool isDistrictAlarm) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+          border: Border(
+              right: BorderSide(
+                  color: region.isAlarm
+                      ? CustomColor.red
+                      : isDistrictAlarm
+                          ? CustomColor.colorMapAtantion
+                          : CustomColor.green,
+                  width: 2),
+              left: BorderSide(
+                  color: region.isAlarm
+                      ? CustomColor.red
+                      : isDistrictAlarm
+                          ? CustomColor.colorMapAtantion
+                          : CustomColor.green,
+                  width: 2))),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildAlarmTime(region.timeStart, region.timeEnd),
+          _buildTimer(region.timeDurationAlarm, region.timeDurationCancelAlarm),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildAlarmTime(String? timeStart, String? timeEnd) {
+  if (timeStart != null) {
+    return RichText(
+        text: TextSpan(text: "Начало тревоги\n", style: TextStyle(color: CustomColor.textColor, fontFamily: "Days"), children: [
+      TextSpan(
+        text: timeStart,
+        style: TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
+      )
+    ]));
+  } else if (timeEnd != null) {
+    return RichText(
+        text: TextSpan(text: "Конец тревоги\n", style: TextStyle(color: CustomColor.textColor, fontFamily: "Days"), children: [
+      TextSpan(
+        text: timeEnd,
+        style: TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
+      )
+    ]));
+  } else {
+    return const SizedBox.shrink();
+  }
+}
+
+Widget _buildTimer(String? startAlarm, String? endAlarm) {
+  if (startAlarm != null) {
+    return RichText(
+        textAlign: TextAlign.end,
+        text: TextSpan(
+          text: startAlarm == "0:00" ? "Только что" : "Тревога длится: \n",
+          style: const TextStyle(fontSize: 14, color: CustomColor.red, fontFamily: "Days"),
+          children: [
+            TextSpan(
+              text: startAlarm,
+              style: const TextStyle(fontSize: 16, color: CustomColor.red, fontFamily: "Days"),
+            )
+          ],
+        ));
+  } else if (endAlarm != null) {
+    return RichText(
+        textAlign: TextAlign.end,
+        text: TextSpan(
+          text: endAlarm == "0:00" ? "Только что" : "Без тревоги: \n",
+          style: const TextStyle(fontSize: 14, color: CustomColor.green, fontFamily: "Days"),
+          children: [
+            TextSpan(
+              text: endAlarm,
+              style: const TextStyle(fontSize: 16, color: CustomColor.green, fontFamily: "Days"),
+            )
+          ],
+        ));
+  } else {
+    return const SizedBox.shrink();
+  }
 }
 
 Widget _buildDate(String? timeStart, String? timeEnd) {
