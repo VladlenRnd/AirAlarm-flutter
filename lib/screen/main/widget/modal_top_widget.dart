@@ -119,7 +119,7 @@ Widget _buildHeader(RegionModel region, BuildContext context) {
 
 Widget _buildInfo(RegionModel region, bool isDistrictAlarm) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
+    padding: const EdgeInsets.symmetric(horizontal: 10),
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
@@ -180,7 +180,7 @@ Widget _buildTimer(String? startAlarm, String? endAlarm) {
           style: const TextStyle(fontSize: 14, color: CustomColor.red, fontFamily: "Days"),
           children: [
             TextSpan(
-              text: startAlarm,
+              text: startAlarm != "0:00" ? startAlarm : "",
               style: const TextStyle(fontSize: 16, color: CustomColor.red, fontFamily: "Days"),
             )
           ],
@@ -193,7 +193,7 @@ Widget _buildTimer(String? startAlarm, String? endAlarm) {
           style: const TextStyle(fontSize: 14, color: CustomColor.green, fontFamily: "Days"),
           children: [
             TextSpan(
-              text: endAlarm,
+              text: endAlarm != "0:00" ? endAlarm : "",
               style: const TextStyle(fontSize: 16, color: CustomColor.green, fontFamily: "Days"),
             )
           ],

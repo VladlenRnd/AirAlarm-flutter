@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:lottie/lottie.dart';
@@ -62,7 +63,11 @@ class NewsScreen extends StatelessWidget {
                               children: listNews.reversed.map((e) {
                                 return Column(
                                   children: [
-                                    _buildCardNews(context, DateFormat("dd/MM/yyyy : HH:mm").format(e.publishTime!), e.body, e.imageUrl),
+                                    _buildCardNews(
+                                        context,
+                                        UiTools.getDateToDay(e.publishTime!, true) ?? DateFormat("dd/MM/yyyy : HH:mm").format(e.publishTime!),
+                                        e.body,
+                                        e.imageUrl),
                                     Container(height: 10, color: CustomColor.background),
                                   ],
                                 );
@@ -126,34 +131,22 @@ class NewsScreen extends StatelessWidget {
                     children: urlImage.map((e) => _buildImage(e, urlImage, context)).toList(),
                   ),
           if (urlImage.isNotEmpty) const SizedBox(height: 15),
-          Text(
-            body,
-            style: const TextStyle(fontSize: 19, letterSpacing: 0.87),
-          ),
+          Html(data: body),
+          // Text(
+          //   body,
+          //   style: const TextStyle(fontSize: 19, letterSpacing: 0.87),
+          // ),
           Container(
               alignment: Alignment.bottomRight,
               padding: const EdgeInsets.only(top: 10),
               child: Text(
-                _getTextCurrent(time),
+                time,
                 style: TextStyle(color: Colors.white.withOpacity(0.5)),
               )),
         ],
       ),
     );
   }
-}
-
-String _getTextCurrent(String time) {
-  int number = int.parse(time.replaceAll(RegExp(r'[^0-9]'), ''));
-
-  if (time.toLowerCase().contains("минут")) {
-    return "$number ${UiTools.declinationWordByNumber(number, "минуту", "минуты", "минут")} назад";
-  }
-  if (time.toLowerCase().contains("час")) {
-    return "$number ${UiTools.declinationWordByNumber(number, "час", "часа", "часов")} назад";
-  }
-
-  return time;
 }
 
 //Минут

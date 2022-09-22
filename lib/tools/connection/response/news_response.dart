@@ -26,7 +26,8 @@ class NewsResponce {
 
       elem = n.getElementsByClassName("tgme_widget_message_text");
       if (elem.isNotEmpty) {
-        msg = elem.last.text.replaceAll("Подписаться / Прислать новость", "");
+        msg = elem.last.innerHtml
+            .replaceRange(elem.last.innerHtml.indexOf("Подписаться</a>"), null, ""); //  .replaceAll("Подписаться Прислать новость", "");
       }
 
       elem = n.getElementsByClassName("tgme_widget_message_photo_wrap");

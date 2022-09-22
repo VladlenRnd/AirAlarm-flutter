@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:alarm/tools/ui_tools.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -156,7 +157,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   String? _formatData(String? data) {
     if (data != null) {
-      return DateFormat('dd.MM.yyyy HH:mm:ss').format(DateTime.parse(data).toLocal());
+      return UiTools.getDateToDay(DateTime.parse(data).toLocal(), true) ?? DateFormat('dd/MM/yyyy  HH:mm:ss').format(DateTime.parse(data).toLocal());
     }
     return null;
   }

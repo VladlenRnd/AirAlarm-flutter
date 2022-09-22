@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 import '../models/region_model.dart';
 import 'custom_color.dart';
@@ -25,6 +26,18 @@ class UiTools {
         : isAlarmDistrict
             ? SvgPicture.asset("assets/icons/bomb.svg", color: CustomColor.colorMapAtantion, height: size, width: size)
             : SvgPicture.asset("assets/icons/safety.svg", color: CustomColor.green, height: size, width: size);
+  }
+
+  static String? getDateToDay(DateTime date, bool showTime) {
+    DateTime now = DateTime.now();
+    switch (DateTime.utc(now.year, now.month, now.day).difference(DateTime.utc(date.year, date.month, date.day)).inDays) {
+      case 0:
+        return "Сегодня ${showTime ? DateFormat("HH:mm").format(date) : ""}";
+      case 1:
+        return "Вчера ${showTime ? DateFormat("HH:mm").format(date) : ""}";
+      default:
+        return null;
+    }
   }
 
   static String declinationWordByNumber(int number, String word1, String word2, String word3) {

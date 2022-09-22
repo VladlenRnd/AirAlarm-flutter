@@ -67,7 +67,7 @@ class _CardListState extends State<CardList> {
                     ),
                   ),
                   const Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                  if (!isAlarmDistrict) _buildTimer(widget.model.timeDurationAlarm, widget.model.timeDurationCancelAlarm),
+                  if (!isAlarmDistrict || widget.model.isAlarm) _buildTimer(widget.model.timeDurationAlarm, widget.model.timeDurationCancelAlarm),
                   const Divider(),
                   _buildDate(widget.model.timeStart, widget.model.timeEnd),
                 ],
