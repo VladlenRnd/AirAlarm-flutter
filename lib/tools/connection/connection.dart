@@ -18,11 +18,11 @@ class Conectrion {
     }
   }
 
-  static Future<UpdateRespose> chekUpdate() async {
+  static Future<UpdateResposeOld> chekUpdate() async {
     final response = await http.get(Uri.parse('https://raw.githubusercontent.com/VladlenRnd/AirAlarm-flutter/dev/apks/update.json'));
 
     if (response.statusCode == 200) {
-      return UpdateRespose.fromJson(jsonDecode(response.body));
+      return UpdateResposeOld.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load update JSON');
     }
@@ -38,17 +38,33 @@ class Conectrion {
     }
   }
 
+  // static Future<NewsResponce> getNews() async {
+  //   final response = await http.get(Uri.parse('https://liveuamap.com/ru'));
+
+  //   if (response.statusCode == 200) {
+  //     return NewsResponce.fromHtml(response.body);
+  //   } else {
+  //     throw Exception('Failed to load news');
+  //   }
+  // }
+
   static Future<NewsResponce> getNews() async {
-    final response = await http.get(Uri.parse('https://liveuamap.com/ru'));
+    final response = await http.get(Uri.parse('https://t.me/s/Novoeizdanie/'));
 
     if (response.statusCode == 200) {
       return NewsResponce.fromHtml(response.body);
     } else {
       throw Exception('Failed to load news');
     }
+  }
 
-    //String sdf = element.children
+  static Future<NewsResponce> getAddNews(String id) async {
+    final response = await http.get(Uri.parse('https://t.me/s/Novoeizdanie?before=$id'));
 
-    // return AlarmRespose.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    if (response.statusCode == 200) {
+      return NewsResponce.fromHtml(response.body);
+    } else {
+      throw Exception('Failed to load news');
+    }
   }
 }

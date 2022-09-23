@@ -13,16 +13,16 @@ AudioCache? _player;
 AudioPlayer? _controller;
 
 Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) async {
-  bool _isSave = false;
+  bool isSave = false;
   _selectValue = SheredPreferencesService.preferences.getString(isAlarmSound ? "alarmSong" : "cancelSong")!;
-  _player = AudioCache(prefix: "assets/song/" + (isAlarmSound ? "alarm/" : "cancel/"));
+  _player = AudioCache(prefix: "assets/song/${isAlarmSound ? "alarm/" : "cancel/"}");
   await showDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) {
       return StatefulBuilder(
         builder: ((BuildContext context, void Function(Function()) setState) {
-          if (!_isSave) {
+          if (!isSave) {
             return AlertDialog(
               title: Text(isAlarmSound ? "Звук тревоги" : "Звук отмены тревоги", textAlign: TextAlign.center),
               backgroundColor: CustomColor.background,
@@ -37,13 +37,13 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
                     )),
                 MaterialButton(
                     onPressed: () async {
-                      setState(() => _isSave = true);
+                      setState(() => isSave = true);
                       SheredPreferencesService.preferences.setString(isAlarmSound ? "alarmSong" : "cancelSong", _selectValue);
                       NotificationService.init();
                       Navigator.of(context).pop();
                     },
-                    child: const Text("Сохранить"),
-                    color: CustomColor.primaryGreen.withOpacity(0.5)),
+                    color: CustomColor.primaryGreen.withOpacity(0.5),
+                    child: const Text("Сохранить")),
               ],
             );
           }
@@ -86,7 +86,7 @@ Widget _buildItem(String title, String fileName, void Function(Function()) setSt
             IconButton(
               onPressed: () async {
                 await _controller?.stop();
-                _controller = await _player?.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
+                _controller = await _player!.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
               },
               splashRadius: 25,
               icon: Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),

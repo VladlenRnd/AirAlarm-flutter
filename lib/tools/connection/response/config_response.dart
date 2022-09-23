@@ -1,16 +1,19 @@
 class ConfigResponse {
+  late final bool? war;
+  late final DateTime? startWarDate;
+
   ConfigResponse({
     required this.war,
   });
-  late final bool? war;
 
   ConfigResponse.fromJson(Map<String, dynamic> json) {
     war = json['war'];
+    startWarDate = DateTime.parse(json["startWarDate"]);
   }
 
   Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['war'] = war;
-    return _data;
+    final data = <String, dynamic>{};
+    data['war'] = war;
+    return data;
   }
 }

@@ -7,6 +7,7 @@ import '../service/notification_service.dart';
 import '../service/shered_preferences_service.dart';
 import 'nottification_tools.dart';
 
+@pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (kDebugMode) print("_____________BACKGROUND MESSAGE________________");
 
@@ -17,19 +18,23 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   String alertSong = SheredPreferencesService.preferences.getString("alarmSong")!;
   String cancelSong = SheredPreferencesService.preferences.getString("cancelSong")!;
 
-  if (message.data.isNotEmpty && message.data["update"] != null) {
-    PackageInfo infoApp = await PackageInfo.fromPlatform();
-    if (infoApp.version != message.data["update"]) NotificationService.showUpdateNotification(notificationId: 222, body: "${message.data["update"]}");
-    return;
-  }
+  if (message.data.isNotEmpty) {
+    if (message.data["test"] != null) {
+      testNotification(message.data);
+      return;
+    }
+    if (message.data["update"] != null) {
+      PackageInfo infoApp = await PackageInfo.fromPlatform();
+      if (infoApp.version != message.data["update"]) {
+        NotificationService.showUpdateNotification(notificationId: 222, body: "${message.data["update"]}");
+      }
 
-  if (message.data.isNotEmpty && message.data["test"] != null) {
-    testNotification(message.data);
-    return;
-  }
+      return;
+    }
 
-  NotificationService.showNotification(
-      message.data["isAlarm"].toLowerCase() == 'true', message.data["region"], alertSong, cancelSong, isSoundNotification());
+    NotificationService.showNotification(
+        message.data["isAlarm"].toLowerCase() == 'true', message.data["region"], alertSong, cancelSong, isSoundNotification());
+  }
 
   if (kDebugMode) print("___________________________________________");
 }

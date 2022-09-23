@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:alarm/tools/ui_tools.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:meta/meta.dart';
 import '../../../models/district_model.dart';
 import '../../../tools/connection/connection.dart';
 import '../../../tools/connection/response/alarm_response.dart';
@@ -17,6 +17,7 @@ part 'main_state.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
   int _oldDataTry = 0;
+  Timer? _timer;
 
   MainBloc() : super(MainInitialState()) {
     on<MainEvent>((event, emit) {
@@ -53,7 +54,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   void _initTimerData() async {
-    Timer.periodic(const Duration(seconds: 10), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) async {
       try {
         add(MainUpdateEvent(alarm: await _getData()));
       } catch (e) {
@@ -148,9 +149,15 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     return null;
   }
 
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
+  }
+
   String? _formatData(String? data) {
     if (data != null) {
-      return DateFormat('dd.MM.yyyy HH:mm:ss').format(DateTime.parse(data).toLocal());
+      return UiTools.getDateToDay(DateTime.parse(data).toLocal(), true) ?? DateFormat('dd/MM/yyyy  HH:mm:ss').format(DateTime.parse(data).toLocal());
     }
     return null;
   }

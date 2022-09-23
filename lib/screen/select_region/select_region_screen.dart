@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
 import '../../tools/region/eregion.dart';
-import '../../tools/region/region_title_tools.dart';
 
 class SelectRegionScreen extends StatefulWidget {
   final void Function(String)? selectRegion;

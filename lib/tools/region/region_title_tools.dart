@@ -57,6 +57,117 @@ class RegionTitleTools {
     throw Exception("No find enum by enumName $enumName");
   }
 
+  static ERegion? getRegionByGeolocation(String address, String locality) {
+    String findBy = address.isNotEmpty ? address : locality;
+
+    switch (findBy) {
+      case "Луганська область":
+      case "Луганская область":
+      case "Луганск":
+      case "Луганськ":
+        return ERegion.lugan;
+
+      case "Донецкая область":
+      case "Донецька область":
+      case "Донецьк":
+      case "Донецк":
+        return ERegion.donetsk;
+
+      case "Харківська область":
+      case "Харьковская область":
+        return ERegion.harkiv;
+
+      case "Дніпропетровська область":
+      case "Днепропетровская область":
+        return ERegion.dnipro;
+
+      case "Запорізька область":
+      case "Запорожская область":
+        return ERegion.zapor;
+
+      case "Сумська область":
+      case "Сумская область":
+        return ERegion.sumska;
+
+      case "Полтавская область":
+      case "Полтавська область":
+        return ERegion.poltava;
+
+      case "Херсонська область":
+      case "Херсонская область":
+        return ERegion.herson;
+
+      case "Черниговская область":
+      case "Чернігівська область":
+        return ERegion.chernigev;
+
+      case "Київська область":
+      case "Киевская область":
+      case "Київ":
+      case "Киев":
+        return ERegion.kyiv;
+
+      case "Черкаська область":
+      case "Черкасская область":
+        return ERegion.cherkasy;
+
+      case "Кіровоградська область":
+      case "Кировоградская область":
+        return ERegion.kirovograd;
+
+      case "Николаевская область":
+      case "Миколаївська область":
+        return ERegion.mikolaev;
+
+      case "Житомирська область":
+      case "Житомирская область":
+        return ERegion.jitomer;
+
+      case "Вінницька область":
+      case "Винницкая область":
+        return ERegion.vinetsk;
+
+      case "Одеська область":
+      case "Одесская область":
+        return ERegion.odesa;
+
+      case "Рівненська область":
+      case "Ровенская область":
+        return ERegion.rivno;
+
+      case "Хмельницька область":
+      case "Хмельницкая область":
+        return ERegion.hmelnytsk;
+
+      case "Тернопільська область":
+      case "Тернопольская область":
+        return ERegion.ternopil;
+
+      case "Івано-Франківська область":
+      case "Ивано-Франковская область":
+        return ERegion.ivanoFrankowsk;
+
+      case "Чернівецька область":
+      case "Черновицкая область":
+        return ERegion.chernivets;
+
+      case "Закарпатська область":
+      case "Закарпатская область":
+        return ERegion.zakarpatska;
+
+      case "Львовская область":
+      case "Львівська область":
+        return ERegion.lvow;
+
+      case "Волинська область":
+      case "Волынская область":
+        return ERegion.volinska;
+
+      default:
+        return null;
+    }
+  }
+
   static String getRegionByEnumName(String enumName) {
     switch (enumName) {
       case "dnipro":
