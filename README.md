@@ -16,5 +16,6 @@ Application for detecting air raid alerts on the territory of Ukraine
 - Ability to select a period of time when the sound in notifications will not play
 - View news
 - Auto-locate when traveling around the country
+- Alarm history
 
 ###### Developed with Flutter/dart
