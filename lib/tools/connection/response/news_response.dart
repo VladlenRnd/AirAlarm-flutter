@@ -11,7 +11,7 @@ class NewsResponce {
 
     Document document = parse(html);
     List<Element> element = document.getElementsByClassName("tgme_widget_message_wrap");
-    for (Element n in element) {
+    for (Element news in element) {
       String id = "";
       String msg = "";
       List<String> img = [];
@@ -19,23 +19,23 @@ class NewsResponce {
       List<Element> elem;
 
       //*********** */
-      elem = n.getElementsByClassName("text_not_supported_wrap");
+      elem = news.getElementsByClassName("text_not_supported_wrap");
       if (elem.isNotEmpty) {
         id = elem[0].attributes["data-post"].toString().replaceAll("Novoeizdanie/", "");
       }
 
-      elem = n.getElementsByClassName("tgme_widget_message_text");
+      elem = news.getElementsByClassName("tgme_widget_message_text");
       if (elem.isNotEmpty) {
         msg = elem.last.innerHtml
             .replaceRange(elem.last.innerHtml.indexOf("Подписаться</a>"), null, ""); //  .replaceAll("Подписаться Прислать новость", "");
       }
 
-      elem = n.getElementsByClassName("tgme_widget_message_photo_wrap");
+      elem = news.getElementsByClassName("tgme_widget_message_photo_wrap");
       for (Element pik in elem) {
         String style = pik.attributes["style"].toString();
         img.add(style.substring(style.indexOf("https"), style.indexOf("')")));
       }
-      elem = n.getElementsByTagName("time"); //n.getElementsByClassName("tgme_widget_message_date");
+      elem = news.getElementsByTagName("time"); //n.getElementsByClassName("tgme_widget_message_date");
       for (Element e in elem) {
         if (e.className == "time") {
           t = DateTime.parse(e.attributes["datetime"].toString()).toLocal();

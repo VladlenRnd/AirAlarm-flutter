@@ -38,15 +38,16 @@ class Conectrion {
     }
   }
 
-  // static Future<NewsResponce> getNews() async {
-  //   final response = await http.get(Uri.parse('https://liveuamap.com/ru'));
+  static Future<String> getHistoryAlarm() async {
+    final response =
+        await http.get(Uri.parse('https://raw.githubusercontent.com/Vadimkin/ukrainian-air-raid-sirens-dataset/main/datasets/oblasts_only.csv'));
 
-  //   if (response.statusCode == 200) {
-  //     return NewsResponce.fromHtml(response.body);
-  //   } else {
-  //     throw Exception('Failed to load news');
-  //   }
-  // }
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to load History Alarm JSON');
+    }
+  }
 
   static Future<NewsResponce> getNews() async {
     final response = await http.get(Uri.parse('https://t.me/s/Novoeizdanie/'));
@@ -58,7 +59,7 @@ class Conectrion {
     }
   }
 
-  static Future<NewsResponce> getAddNews(String id) async {
+  static Future<NewsResponce> getUpdateNews(String id) async {
     final response = await http.get(Uri.parse('https://t.me/s/Novoeizdanie?before=$id'));
 
     if (response.statusCode == 200) {

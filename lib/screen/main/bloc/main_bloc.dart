@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:alarm/tools/ui_tools.dart';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:intl/intl.dart';
 import '../../../models/district_model.dart';
 import '../../../tools/connection/connection.dart';
 import '../../../tools/connection/response/alarm_response.dart';
+import '../../../tools/history.dart';
 import '../../../tools/region/eregion.dart';
 import '../../../models/region_model.dart';
 
@@ -101,11 +103,29 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     ];
   }
 
+  List<List<String>> _getHistoryThreeDay(ERegion region) {
+    List<List<String>> result = [];
+    if (allHistory[region] == null) return [];
+
+    result.addAll(allHistory[region]!.reversed.toList().where((element) {
+      DateTime date = DateTime.parse(element[0]);
+      DateTime dateNow = DateTime.now().add(const Duration(days: -4));
+
+      if (dateNow.isBefore(date)) return true;
+
+      return false;
+    }));
+
+    return result;
+  }
+
   RegionModel _getRegionModel(Region region, ERegion titleRegion) {
     return RegionModel(
       title: titleRegion.title,
       isAlarm: region.enabled,
       region: titleRegion,
+      allHistory: allHistory[titleRegion] == null ? [] : allHistory[titleRegion]!.reversed.toList(),
+      historyThreeDay: _getHistoryThreeDay(titleRegion),
       timeDurationAlarm: _getTimer(region.enabledAt),
       timeDurationCancelAlarm: _getTimer(region.disabledAt),
       timeEnd: _formatData(region.disabledAt),
@@ -132,9 +152,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     return result;
   }
 
-  String? _getTimer(String? startedAlarmTime) {
-    if (startedAlarmTime != null) {
-      Duration duration = DateTime.now().difference(DateTime.parse(startedAlarmTime).toLocal());
+  String? _getTimer(String? alarmTime) {
+    if (alarmTime != null) {
+      Duration duration = DateTime.now().difference(DateTime.parse(alarmTime).toLocal());
 
       String day = duration.inDays.toString();
       String hors = (duration.inHours % 24).toString().padLeft(1, '0');

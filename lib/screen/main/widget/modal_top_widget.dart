@@ -1,9 +1,10 @@
+import 'package:alarm/widget/history_list_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/district_model.dart';
 import '../../../models/region_model.dart';
 import '../../../tools/custom_color.dart';
-import '../../../tools/ui_tools.dart';
+import '../../history/history_screen.dart';
 
 class _ModalTopWidget extends StatelessWidget {
   final RegionModel region;
@@ -24,50 +25,99 @@ class _ModalTopWidget extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: _buildHeader(region, context),
-          ),
-          const SizedBox(height: 15),
-          _buildDistrictList(),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: Alignment.topCenter,
+          child: _buildHeader(region, context),
+        ),
+        ..._buildAlarmDistrict(),
+        Padding(padding: const EdgeInsets.only(top: 15), child: Container(height: 5, color: Colors.black)),
+        _buildHistory(context),
+      ],
     );
   }
 
-  Widget _buildDistrictList() {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [for (int i = 0; i < region.districts.length; i++) _buildDistrict(region.districts[i], i % 2 == 0, region.isAlarm)]);
-  }
-}
+  List<Widget> _buildAlarmDistrict() {
+    if (region.isAlarm) return [];
+    try {
+      region.districts.firstWhere((element) => element.isAlarm == true);
+    } catch (e) {
+      return [];
+    }
 
-Widget _buildDistrict(DistrictModel districts, bool isCount, bool isAlarmRegion) {
-  return ColoredBox(
-    color: isCount ? CustomColor.background : CustomColor.backgroundLight,
-    child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                UiTools.buildIconStatus(isAlarmRegion, districts.isAlarm, size: 30),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    districts.title,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                )
-              ],
-            ),
-            if (!isAlarmRegion)
+    return [
+      Container(height: 5, color: Colors.black, margin: const EdgeInsets.symmetric(vertical: 15)),
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 15, bottom: 10),
+          child: Row(children: const [
+            Icon(Icons.warning_amber_rounded, color: Colors.amber),
+            SizedBox(width: 10),
+            Text("Опасные районы", style: TextStyle(fontSize: 16)),
+          ]),
+        ),
+        for (int i = 0; i < region.districts.length; i++)
+          if (region.districts[i].isAlarm && !region.isAlarm) _buildDistrict(region.districts[i])
+      ]),
+    ];
+  }
+
+  Widget _buildHistory(BuildContext context) {
+    if (region.historyThreeDay.isEmpty) return const SizedBox.shrink();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10, right: 15, top: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Icon(Icons.history_outlined, color: CustomColor.systemSecondary),
+                  SizedBox(width: 10),
+                  Text("История тревог \nза 3 дня", textAlign: TextAlign.start, style: TextStyle(fontSize: 16)),
+                ],
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => HistoryScreen(region: region)));
+                },
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
+                child: const Text("Полная история"),
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 5),
+        SizedBox(
+          height: 400,
+          child: HistoryListWidget(historyData: region.historyThreeDay),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDistrict(DistrictModel districts) {
+    return Container(
+      height: 100,
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: CustomColor.background,
+      ),
+      child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(districts.title, style: const TextStyle(fontSize: 24)),
+              const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: Column(
@@ -77,141 +127,135 @@ Widget _buildDistrict(DistrictModel districts, bool isCount, bool isAlarmRegion)
                   ],
                 ),
               ),
-          ],
-        )),
-  );
-}
-
-Widget _buildHeader(RegionModel region, BuildContext context) {
-  bool isDistrictsAlarm = region.districts.any((element) => element.isAlarm == true);
-  return Column(
-    children: [
-      Align(alignment: Alignment.topLeft, child: IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close))),
-      Text(region.title, style: const TextStyle(fontSize: 20)),
-      const SizedBox(height: 10),
-      Text(
-        region.isAlarm
-            ? "Воздушная тревога в области"
-            : isDistrictsAlarm
-                ? "Опасность в области"
-                : "Тревоги нет",
-        style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: region.isAlarm
-                ? CustomColor.red
-                : isDistrictsAlarm
-                    ? CustomColor.colorMapAtantion
-                    : CustomColor.green),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
-        child: Container(
-          height: 0.5,
-          color: Colors.grey,
-          width: double.infinity,
-        ),
-      ),
-      _buildInfo(region, isDistrictsAlarm),
-    ],
-  );
-}
-
-Widget _buildInfo(RegionModel region, bool isDistrictAlarm) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 10),
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(
-          border: Border(
-              right: BorderSide(
-                  color: region.isAlarm
-                      ? CustomColor.red
-                      : isDistrictAlarm
-                          ? CustomColor.colorMapAtantion
-                          : CustomColor.green,
-                  width: 2),
-              left: BorderSide(
-                  color: region.isAlarm
-                      ? CustomColor.red
-                      : isDistrictAlarm
-                          ? CustomColor.colorMapAtantion
-                          : CustomColor.green,
-                  width: 2))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildAlarmTime(region.timeStart, region.timeEnd),
-          _buildTimer(region.timeDurationAlarm, region.timeDurationCancelAlarm),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _buildAlarmTime(String? timeStart, String? timeEnd) {
-  if (timeStart != null) {
-    return RichText(
-        text: TextSpan(text: "Начало тревоги\n", style: TextStyle(color: CustomColor.textColor, fontFamily: "Days"), children: [
-      TextSpan(
-        text: timeStart,
-        style: TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
-      )
-    ]));
-  } else if (timeEnd != null) {
-    return RichText(
-        text: TextSpan(text: "Конец тревоги\n", style: TextStyle(color: CustomColor.textColor, fontFamily: "Days"), children: [
-      TextSpan(
-        text: timeEnd,
-        style: TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
-      )
-    ]));
-  } else {
-    return const SizedBox.shrink();
-  }
-}
-
-Widget _buildTimer(String? startAlarm, String? endAlarm) {
-  if (startAlarm != null) {
-    return RichText(
-        textAlign: TextAlign.end,
-        text: TextSpan(
-          text: startAlarm == "0:00" ? "Только что" : "Тревога длится: \n",
-          style: const TextStyle(fontSize: 14, color: CustomColor.red, fontFamily: "Days"),
-          children: [
-            TextSpan(
-              text: startAlarm != "0:00" ? startAlarm : "",
-              style: const TextStyle(fontSize: 16, color: CustomColor.red, fontFamily: "Days"),
-            )
-          ],
-        ));
-  } else if (endAlarm != null) {
-    return RichText(
-        textAlign: TextAlign.end,
-        text: TextSpan(
-          text: endAlarm == "0:00" ? "Только что" : "Без тревоги: \n",
-          style: const TextStyle(fontSize: 14, color: CustomColor.green, fontFamily: "Days"),
-          children: [
-            TextSpan(
-              text: endAlarm != "0:00" ? endAlarm : "",
-              style: const TextStyle(fontSize: 16, color: CustomColor.green, fontFamily: "Days"),
-            )
-          ],
-        ));
-  } else {
-    return const SizedBox.shrink();
-  }
-}
-
-Widget _buildDate(String? timeStart, String? timeEnd) {
-  if (timeStart != null) {
-    return Text(
-      "Опасность артобстрела! \nc $timeStart",
-      textAlign: TextAlign.center,
-      style: const TextStyle(color: CustomColor.colorMapAtantion, fontSize: 16),
+            ],
+          )),
     );
   }
-  return const SizedBox.shrink();
+
+  Widget _buildHeader(RegionModel region, BuildContext context) {
+    bool isDistrictsAlarm = region.districts.any((element) => element.isAlarm == true);
+    return Column(
+      children: [
+        Align(alignment: Alignment.topLeft, child: IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.close))),
+        Text(region.title, style: const TextStyle(fontSize: 20)),
+        const SizedBox(height: 5),
+        Text(
+          region.isAlarm
+              ? "Воздушная тревога в области"
+              : isDistrictsAlarm
+                  ? "Опасность в области"
+                  : "Тревоги нет",
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: region.isAlarm
+                  ? CustomColor.red
+                  : isDistrictsAlarm
+                      ? CustomColor.colorMapAtantion
+                      : CustomColor.green),
+        ),
+        const SizedBox(height: 10),
+        _buildInfo(region, isDistrictsAlarm),
+      ],
+    );
+  }
+
+  Widget _buildInfo(RegionModel region, bool isDistrictAlarm) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+            border: Border(
+                right: BorderSide(
+                    color: region.isAlarm
+                        ? CustomColor.red
+                        : isDistrictAlarm
+                            ? CustomColor.colorMapAtantion
+                            : CustomColor.green,
+                    width: 2),
+                left: BorderSide(
+                    color: region.isAlarm
+                        ? CustomColor.red
+                        : isDistrictAlarm
+                            ? CustomColor.colorMapAtantion
+                            : CustomColor.green,
+                    width: 2))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildAlarmTime(region.timeStart, region.timeEnd),
+            _buildTimer(region.timeDurationAlarm, region.timeDurationCancelAlarm),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlarmTime(String? timeStart, String? timeEnd) {
+    if (timeStart != null) {
+      return RichText(
+          text: TextSpan(text: "Начало тревоги\n", style: TextStyle(color: CustomColor.textColor, fontFamily: "Days"), children: [
+        TextSpan(
+          text: timeStart,
+          style: TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
+        )
+      ]));
+    } else if (timeEnd != null) {
+      return RichText(
+          text: TextSpan(text: "Конец тревоги\n", style: TextStyle(color: CustomColor.textColor.withOpacity(0.6), fontFamily: "Days"), children: [
+        TextSpan(
+          text: timeEnd,
+          style: TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
+        )
+      ]));
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildTimer(String? startAlarm, String? endAlarm) {
+    if (startAlarm != null) {
+      return RichText(
+          textAlign: TextAlign.end,
+          text: TextSpan(
+            text: startAlarm == "0:00" ? "Только что" : "Тревога длится: \n",
+            style: const TextStyle(fontSize: 14, color: CustomColor.red, fontFamily: "Days"),
+            children: [
+              TextSpan(
+                text: startAlarm != "0:00" ? startAlarm : "",
+                style: const TextStyle(fontSize: 16, color: CustomColor.red, fontFamily: "Days"),
+              )
+            ],
+          ));
+    } else if (endAlarm != null) {
+      return RichText(
+          textAlign: TextAlign.end,
+          text: TextSpan(
+            text: endAlarm == "0:00" ? "Только что" : "Без тревоги: \n",
+            style: const TextStyle(fontSize: 14, color: CustomColor.green, fontFamily: "Days"),
+            children: [
+              TextSpan(
+                text: endAlarm != "0:00" ? endAlarm : "",
+                style: const TextStyle(fontSize: 16, color: CustomColor.green, fontFamily: "Days"),
+              )
+            ],
+          ));
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildDate(String? timeStart, String? timeEnd) {
+    if (timeStart != null) {
+      return Text(
+        "Повышенная опасность \nc $timeStart",
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: CustomColor.colorMapAtantion, fontSize: 16),
+      );
+    }
+    return const SizedBox.shrink();
+  }
 }
 
 Future<void> showDistrictDialog(BuildContext context, RegionModel region) async {
