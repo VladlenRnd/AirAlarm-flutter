@@ -19,7 +19,7 @@ class HistoryScreen extends StatelessWidget {
         appBar: AppBar(
           title: Column(
             children: [
-              const Text("История воздушных тревог"),
+              const Text("История тревог"),
               const SizedBox(height: 5),
               Text(region.title, style: const TextStyle(fontSize: 14)),
             ],

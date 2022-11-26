@@ -69,7 +69,7 @@ class _ModalTopWidget extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 10, right: 15, top: 10),
+          padding: const EdgeInsets.only(left: 10, right: 3, top: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -78,17 +78,18 @@ class _ModalTopWidget extends StatelessWidget {
                 children: const [
                   Icon(Icons.history_outlined, color: CustomColor.systemSecondary),
                   SizedBox(width: 10),
-                  Text("История тревог \nза 3 дня", textAlign: TextAlign.start, style: TextStyle(fontSize: 16)),
+                  Text("История тревог \nза 3 дня", textAlign: TextAlign.start, style: TextStyle(fontSize: 14)),
                 ],
               ),
-              ElevatedButton(
+              Flexible(
+                  child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => HistoryScreen(region: region)));
                 },
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
                 child: const Text("Полная история"),
-              )
+              )),
             ],
           ),
         ),

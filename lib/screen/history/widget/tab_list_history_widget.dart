@@ -16,16 +16,15 @@ class TabListHistoryWidget extends StatelessWidget {
       children: [
         _buildCalendar(state.minDate, state.maxData, state.selectStartData, state.selectEndData, context),
         Container(
-          height: 160,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: CustomColor.listCardColor,
           ),
           margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -45,7 +44,10 @@ class TabListHistoryWidget extends StatelessWidget {
                   )),
                 ],
               ),
-              Container(height: 1, color: Colors.black),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Container(height: 1, color: Colors.black),
+              ),
               Row(
                 children: [
                   Expanded(
@@ -90,6 +92,8 @@ class TabListHistoryWidget extends StatelessWidget {
                   firstDate: first,
                   lastDate: last,
                   initialEntryMode: DatePickerEntryMode.calendarOnly,
+                  saveText: "Сохранить",
+                  helpText: "Выбрать период",
                   initialDateRange: DateTimeRange(start: selectFirst, end: selectLast),
                 ).then((value) {
                   if (value != null) onChangeData?.call(value);
@@ -121,28 +125,25 @@ class TabListHistoryWidget extends StatelessWidget {
   }
 
   Widget _buildTitleData(String title, String titleTwo, Color titleTwoColor, String data) {
-    return SizedBox(
-      height: 50,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              text: title,
-              style: TextStyle(fontSize: 12, color: CustomColor.textColor.withOpacity(0.6), fontFamily: "Days"),
-              children: [
-                TextSpan(
-                  text: titleTwo,
-                  style: TextStyle(fontSize: 12, color: titleTwoColor),
-                ),
-              ],
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text: title,
+            style: TextStyle(fontSize: 12, color: CustomColor.textColor.withOpacity(0.6), fontFamily: "Days"),
+            children: [
+              TextSpan(
+                text: titleTwo,
+                style: TextStyle(fontSize: 12, color: titleTwoColor),
+              ),
+            ],
           ),
-          const SizedBox(height: 5),
-          Text(data, style: TextStyle(fontSize: 14, fontFamily: "Days", color: CustomColor.textColor)),
-        ],
-      ),
+        ),
+        const SizedBox(height: 5),
+        Text(data, style: TextStyle(fontSize: 14, fontFamily: "Days", color: CustomColor.textColor)),
+      ],
     );
   }
 }
