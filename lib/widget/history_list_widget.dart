@@ -35,9 +35,19 @@ class HistoryListWidget extends StatelessWidget {
             title,
             style: const TextStyle(color: Colors.white, fontSize: 16),
           ),
-          Text(
-            subTitle,
-            style: const TextStyle(color: Colors.white),
+          Container(
+            height: 25,
+            width: 25,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              color: CustomColor.systemSecondary,
+            ),
+            child: Text(
+              subTitle,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -47,7 +57,7 @@ class HistoryListWidget extends StatelessWidget {
   List<SliverStickyHeader> _getHeaderList() {
     return _groupedData.entries.map((e) {
       return SliverStickyHeader(
-        header: _buildTitleHeader("Дата ${e.key}", "Кол-во тревог за день ${e.value.length}"),
+        header: _buildTitleHeader("Дата ${e.key}", "${e.value.length}"),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, i) => _buildHistoryCard(DateTime.parse(e.value[i][0]), DateTime.parse(e.value[i][1])),
@@ -86,20 +96,20 @@ class HistoryListWidget extends StatelessWidget {
     return Container(
       height: 80,
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: CustomColor.background,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildCardTitleValue(
                 "Начало", DateFormat("dd/MM/yyyy").format(dateStart), DateFormat("HH:mm").format(dateStart), CrossAxisAlignment.start),
-            _buildCardTitleValue("Продолжительность", "$hors:$min", "", CrossAxisAlignment.center),
+            _buildCardTitleValue("Длина", "$hors:$min", "", CrossAxisAlignment.center),
             _buildCardTitleValue("Конец", DateFormat("dd/MM/yyyy").format(dateEnd), DateFormat("HH:mm").format(dateEnd), CrossAxisAlignment.end),
           ],
         ),
