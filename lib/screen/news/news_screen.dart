@@ -53,7 +53,7 @@ class NewsScreen extends StatelessWidget {
                           isLoading: false,
                           scrollOffset: 200,
                           onEndOfPage: () async {
-                            NewsResponce resp = await Conectrion.getAddNews(listNews.reversed.last.id);
+                            NewsResponce resp = await Conectrion.getUpdateNews(listNews.reversed.last.id);
                             setState(() {
                               listNews.insertAll(0, resp.news);
                             });

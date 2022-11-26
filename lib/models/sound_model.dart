@@ -14,6 +14,7 @@ class SoundService {
       SoundModel(name: "Без звука", fileName: ""),
       SoundModel(name: "Сирена", fileName: "alarm"),
       SoundModel(name: "Филл Бот тревога", fileName: "fill_alarm"),
+      SoundModel(name: "Филл Бот тревога (UA)", fileName: "fill_alarm_ua"),
       SoundModel(name: "Сигнал + бот", fileName: "beep_fill_alarm"),
     ];
   }
@@ -23,6 +24,7 @@ class SoundService {
       SoundModel(name: "Без звука", fileName: ""),
       SoundModel(name: "Системная отмена", fileName: "cancel_alarm"),
       SoundModel(name: "Филл Бот отмена", fileName: "fill_cancel"),
+      SoundModel(name: "Филл Бот отмена (UA)", fileName: "fill_cancel_ua"),
       SoundModel(name: "Сигнал", fileName: "beep_cancel"),
     ];
   }

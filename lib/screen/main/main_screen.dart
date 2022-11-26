@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../dialog/update_dialog.dart';
@@ -82,6 +83,31 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     );
   }
 
+  Widget _buildNotWar() {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            Colors.yellowAccent,
+            Colors.blueAccent,
+          ],
+        )),
+        child: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Война окончена!", style: TextStyle(fontSize: 30, color: CustomColor.backgroundLight)),
+            Text("24/02/2022 - ${DateFormat("dd/MM/yyyy").format(DateTime.now().toLocal())}",
+                style: const TextStyle(fontSize: 24, color: CustomColor.backgroundLight)),
+          ],
+        )),
+      ),
+    );
+  }
+
   Widget _buildWarCounter() {
     if (ConfigRepository.instance.config.war == true && ConfigRepository.instance.config.startWarDate != null) {
       int warDay = DateTime.now().difference(ConfigRepository.instance.config.startWarDate!).inDays + 1;
@@ -95,6 +121,9 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    if (ConfigRepository.instance.config.war != null && ConfigRepository.instance.config.war == false) {
+      return _buildNotWar();
+    }
     return BlocBuilder<MainBloc, MainState>(
       bloc: _bloc,
       builder: (BuildContext context, MainState state) {

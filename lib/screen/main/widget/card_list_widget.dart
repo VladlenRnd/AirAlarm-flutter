@@ -55,7 +55,7 @@ class _CardListState extends State<CardList> {
                     widget.model.isAlarm
                         ? "Воздушная тревога"
                         : isAlarmDistrict
-                            ? "Опасность артобстрела"
+                            ? "Повышенная опасность"
                             : "Тревоги нет",
                     style: TextStyle(
                       color: widget.model.isAlarm

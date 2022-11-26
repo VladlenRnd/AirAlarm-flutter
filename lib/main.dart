@@ -13,6 +13,7 @@ import 'service/notification_service.dart';
 import 'service/shered_preferences_service.dart';
 import 'tools/background_hendler.dart';
 import 'tools/custom_color.dart';
+import 'tools/history.dart';
 import 'tools/nottification_tools.dart';
 
 void main() async {
@@ -25,6 +26,7 @@ void main() async {
 
   await ConfigRepository.instance.init();
   await _initFirebaseService();
+  await getAllHistory();
   runApp(const MyApp());
 }
 
@@ -77,12 +79,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: const MainScreen(),
-        theme: ThemeData(
-            fontFamily: "Days",
-            colorScheme: ThemeData.dark().colorScheme.copyWith(
-                  secondary: CustomColor.backgroundLight.withOpacity(0.1),
-                )));
+      debugShowCheckedModeBanner: false,
+      home: const MainScreen(),
+      theme: ThemeData(
+        fontFamily: "Days",
+        colorScheme: ThemeData.dark().colorScheme.copyWith(
+              secondary: CustomColor.backgroundLight.withOpacity(0.1),
+            ),
+      ),
+    );
   }
 }

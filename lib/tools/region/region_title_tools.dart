@@ -57,6 +57,64 @@ class RegionTitleTools {
     throw Exception("No find enum by enumName $enumName");
   }
 
+  static ERegion? getERegionByUkrString(String str) {
+    switch (str) {
+      case 'Дніпропетровська область':
+        return ERegion.dnipro;
+      case 'Запорізька область':
+        return ERegion.zapor;
+      case 'Київська область':
+        return ERegion.kyiv;
+      case 'Луганська область':
+        return ERegion.lugan;
+      case 'Харківська область':
+        return ERegion.harkiv;
+      case 'Донецька область':
+        return ERegion.donetsk;
+      case 'Житомирська область':
+        return ERegion.jitomer;
+      case 'Закарпатська область':
+        return ERegion.zakarpatska;
+      case 'Кіровоградська область':
+        return ERegion.kirovograd;
+      case 'Львівська область':
+        return ERegion.lvow;
+      case 'Миколаївська область':
+        return ERegion.mikolaev;
+      case 'Одеська область':
+        return ERegion.odesa;
+      case 'Полтавська область':
+        return ERegion.poltava;
+      case 'Рівненська область':
+        return ERegion.rivno;
+      case 'Сумська область':
+        return ERegion.sumska;
+      case 'Тернопільська область':
+        return ERegion.ternopil;
+      case 'Херсонська область':
+        return ERegion.herson;
+      case 'Хмельницька область':
+        return ERegion.hmelnytsk;
+      case 'Черкаська область':
+        return ERegion.cherkasy;
+      case 'Чернівецька область':
+        return ERegion.chernivets;
+      case 'Чернігівська область':
+        return ERegion.chernigev;
+      case 'Вінницька область':
+        return ERegion.vinetsk;
+      case 'Волинська область':
+        return ERegion.volinska;
+      case 'АР Крим':
+        return ERegion.krim;
+      case 'Івано-Франківська область':
+        return ERegion.ivanoFrankowsk;
+      case 'Івано-Франківська облать':
+        return ERegion.ivanoFrankowsk;
+    }
+    return null;
+  }
+
   static ERegion? getRegionByGeolocation(String address, String locality) {
     String findBy = address.isNotEmpty ? address : locality;
 
