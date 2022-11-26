@@ -1,11 +1,10 @@
 {
-    "newVersion": "1.4.5",
-    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/releases/download/v1.4.5/airAlarm.v1.4.5.apk",
+    "newVersion": "1.5.0",
+    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/releases/download/v.1.5.0/airAlarm.v1.5.0.apk",
     "descroption": [
-        "Добавлена функция автоопределения области по геопозиции",
-        "Изменены иконки",
+        "Добавлена история тревог",
+        "Добавлены уведомления на укр языке",
         "Небольшое изменение дизайна",
-        "Добавлены 2 новых звука уведомления",
-        "Обновлены новости"
+        "Исправление некоторых ошибок"
     ]
 }
