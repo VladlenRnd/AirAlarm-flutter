@@ -40,7 +40,7 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
                     onPressed: () async {
                       setState(() => isSave = true);
                       SheredPreferencesService.preferences.setString(isAlarmSound ? "alarmSong" : "cancelSong", _selectValue);
-                      NotificationService.init();
+                      NotificationService().init();
                       Navigator.of(context).pop();
                     },
                     color: CustomColor.primaryGreen.withOpacity(0.5),

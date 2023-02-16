@@ -38,7 +38,7 @@ class NewsScreen extends StatelessWidget {
         body: StatefulBuilder(
           builder: (BuildContext context, setState) {
             return FutureBuilder<NewsResponce>(
-              future: Conectrion.getNews(),
+              future: Connection.getNews(),
               builder: (BuildContext context, AsyncSnapshot<NewsResponce> snapshot) {
                 if (snapshot.hasData) {
                   if (listNews.isEmpty) {
@@ -53,7 +53,7 @@ class NewsScreen extends StatelessWidget {
                           isLoading: false,
                           scrollOffset: 200,
                           onEndOfPage: () async {
-                            NewsResponce resp = await Conectrion.getUpdateNews(listNews.reversed.last.id);
+                            NewsResponce resp = await Connection.getUpdateNews(listNews.reversed.last.id);
                             setState(() {
                               listNews.insertAll(0, resp.news);
                             });

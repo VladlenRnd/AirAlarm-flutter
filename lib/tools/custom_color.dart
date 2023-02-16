@@ -11,7 +11,7 @@ class CustomColor {
   static const Color backgroundLight = Color(0xFF333538);
   static const Color background = Color(0xFF252629);
 
-  static Color textColor = Color(Colors.white.value);
+  static const Color textColor = Colors.white;
 
   static const Color systemTextBox = Color(0xFF26314d);
   static const Color systemText = Color(0xFF2d60d6);

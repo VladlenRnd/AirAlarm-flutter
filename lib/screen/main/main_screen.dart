@@ -4,41 +4,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../dialog/update_dialog.dart';
+import '../../service/shered_preferences_service.dart';
 import '../../tools/connection/connection.dart';
 import '../../models/region_model.dart';
+import '../../tools/connection/response/alarm_response.dart';
+import '../../tools/connection/response/config_response.dart';
 import '../../tools/repository/config_repository.dart';
 import '../../tools/ui_tools.dart';
 import '../../tools/ukrain_svg.dart';
 import '../../tools/update_info.dart';
 import '../drawer/drawer_screen.dart';
+import '../drawer/end_drawer_screen.dart';
 import 'bloc/main_bloc.dart';
 import '../../tools/custom_color.dart';
-import 'widget/card_list_small_widget.dart';
 import 'widget/card_list_widget.dart';
 import 'widget/modal_top_widget.dart';
+import 'widget/not_war_widget.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  final AlarmRespose? initAlarm;
+  const MainScreen({Key? key, required this.initAlarm}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
-  late final MainBloc _bloc;
-
-  double sizeAllListTop = 332;
-  double? sizeAllListHeight;
-  late final AnimationController _controller;
+class _MainScreenState extends State<MainScreen> {
+  ConfigResponse config = ConfigRepository.instance.config;
 
   Future<bool> _isUpdateCheck() async {
     bool result = false;
     try {
-      UpdateInfo.infoUpdate = await Conectrion.chekUpdate();
+      UpdateInfo.infoUpdate = await Connection.chekUpdate();
       PackageInfo infoApp = await PackageInfo.fromPlatform();
 
       if (infoApp.version != UpdateInfo.infoUpdate.newVersion) {
@@ -53,11 +53,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
 
   @override
   void initState() {
-    _bloc = MainBloc();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (await _isUpdateCheck()) {
         showUpdateDialog(context);
@@ -67,367 +62,287 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    _bloc.close();
-    super.dispose();
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      toolbarHeight: 40,
-      backgroundColor: CustomColor.backgroundLight,
-      elevation: 0.0,
-      titleSpacing: 0,
-      actions: [_buildWarCounter()],
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [_buildApp(), if (config.war != null && config.war == false) const NotWarWidget()],
     );
   }
 
-  Widget _buildNotWar() {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            Colors.yellowAccent,
-            Colors.blueAccent,
-          ],
-        )),
-        child: Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Война окончена!", style: TextStyle(fontSize: 30, color: CustomColor.backgroundLight)),
-            Text("24/02/2022 - ${DateFormat("dd/MM/yyyy").format(DateTime.now().toLocal())}",
-                style: const TextStyle(fontSize: 24, color: CustomColor.backgroundLight)),
-          ],
-        )),
+  Widget _buildAlarmCounter(int alarmCount) {
+    if (alarmCount == 0) return const SizedBox.shrink();
+    return Stack(
+      children: [
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: Builder(
+                builder: (context) => CupertinoButton(
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                      padding: EdgeInsets.zero,
+                      child: Lottie.asset(
+                        'assets/lottie/warning.json',
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                        frameRate: FrameRate(60),
+                      ),
+                    ))),
+        Positioned(
+          top: 5,
+          right: 5,
+          child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(color: CustomColor.red, shape: BoxShape.circle, border: Border.all(color: CustomColor.background)),
+              child: Center(
+                child: Text(
+                  alarmCount.toString(),
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+              )),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildToolBarStatus(int count, Widget icon, Color color) {
+    if (count == 0) return const SizedBox.shrink();
+    return Container(
+      height: 25,
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [icon, const SizedBox(width: 5), Text("$count", textAlign: TextAlign.center)],
       ),
     );
   }
 
-  Widget _buildWarCounter() {
-    if (ConfigRepository.instance.config.war == true && ConfigRepository.instance.config.startWarDate != null) {
-      int warDay = DateTime.now().difference(ConfigRepository.instance.config.startWarDate!).inDays + 1;
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-        child: Text("$warDay день войны", textAlign: TextAlign.center, style: const TextStyle(color: CustomColor.red)),
-      );
-    }
-    return const SizedBox.shrink();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (ConfigRepository.instance.config.war != null && ConfigRepository.instance.config.war == false) {
-      return _buildNotWar();
-    }
-    return BlocBuilder<MainBloc, MainState>(
-      bloc: _bloc,
-      builder: (BuildContext context, MainState state) {
-        if (state is MainLoadedDataState || state is MainInitialState) {
-          return Scaffold(
-            backgroundColor: CustomColor.background,
-            body: Center(
-              child: Lottie.asset(
-                'assets/lottie/load2.json',
-                width: 250,
-                height: 250,
-                frameRate: FrameRate(60),
-              ),
-            ),
-          );
-        }
+  Widget _buildApp() {
+    return BlocProvider(
+      create: (_) => MainBloc(widget.initAlarm!),
+      child: BlocBuilder<MainBloc, MainState>(builder: (BuildContext context, MainState state) {
         if (state is MainLoadDataState) {
-          return _buildScaffold(
-            Padding(
-              padding: const EdgeInsets.only(top: 15, right: 5, left: 5),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  UiTools.getAlarmRegion(state.listRegions).isNotEmpty
-                      ? _buildAlertList(UiTools.getAlarmRegion(state.listRegions))
-                      : const SizedBox.shrink(),
-                  Expanded(
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Positioned.fill(
-                          child: _buildMap(state.listRegions),
-                        ),
-                        AnimatedPositioned(
-                          top: sizeAllListTop,
-                          curve: Curves.easeOutCirc,
-                          height: sizeAllListHeight ?? _getHeightAllRegion(context, false, UiTools.getAlarmRegion(state.listRegions).isNotEmpty),
-                          width: MediaQuery.of(context).size.width,
-                          duration: const Duration(milliseconds: 600),
-                          child: _buildAllRegion(state.listRegions),
-                        ),
-                      ],
+          return Scaffold(
+              backgroundColor: CustomColor.background,
+              resizeToAvoidBottomInset: false,
+              drawer: CustomDrawer(allRegion: state.listRegions),
+              endDrawer: CustomEndDrawer(alertsRegions: UiTools.getAlarmRegion(state.listRegions)),
+              endDrawerEnableOpenDragGesture: false,
+              body: SafeArea(
+                child: CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: <Widget>[
+                    SliverAppBar(
+                      stretch: true,
+                      actions: [_buildAlarmCounter(UiTools.getAlarmRegion(state.listRegions).length)],
+                      pinned: true,
+                      floating: true,
+                      expandedHeight: 383,
+                      bottom: PreferredSize(
+                          preferredSize: const Size(double.infinity, 33),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 3,
+                                width: double.infinity,
+                                color: Colors.black,
+                              ),
+                              Container(
+                                color: CustomColor.systemTextBox,
+                                height: 30,
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: Row(
+                                  children: [
+                                    _buildToolBarStatus(
+                                      UiTools.getAlarmRegion(state.listRegions).length,
+                                      SvgPicture.asset("assets/icons/alarm.svg", width: 20, color: CustomColor.textColor),
+                                      CustomColor.red,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    _buildToolBarStatus(
+                                      UiTools.getCountWarningRegion(state.listRegions),
+                                      SvgPicture.asset("assets/icons/bomb.svg", width: 20, color: CustomColor.textColor),
+                                      CustomColor.colorMapAtantion,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    _buildToolBarStatus(
+                                      (state.listRegions.length - UiTools.getAlarmRegion(state.listRegions).length),
+                                      SvgPicture.asset("assets/icons/safety.svg", width: 20, color: CustomColor.textColor),
+                                      CustomColor.green,
+                                    ),
+                                    const Spacer(),
+                                    PopupMenuButton<int>(
+                                      icon: const Icon(Icons.sort),
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                      tooltip: "Сортировка",
+                                      splashRadius: 1,
+                                      onSelected: (int sortIndex) => BlocProvider.of<MainBloc>(context).add(MainChangeSort(sortIndex: sortIndex)),
+                                      offset: const Offset(-30, 25),
+                                      itemBuilder: (BuildContext context) {
+                                        return _buildSortPopup(state.sortIndex);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )),
+                      flexibleSpace: FlexibleSpaceBar(
+                        background: _buildMap(state.listRegions),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            allRegion: state.listRegions,
-          );
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                          return Padding(
+                              key: ValueKey(state.listRegions[index].region),
+                              padding: const EdgeInsets.symmetric(vertical: 3),
+                              child: CupertinoButton(
+                                onPressed: () async => await showDistrictDialog(context, state.listRegions[index]),
+                                padding: EdgeInsets.zero,
+                                child: CardList(
+                                  key: ValueKey(state.listRegions[index].region),
+                                  model: state.listRegions[index],
+                                ),
+                              ));
+                        },
+                        childCount: state.listRegions.length,
+                      ),
+                    ),
+                  ],
+                ),
+              ));
         }
-        return Scaffold(body: _buildErrorWidget());
-      },
+        if (state is MainErrorDataState) {
+          return Scaffold(body: _buildErrorWidget());
+        }
+        return const SizedBox.shrink();
+      }),
     );
   }
 
-  Widget _buildScaffold(Widget child, {List<RegionModel>? allRegion}) {
-    return Scaffold(
-        backgroundColor: CustomColor.background,
-        appBar: _buildAppBar(),
-        resizeToAvoidBottomInset: false,
-        drawer: CustomDrawer(allRegion: allRegion ?? []),
-        body: SafeArea(
-          child: child,
-        ));
+  List<PopupMenuItem<int>> _buildSortPopup(int selectSort) {
+    Widget checkIcon = const Icon(Icons.check, color: CustomColor.green);
+    return [
+      PopupMenuItem(
+        value: 0,
+        padding: EdgeInsets.zero,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(children: [
+            const Padding(padding: EdgeInsetsDirectional.only(end: 8.0), child: Icon(Icons.warning_amber_rounded)),
+            const Text("Сперва тревоги"),
+            const Spacer(),
+            if (selectSort == 0) checkIcon,
+          ]),
+        ),
+      ),
+      PopupMenuItem(
+        value: 1,
+        padding: EdgeInsets.zero,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(children: [
+            const Padding(padding: EdgeInsetsDirectional.only(end: 8.0), child: Icon(Icons.shield_outlined)),
+            const Text("Сперва без тревоги"),
+            if (selectSort == 1) checkIcon,
+          ]),
+        ),
+      ),
+      PopupMenuItem(
+        value: 2,
+        padding: EdgeInsets.zero,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(children: [
+            const Padding(padding: EdgeInsetsDirectional.only(end: 8.0), child: Icon(Icons.sort_by_alpha_outlined)),
+            const Text("По алфавиту"),
+            if (selectSort == 2) checkIcon,
+          ]),
+        ),
+      ),
+      PopupMenuItem(
+        value: 3,
+        padding: EdgeInsets.zero,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(children: [
+            const Padding(padding: EdgeInsetsDirectional.only(end: 8.0), child: Icon(Icons.keyboard_double_arrow_down_outlined)),
+            const Text("от Я до А"),
+            if (selectSort == 3) checkIcon,
+          ]),
+        ),
+      ),
+    ];
   }
 
   Widget _buildMap(List<RegionModel> allRegion) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              color: CustomColor.backgroundLight,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Row(
-                  children: [
-                    const Icon(Icons.map_outlined, color: Colors.greenAccent),
-                    _buildTitle("Карта"),
-                  ],
-                ),
-              )),
-          Stack(
-            children: [
-              InteractiveViewer(
-                maxScale: 3,
-                minScale: 1,
-                child: Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width,
-                    color: CustomColor.backgroundLight,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 300, maxWidth: 360, minHeight: 300, minWidth: 360),
-                      child: LayoutBuilder(builder: ((context, constraints) {
-                        double w = constraints.maxWidth;
-                        double h = constraints.minHeight;
-                        return Stack(
-                          children: [
-                            Positioned(
-                              top: 30,
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: SvgPicture.string(
-                                fit: BoxFit.fitWidth,
-                                UkrainSvg.getSvgStr(regions: allRegion),
-                                placeholderBuilder: (BuildContext context) => Center(
-                                  child: Lottie.asset('assets/lottie/load2.json', width: 250, height: 250, frameRate: FrameRate(60)),
-                                ),
-                              ),
-                            ),
-                            Positioned(top: h * 0.55, left: w * 0.64, child: _buildMapText("Днепропетровск", allRegion, ERegion.dnipro, fontSize: 6)),
-                            Positioned(top: h * 0.48, left: w * 0.89, child: _buildMapText("Луганск", allRegion, ERegion.lugan, fontSize: 6)),
-                            Positioned(top: h * 0.6, left: w * 0.82, child: _buildMapText("Донецк", allRegion, ERegion.donetsk)),
-                            Positioned(top: h * 0.66, left: w * 0.69, child: _buildMapText("Запорожье", allRegion, ERegion.zapor, fontSize: 6.5)),
-                            Positioned(top: h * 0.72, left: w * 0.6, child: _buildMapText("Херсон", allRegion, ERegion.herson)),
-                            Positioned(top: h * 0.85, left: w * 0.62, child: _buildMapText("АР Крым", allRegion, ERegion.krim, fontSize: 6)),
-                            Positioned(top: h * 0.4, left: w * 0.74, child: _buildMapText("Харьков", allRegion, ERegion.harkiv, fontSize: 9)),
-                            Positioned(top: h * 0.4, left: w * 0.585, child: _buildMapText("Полтава", allRegion, ERegion.poltava, fontSize: 9)),
-                            Positioned(top: h * 0.28, left: w * 0.62, child: _buildMapText("Сумы", allRegion, ERegion.sumska, fontSize: 9)),
-                            Positioned(top: h * 0.24, left: w * 0.49, child: _buildMapText("Чернигов", allRegion, ERegion.chernigev, fontSize: 7)),
-                            Positioned(top: h * 0.34, left: w * 0.43, child: _buildMapText("Киев", allRegion, ERegion.kyiv, fontSize: 11)),
-                            Positioned(top: h * 0.46, left: w * 0.46, child: _buildMapText("Черкасы", allRegion, ERegion.cherkasy, fontSize: 8)),
-                            Positioned(top: h * 0.54, left: w * 0.48, child: _buildMapText("Кировоград", allRegion, ERegion.kirovograd)),
-                            Positioned(top: h * 0.64, left: w * 0.5, child: _buildMapText("Николаев", allRegion, ERegion.mikolaev, fontSize: 6)),
-                            Positioned(top: h * 0.67, left: w * 0.41, child: _buildMapText("Одесса", allRegion, ERegion.odesa, fontSize: 6)),
-                            Positioned(top: h * 0.31, left: w * 0.29, child: _buildMapText("Житомир", allRegion, ERegion.jitomer, fontSize: 7)),
-                            Positioned(top: h * 0.5, left: w * 0.31, child: _buildMapText("Винница", allRegion, ERegion.vinetsk, fontSize: 7)),
-                            Positioned(top: h * 0.26, left: w * 0.22, child: _buildMapText("Ровно", allRegion, ERegion.rivno, fontSize: 7)),
-                            Positioned(top: h * 0.26, left: w * 0.11, child: _buildMapText("Луцк", allRegion, ERegion.volinska, fontSize: 10)),
-                            Positioned(
-                                top: h * 0.40, left: w * 0.23, child: _buildMapText("Хмель-\nницкий", allRegion, ERegion.hmelnytsk, fontSize: 6)),
-                            Positioned(top: h * 0.44, left: w * 0.16, child: _buildMapText("Терно-\nполь", allRegion, ERegion.ternopil, fontSize: 6)),
-                            Positioned(top: h * 0.4, left: w * 0.06, child: _buildMapText("Львов", allRegion, ERegion.lvow, fontSize: 8)),
-                            Positioned(top: h * 0.54, left: w * 0.01, child: _buildMapText("Ужгород", allRegion, ERegion.zakarpatska, fontSize: 6)),
-                            Positioned(
-                                top: h * 0.51,
-                                left: w * 0.09,
-                                child: _buildMapText("Ивано-\nФранковск", allRegion, ERegion.ivanoFrankowsk, fontSize: 5)),
-                            Positioned(top: h * 0.57, left: w * 0.17, child: _buildMapText("Черновцы", allRegion, ERegion.chernivets, fontSize: 5)),
-                          ],
-                        );
-                      })),
-                    )),
-              ),
-              Positioned(
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  height: 55,
-                  width: double.infinity,
-                  color: CustomColor.backgroundLight.withOpacity(0.5),
-                  child: UiTools.getAlarmRegion(allRegion).isNotEmpty
-                      ? Column(
-                          children: [
-                            Text("Тревога на ${UiTools.getPercentAlarm(allRegion)}% територии", style: const TextStyle(fontSize: 18)),
-                            Text(
-                                "(${UiTools.getAlarmRegion(allRegion).length} ${UiTools.declinationWordByNumber(UiTools.getAlarmRegion(allRegion).length, "Область", "Области", "Областей")})",
-                                style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.7))),
-                          ],
-                        )
-                      : const Text(
-                          "Тревоги нет",
-                          style: TextStyle(color: CustomColor.green, fontSize: 19, fontWeight: FontWeight.w700),
-                          textAlign: TextAlign.center,
-                        ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 7),
-      child: Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-    );
-  }
-
-  double _getHeightAllRegion(BuildContext context, bool isOpen, bool isAlarmBloc) {
-    if (isAlarmBloc) {
-      return MediaQuery.of(context).size.height - (50 + 120 + 40 + (isOpen ? 0 : 339));
-    }
-    return MediaQuery.of(context).size.height - (50 + 30 + (isOpen ? 0 : 339));
-  }
-
-  Widget _buildAllRegion(List<RegionModel> allRegion) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
+    return InteractiveViewer(
+      maxScale: 3,
+      minScale: 1,
       child: Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: CustomColor.backgroundLight),
-        padding: const EdgeInsets.only(top: 4),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: SizedBox(
-                  height: 24,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.pix, color: Colors.indigoAccent),
-                      Expanded(
-                        child: _buildTitle("Области"),
-                      ),
-                      const Spacer(),
-                      CupertinoButton(
-                          onPressed: () {
-                            setState(() {
-                              if (sizeAllListTop == 332) {
-                                sizeAllListTop = -5;
-                                sizeAllListHeight = _getHeightAllRegion(context, true, UiTools.getAlarmRegion(allRegion).isNotEmpty);
-
-                                _controller.forward();
-                              } else {
-                                sizeAllListTop = 332;
-                                sizeAllListHeight = _getHeightAllRegion(context, false, UiTools.getAlarmRegion(allRegion).isNotEmpty);
-
-                                _controller.reverse();
-                              }
-                            });
-                          },
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                          ),
-                          child: RotationTransition(
-                            turns: Tween(begin: 0.0, end: 0.5).animate(_controller),
-                            child: const Icon(Icons.expand_less, color: Colors.white, size: 30),
-                          ))
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Expanded(child: _buildList(allRegion)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAlertList(List<RegionModel> alertsRegions) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: SizedBox(
-          height: 120,
-          child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: CustomColor.backgroundLight,
-              ),
-              padding: const EdgeInsets.only(top: 4),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.warning_amber_rounded,
-                            color: CustomColor.red,
-                          ),
-                          _buildTitle("Тревоги"),
-                          const Spacer(),
-                          Container(
-                            width: 25,
-                            height: 25,
-                            margin: const EdgeInsets.symmetric(horizontal: 5),
-                            alignment: Alignment.center,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: CustomColor.red,
-                            ),
-                            child: Text(alertsRegions.length.toString(), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
-                          )
-                        ],
+          alignment: Alignment.center,
+          width: MediaQuery.of(context).size.width,
+          color: CustomColor.backgroundLight,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 300, maxWidth: 380, minHeight: 300, minWidth: 380),
+            child: LayoutBuilder(builder: ((context, constraints) {
+              double w = constraints.maxWidth;
+              double h = constraints.minHeight;
+              return Stack(
+                children: [
+                  Positioned(
+                    top: 30,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: SvgPicture.string(
+                      fit: BoxFit.fitWidth,
+                      UkrainSvg.getSvgStr(regions: allRegion),
+                      placeholderBuilder: (BuildContext context) => Center(
+                        child: Lottie.asset('assets/lottie/load2.json', width: 250, height: 250, frameRate: FrameRate(60)),
                       ),
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: alertsRegions.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CardListSmall(region: alertsRegions[index]),
-                          );
-                        },
-                      ),
-                    )
-                  ],
-                ),
-              ))),
+                  ),
+                  Positioned(top: h * 0.55, left: w * 0.64, child: _buildMapText("Днепропетровск", allRegion, ERegion.dnipro, fontSize: 6)),
+                  Positioned(top: h * 0.48, left: w * 0.89, child: _buildMapText("Луганск", allRegion, ERegion.lugan, fontSize: 6)),
+                  Positioned(top: h * 0.6, left: w * 0.82, child: _buildMapText("Донецк", allRegion, ERegion.donetsk)),
+                  Positioned(top: h * 0.66, left: w * 0.69, child: _buildMapText("Запорожье", allRegion, ERegion.zapor, fontSize: 6.5)),
+                  Positioned(top: h * 0.72, left: w * 0.6, child: _buildMapText("Херсон", allRegion, ERegion.herson)),
+                  Positioned(top: h * 0.85, left: w * 0.62, child: _buildMapText("АР Крым", allRegion, ERegion.krim, fontSize: 6)),
+                  Positioned(top: h * 0.4, left: w * 0.74, child: _buildMapText("Харьков", allRegion, ERegion.harkiv, fontSize: 9)),
+                  Positioned(top: h * 0.4, left: w * 0.585, child: _buildMapText("Полтава", allRegion, ERegion.poltava, fontSize: 9)),
+                  Positioned(top: h * 0.28, left: w * 0.62, child: _buildMapText("Сумы", allRegion, ERegion.sumska, fontSize: 9)),
+                  Positioned(top: h * 0.24, left: w * 0.49, child: _buildMapText("Чернигов", allRegion, ERegion.chernigev, fontSize: 7)),
+                  Positioned(top: h * 0.34, left: w * 0.43, child: _buildMapText("Киев", allRegion, ERegion.kyiv, fontSize: 11)),
+                  Positioned(top: h * 0.46, left: w * 0.46, child: _buildMapText("Черкасы", allRegion, ERegion.cherkasy, fontSize: 8)),
+                  Positioned(top: h * 0.54, left: w * 0.48, child: _buildMapText("Кировоград", allRegion, ERegion.kirovograd)),
+                  Positioned(top: h * 0.64, left: w * 0.5, child: _buildMapText("Николаев", allRegion, ERegion.mikolaev, fontSize: 6)),
+                  Positioned(top: h * 0.67, left: w * 0.41, child: _buildMapText("Одесса", allRegion, ERegion.odesa, fontSize: 6)),
+                  Positioned(top: h * 0.31, left: w * 0.29, child: _buildMapText("Житомир", allRegion, ERegion.jitomer, fontSize: 7)),
+                  Positioned(top: h * 0.5, left: w * 0.31, child: _buildMapText("Винница", allRegion, ERegion.vinetsk, fontSize: 7)),
+                  Positioned(top: h * 0.26, left: w * 0.22, child: _buildMapText("Ровно", allRegion, ERegion.rivno, fontSize: 7)),
+                  Positioned(top: h * 0.26, left: w * 0.11, child: _buildMapText("Луцк", allRegion, ERegion.volinska, fontSize: 10)),
+                  Positioned(top: h * 0.40, left: w * 0.23, child: _buildMapText("Хмель-\nницкий", allRegion, ERegion.hmelnytsk, fontSize: 6)),
+                  Positioned(top: h * 0.44, left: w * 0.16, child: _buildMapText("Терно-\nполь", allRegion, ERegion.ternopil, fontSize: 6)),
+                  Positioned(top: h * 0.4, left: w * 0.06, child: _buildMapText("Львов", allRegion, ERegion.lvow, fontSize: 8)),
+                  Positioned(top: h * 0.54, left: w * 0.01, child: _buildMapText("Ужгород", allRegion, ERegion.zakarpatska, fontSize: 6)),
+                  Positioned(
+                      top: h * 0.51, left: w * 0.09, child: _buildMapText("Ивано-\nФранковск", allRegion, ERegion.ivanoFrankowsk, fontSize: 5)),
+                  Positioned(top: h * 0.57, left: w * 0.17, child: _buildMapText("Черновцы", allRegion, ERegion.chernivets, fontSize: 5)),
+                ],
+              );
+            })),
+          )),
     );
   }
 
@@ -438,28 +353,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         region,
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: fontSize),
-      ),
-    );
-  }
-
-  Widget _buildList(List<RegionModel> listRegions) {
-    return ColoredBox(
-      color: CustomColor.background,
-      child: ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-              key: ValueKey(listRegions[index].region),
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: CupertinoButton(
-                onPressed: () async => await showDistrictDialog(context, listRegions[index]),
-                padding: EdgeInsets.zero,
-                child: CardList(
-                  key: ValueKey(listRegions[index].region),
-                  model: listRegions[index],
-                ),
-              ));
-        },
-        itemCount: listRegions.length,
       ),
     );
   }

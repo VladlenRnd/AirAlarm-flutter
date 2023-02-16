@@ -14,6 +14,17 @@ class UiTools {
     return alarmRegion;
   }
 
+  static int getCountWarningRegion(List<RegionModel> allRegion) {
+    int warningCount = 0;
+    for (RegionModel element in allRegion) {
+      try {
+        element.districts.firstWhere((d) => d.isAlarm == true);
+        warningCount++;
+      } catch (e) {}
+    }
+    return warningCount;
+  }
+
   static int getPercentAlarm(List<RegionModel> allRegion) {
     double onePercent = 100 / allRegion.length;
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:alarm/service/abstract_service.dart';
 import 'package:alarm/service/notification_service.dart';
 import 'package:alarm/tools/region/region_title_tools.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,34 +15,49 @@ import 'shered_preferences_service.dart';
 
 FlutterBackgroundService? bservice;
 
-class LocationService {
+class LocationService implements AService {
   static late final FlutterBackgroundService _service;
 
-  static Future<void> init() async {
-    _service = FlutterBackgroundService();
+  LocationService._privateConstructor();
+  static final LocationService _instance = LocationService._privateConstructor();
+  factory LocationService() => _instance;
 
-    await _service.configure(
-      androidConfiguration: AndroidConfiguration(
-        // this will executed when app is in foreground or background in separated isolate
-        onStart: _onStart,
-        initialNotificationContent: "",
-        initialNotificationTitle: "Автоопределение области запущено",
+  @override
+  bool isInitDone = false;
 
-        // auto start service
-        autoStart: await FlutterBackgroundService().isRunning(),
-        isForegroundMode: true,
-      ),
-      iosConfiguration: IosConfiguration(
-        // auto start service
-        autoStart: true,
+  @override
+  Future<bool> init() async {
+    if (isInitDone) return true;
+    try {
+      _service = FlutterBackgroundService();
 
-        // this will executed when app is in foreground in separated isolate
-        onForeground: ((service) => {}),
+      await _service.configure(
+        androidConfiguration: AndroidConfiguration(
+          // this will executed when app is in foreground or background in separated isolate
+          onStart: _onStart,
+          initialNotificationContent: "",
+          initialNotificationTitle: "Автоопределение области запущено",
 
-        // you have to enable background fetch capability on xcode project
-        onBackground: (service) => true,
-      ),
-    );
+          // auto start service
+          autoStart: await FlutterBackgroundService().isRunning(),
+          isForegroundMode: true,
+        ),
+        iosConfiguration: IosConfiguration(
+          // auto start service
+          autoStart: true,
+
+          // this will executed when app is in foreground in separated isolate
+          onForeground: ((service) => {}),
+
+          // you have to enable background fetch capability on xcode project
+          onBackground: (service) => true,
+        ),
+      );
+      isInitDone = true;
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static Future<bool> enableAutoLocation() async => await _service.startService();
@@ -119,8 +135,8 @@ class LocationService {
   @pragma('vm:entry-point')
   static void _onStart(ServiceInstance service) async {
     DartPluginRegistrant.ensureInitialized();
-    await NotificationService.init();
-    await SheredPreferencesService.init();
+    await NotificationService().init();
+    await SheredPreferencesService().init();
     await Firebase.initializeApp();
     _location(service);
     service.on('stopService').listen((event) {

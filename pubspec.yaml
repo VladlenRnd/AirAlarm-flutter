@@ -53,6 +53,8 @@ dependencies:
   csv: ^5.0.1
   flutter_sticky_header: ^0.6.4
   fl_animated_linechart: ^1.1.6
+  animated_text_kit: ^4.2.2
+  page_transition: ^2.0.9
 
 dev_dependencies:
   flutter_test:
@@ -78,12 +80,15 @@ flutter:
     - assets/images/
     - assets/icons/
 
-
+     
 
   fonts:
     - family: Days
       fonts:
         - asset: fonts/days.ttf
+    - family: 8Bit
+      fonts:
+        - asset: fonts/8bit.ttf
 
         
 

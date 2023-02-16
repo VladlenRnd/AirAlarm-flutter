@@ -1,17 +1,33 @@
 import 'dart:typed_data';
 
+import 'package:alarm/service/abstract_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../tools/custom_color.dart';
 
-class NotificationService {
+class NotificationService implements AService {
   //Main notification
   static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  static Future<void> init() async {
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: AndroidInitializationSettings('ic_start_alarm'), macOS: null);
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  NotificationService._privateConstructor();
+  static final NotificationService _instance = NotificationService._privateConstructor();
+  factory NotificationService() => _instance;
+
+  @override
+  bool isInitDone = false;
+
+  @override
+  Future<bool> init() async {
+    if (isInitDone) return true;
+    try {
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: AndroidInitializationSettings('ic_start_alarm'), macOS: null);
+      await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      isInitDone = true;
+      return true;
+    } catch (e) {
+      return false;
+    }
 
     // final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
     //   requestSoundPermission: false,

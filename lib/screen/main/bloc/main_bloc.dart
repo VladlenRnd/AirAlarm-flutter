@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../models/district_model.dart';
+import '../../../service/shered_preferences_service.dart';
 import '../../../tools/connection/connection.dart';
 import '../../../tools/connection/response/alarm_response.dart';
 import '../../../tools/history.dart';
@@ -20,19 +21,19 @@ part 'main_state.dart';
 class MainBloc extends Bloc<MainEvent, MainState> {
   int _oldDataTry = 0;
   Timer? _timer;
+  int? sortIndex = SheredPreferencesService.preferences.getInt("sort");
+  final AlarmRespose respose;
 
-  MainBloc() : super(MainInitialState()) {
+  MainBloc(this.respose) : super(MainInitialState()) {
     on<MainEvent>((event, emit) {
       if (event is MainUpdateEvent) {
         _oldDataTry = 0;
         emit.call(
           MainLoadDataState(
-            listRegions: _getAllRegion(event.alarm.states),
+            sortIndex: sortIndex!,
+            listRegions: _sort(sortIndex!, _getAllRegion(event.alarm.states)),
           ),
         );
-      }
-      if (event is MainForcedUpdateEvent) {
-        _getForceUpdate();
       }
       if (event is MainErrorEvent) {
         if (state is MainLoadDataState && _oldDataTry < 3) {
@@ -42,21 +43,26 @@ class MainBloc extends Bloc<MainEvent, MainState> {
           emit.call(MainErrorDataState());
         }
       }
+      if (event is MainChangeSort) {
+        sortIndex = event.sortIndex;
+        SheredPreferencesService.preferences.setInt("sort", event.sortIndex);
+        if (state is MainLoadDataState) {
+          emit.call(
+            MainLoadDataState(
+              sortIndex: sortIndex!,
+              listRegions: _sort(sortIndex!, (state as MainLoadDataState).listRegions),
+            ),
+          );
+        }
+      }
     });
-    _initTimerData();
-    _getForceUpdate();
-  }
 
-  void _getForceUpdate() async {
-    try {
-      add(MainUpdateEvent(alarm: await _getData()));
-    } catch (e) {
-      add(MainErrorEvent());
-    }
+    _initTimerData();
+    add(MainUpdateEvent(alarm: respose));
   }
 
   void _initTimerData() async {
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 7), (timer) async {
       try {
         add(MainUpdateEvent(alarm: await _getData()));
       } catch (e) {
@@ -67,7 +73,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   Future<AlarmRespose> _getData() async {
     try {
-      return await Conectrion.getAlarm();
+      return await Connection.getAlarm();
     } catch (e) {
       throw Exception("Not data Alarm");
     }
@@ -169,16 +175,57 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     return null;
   }
 
-  @override
-  Future<void> close() {
-    _timer?.cancel();
-    return super.close();
-  }
-
   String? _formatData(String? data) {
     if (data != null) {
       return UiTools.getDateToDay(DateTime.parse(data).toLocal(), true) ?? DateFormat('dd/MM/yyyy  HH:mm:ss').format(DateTime.parse(data).toLocal());
     }
     return null;
+  }
+
+  List<RegionModel> _sort(int sortIndex, List<RegionModel> list) {
+    List<RegionModel> result = List<RegionModel>.from(list);
+
+    switch (sortIndex) {
+      case 0:
+        {
+          result.sort((a, b) {
+            if (a.isAlarm && !b.isAlarm) return -1;
+            if (a.isAlarm && b.isAlarm) return 0;
+            if (!a.isAlarm && !b.isAlarm) return 0;
+            if (!a.isAlarm && b.isAlarm) return 1;
+            return 0;
+          });
+          break;
+        }
+      case 1:
+        {
+          result.sort((a, b) {
+            if (a.isAlarm && !b.isAlarm) return 1;
+            if (a.isAlarm && b.isAlarm) return 0;
+            if (!a.isAlarm && !b.isAlarm) return 0;
+            if (!a.isAlarm && b.isAlarm) return -1;
+            return 0;
+          });
+          break;
+        }
+      case 2:
+        {
+          result.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+          break;
+        }
+      case 3:
+        {
+          result.sort((a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()));
+          break;
+        }
+    }
+
+    return result;
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
   }
 }

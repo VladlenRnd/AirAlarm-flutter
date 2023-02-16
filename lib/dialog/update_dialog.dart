@@ -20,7 +20,8 @@ void showUpdateDialog(BuildContext context) {
               )),
           MaterialButton(
               onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const DownloadScreen()), (route) => false);
+                Navigator.of(context).pop();
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DownloadScreen()));
               },
               color: CustomColor.primaryGreen.withOpacity(0.5),
               child: const Text("Обновить")),

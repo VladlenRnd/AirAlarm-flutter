@@ -60,7 +60,7 @@ class HistoryListWidget extends StatelessWidget {
         header: _buildTitleHeader("Дата ${e.key}", "${e.value.length}"),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
-            (context, i) => _buildHistoryCard(DateTime.parse(e.value[i][0]), DateTime.parse(e.value[i][1])),
+            (context, i) => _buildHistoryCard(DateTime.parse(e.value[i][0]).toLocal(), DateTime.parse(e.value[i][1]).toLocal()),
             childCount: e.value.length,
           ),
         ),
@@ -109,7 +109,7 @@ class HistoryListWidget extends StatelessWidget {
           children: [
             _buildCardTitleValue(
                 "Начало", DateFormat("dd/MM/yyyy").format(dateStart), DateFormat("HH:mm").format(dateStart), CrossAxisAlignment.start),
-            _buildCardTitleValue("Длина", "$hors:$min", "", CrossAxisAlignment.center),
+            _buildCardTitleValue("Время", "$hors:$min", "", CrossAxisAlignment.center),
             _buildCardTitleValue("Конец", DateFormat("dd/MM/yyyy").format(dateEnd), DateFormat("HH:mm").format(dateEnd), CrossAxisAlignment.end),
           ],
         ),
