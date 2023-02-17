@@ -212,7 +212,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   String _countSevenDayAlarm(List<List<String>> alarmHistory) {
     return alarmHistory
         .where((element) {
-          DateTime date = DateTime.parse(element[0]);
+          DateTime date = DateTime.parse(element[0]).toLocal();
           DateTime dateNow = _nowData.add(Duration(days: -(_nowData.weekday + 1)));
 
           if (dateNow.isBefore(date)) return true;
@@ -226,7 +226,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   String _countMonthAlarm(List<List<String>> alarmHistory) {
     return alarmHistory
         .where((element) {
-          DateTime curData = DateTime.parse(element[0]);
+          DateTime curData = DateTime.parse(element[0]).toLocal();
           if (curData.month == _nowData.month && curData.year == _nowData.year) return true;
           return false;
         })

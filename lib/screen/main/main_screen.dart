@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../dialog/update_dialog.dart';
-import '../../service/shered_preferences_service.dart';
 import '../../tools/connection/connection.dart';
 import '../../models/region_model.dart';
 import '../../tools/connection/response/alarm_response.dart';
@@ -124,11 +123,63 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  List<Widget> _buildStatusAlert(List<RegionModel> listRegion) {
+    return [
+      _buildToolBarStatus(
+        UiTools.getAlarmRegion(listRegion).length,
+        SvgPicture.asset("assets/icons/alarm.svg", width: 20, color: CustomColor.textColor),
+        CustomColor.red,
+      ),
+      const SizedBox(width: 10),
+      _buildToolBarStatus(
+        UiTools.getCountWarningRegion(listRegion),
+        SvgPicture.asset("assets/icons/bomb.svg", width: 20, color: CustomColor.textColor),
+        CustomColor.colorMapAtantion,
+      ),
+      const SizedBox(width: 10),
+      _buildToolBarStatus(
+        (listRegion.length - UiTools.getAlarmRegion(listRegion).length),
+        SvgPicture.asset("assets/icons/safety.svg", width: 20, color: CustomColor.textColor),
+        CustomColor.green,
+      ),
+    ];
+  }
+
+  List<Widget> _buildGlobalAlarm() {
+    return [
+      Lottie.asset(
+        'assets/lottie/warning.json',
+        fit: BoxFit.cover,
+        frameRate: FrameRate(60),
+      ),
+      const Text("Всеобщая воздушная тревога", style: TextStyle(color: CustomColor.red)),
+      Lottie.asset(
+        'assets/lottie/warning.json',
+        fit: BoxFit.cover,
+        frameRate: FrameRate(60),
+      ),
+    ];
+  }
+
+  List<Widget> _buildNoAlarm() {
+    return [
+      Lottie.asset(
+        'assets/lottie/shield.json',
+        fit: BoxFit.cover,
+        frameRate: FrameRate(60),
+        repeat: false,
+      ),
+      const Text("Воздушных тревог нет", style: TextStyle(color: CustomColor.green)),
+    ];
+  }
+
   Widget _buildApp() {
     return BlocProvider(
       create: (_) => MainBloc(widget.initAlarm!),
       child: BlocBuilder<MainBloc, MainState>(builder: (BuildContext context, MainState state) {
         if (state is MainLoadDataState) {
+          bool isGlobalAlarm = UiTools.isGlobalAlarm(state.listRegions);
+          bool isNoAlarm = UiTools.isNoAlarm(state.listRegions);
           return Scaffold(
               backgroundColor: CustomColor.background,
               resizeToAvoidBottomInset: false,
@@ -158,26 +209,12 @@ class _MainScreenState extends State<MainScreen> {
                                 color: CustomColor.systemTextBox,
                                 height: 30,
                                 alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
                                   children: [
-                                    _buildToolBarStatus(
-                                      UiTools.getAlarmRegion(state.listRegions).length,
-                                      SvgPicture.asset("assets/icons/alarm.svg", width: 20, color: CustomColor.textColor),
-                                      CustomColor.red,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    _buildToolBarStatus(
-                                      UiTools.getCountWarningRegion(state.listRegions),
-                                      SvgPicture.asset("assets/icons/bomb.svg", width: 20, color: CustomColor.textColor),
-                                      CustomColor.colorMapAtantion,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    _buildToolBarStatus(
-                                      (state.listRegions.length - UiTools.getAlarmRegion(state.listRegions).length),
-                                      SvgPicture.asset("assets/icons/safety.svg", width: 20, color: CustomColor.textColor),
-                                      CustomColor.green,
-                                    ),
+                                    if (isNoAlarm) ..._buildNoAlarm(),
+                                    if (!isNoAlarm && isGlobalAlarm) ..._buildGlobalAlarm(),
+                                    if (!isNoAlarm && !isGlobalAlarm) ..._buildStatusAlert(state.listRegions),
                                     const Spacer(),
                                     PopupMenuButton<int>(
                                       icon: const Icon(Icons.sort),

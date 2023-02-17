@@ -92,10 +92,10 @@ class CustomDrawer extends StatelessWidget {
         child: _buildAllertSetting(context, setState),
       ),
       header: _buildItemHeader(context),
-      theme: ExpandableThemeData(
+      theme: const ExpandableThemeData(
         iconColor: CustomColor.textColor,
         headerAlignment: ExpandablePanelHeaderAlignment.center,
-        iconPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        iconPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
     );
   }

@@ -68,7 +68,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "ЗАГРУЗКА ОБНОВЛЕНИЯ",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -90,7 +90,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                     const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                     Text(
                       "${mByteDownloadStr}MB / ${mByteTotalStr}MB",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         color: CustomColor.textColor,
                         fontWeight: FontWeight.bold,

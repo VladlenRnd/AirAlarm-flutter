@@ -13,7 +13,7 @@ class HistoryListWidget extends StatelessWidget {
 
   void _getGroup() {
     for (List<String> element in historyData) {
-      DateTime date = DateTime.parse(element[0]);
+      DateTime date = DateTime.parse(element[0]).toLocal();
       if (_groupedData[DateFormat("dd/MM/yyyy").format(date)] == null) {
         _groupedData[DateFormat("dd/MM/yyyy").format(date)] = [element];
       } else {

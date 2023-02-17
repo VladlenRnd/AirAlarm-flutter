@@ -108,7 +108,7 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
                     widget.onChange.call(startTime, endTime);
                   }
                 },
-                child: Text("Выбрать время", style: TextStyle(color: CustomColor.textColor)),
+                child: const Text("Выбрать время", style: TextStyle(color: CustomColor.textColor)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),

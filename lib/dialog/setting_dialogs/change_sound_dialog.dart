@@ -80,7 +80,7 @@ Widget _buildItem(String title, String fileName, void Function(Function()) setSt
           const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
           Text(
             title,
-            style: TextStyle(fontSize: 15, color: CustomColor.textColor, fontFamily: "Days"),
+            style: const TextStyle(fontSize: 15, color: CustomColor.textColor, fontFamily: "Days"),
           ),
           const Spacer(),
           if (fileName.isNotEmpty)
@@ -90,7 +90,7 @@ Widget _buildItem(String title, String fileName, void Function(Function()) setSt
                 _controller = await _player!.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
               },
               splashRadius: 25,
-              icon: Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
+              icon: const Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
             )
         ],
       ),

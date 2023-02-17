@@ -84,7 +84,7 @@ class TabListHistoryWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
       child: Column(
         children: [
-          Text("Период", style: TextStyle(fontSize: 15, color: CustomColor.textColor)),
+          const Text("Период", style: TextStyle(fontSize: 15, color: CustomColor.textColor)),
           OutlinedButton(
               onPressed: () async {
                 await showDateRangePicker(
@@ -104,10 +104,10 @@ class TabListHistoryWidget extends StatelessWidget {
                 children: [
                   Text(
                     DateFormat("dd/MM/yyyy").format(selectFirst),
-                    style: TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
+                    style: const TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
                     child: Text(
                       "-",
                       style: TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
@@ -115,7 +115,7 @@ class TabListHistoryWidget extends StatelessWidget {
                   ),
                   Text(
                     DateFormat("dd/MM/yyyy").format(selectLast),
-                    style: TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
+                    style: const TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
                   ),
                 ],
               )),
@@ -142,7 +142,7 @@ class TabListHistoryWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        Text(data, style: TextStyle(fontSize: 14, fontFamily: "Days", color: CustomColor.textColor)),
+        Text(data, style: const TextStyle(fontSize: 14, fontFamily: "Days", color: CustomColor.textColor)),
       ],
     );
   }

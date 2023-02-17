@@ -30,8 +30,6 @@ class NewsScreen extends StatelessWidget {
                 )
               ],
             ),
-            // const SizedBox(width: 10),
-            // const Text("beta", style: TextStyle(fontSize: 10, color: CustomColor.red))
           ]),
           backgroundColor: CustomColor.backgroundLight,
         ),

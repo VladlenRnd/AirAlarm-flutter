@@ -74,11 +74,11 @@ class _ModalTopWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: const [
                   Icon(Icons.history_outlined, color: CustomColor.systemSecondary),
                   SizedBox(width: 10),
-                  Text("История тревог \nза 3 дня", textAlign: TextAlign.start, style: TextStyle(fontSize: 14)),
+                  Text("Краткая история тревог", textAlign: TextAlign.start, style: TextStyle(fontSize: 14)),
                 ],
               ),
               Flexible(
@@ -196,10 +196,10 @@ class _ModalTopWidget extends StatelessWidget {
   Widget _buildAlarmTime(String? timeStart, String? timeEnd) {
     if (timeStart != null) {
       return RichText(
-          text: TextSpan(text: "Начало тревоги\n", style: TextStyle(color: CustomColor.textColor, fontFamily: "Days"), children: [
+          text: TextSpan(text: "Начало тревоги\n", style: const TextStyle(color: CustomColor.textColor, fontFamily: "Days"), children: [
         TextSpan(
           text: timeStart,
-          style: TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
+          style: const TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
         )
       ]));
     } else if (timeEnd != null) {
@@ -207,7 +207,7 @@ class _ModalTopWidget extends StatelessWidget {
           text: TextSpan(text: "Конец тревоги\n", style: TextStyle(color: CustomColor.textColor.withOpacity(0.6), fontFamily: "Days"), children: [
         TextSpan(
           text: timeEnd,
-          style: TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
+          style: const TextStyle(color: CustomColor.textColor, fontSize: 16, fontFamily: "Days"),
         )
       ]));
     } else {

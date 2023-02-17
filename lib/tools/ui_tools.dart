@@ -14,13 +14,35 @@ class UiTools {
     return alarmRegion;
   }
 
+  static bool isGlobalAlarm(List<RegionModel> allRegion) {
+    bool result = true;
+    for (RegionModel element in allRegion) {
+      if (!element.isAlarm) {
+        return false;
+      }
+    }
+    return result;
+  }
+
+  static bool isNoAlarm(List<RegionModel> allRegion) {
+    bool result = true;
+    for (RegionModel element in allRegion) {
+      if (element.isAlarm) {
+        return false;
+      }
+    }
+    return result;
+  }
+
   static int getCountWarningRegion(List<RegionModel> allRegion) {
     int warningCount = 0;
     for (RegionModel element in allRegion) {
-      try {
-        element.districts.firstWhere((d) => d.isAlarm == true);
-        warningCount++;
-      } catch (e) {}
+      if (!element.isAlarm) {
+        try {
+          element.districts.firstWhere((d) => d.isAlarm == true);
+          warningCount++;
+        } catch (e) {}
+      }
     }
     return warningCount;
   }
