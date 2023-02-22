@@ -11,13 +11,14 @@ import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
 
 String _selectValue = "";
-AudioPlayer _audioPlayer = AudioPlayer();
+AudioPlayer? _audioPlayer;
 String? prefix;
 
 Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) async {
   bool isSave = false;
   _selectValue = SheredPreferencesService.preferences.getString(isAlarmSound ? "alarmSong" : "cancelSong")!;
   prefix = "song/${isAlarmSound ? "alarm/" : "cancel/"}";
+  _audioPlayer = AudioPlayer();
   await showDialog(
     context: context,
     barrierDismissible: false,
@@ -57,7 +58,9 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
       );
     },
   ).then((value) async {
-    _audioPlayer.stop();
+    _audioPlayer!.stop();
+    _audioPlayer!.dispose();
+    _audioPlayer = null;
   });
 }
 
@@ -85,7 +88,7 @@ Widget _buildItem(String title, String fileName, void Function(Function()) setSt
           const Spacer(),
           if (fileName.isNotEmpty)
             IconButton(
-              onPressed: () async => await _audioPlayer.play(AssetSource("$prefix$fileName.mp3"), mode: PlayerMode.lowLatency, volume: 0.2),
+              onPressed: () async => await _audioPlayer!.play(AssetSource("$prefix$fileName.mp3"), mode: PlayerMode.mediaPlayer, volume: 0.2),
               splashRadius: 25,
               icon: const Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
             )
