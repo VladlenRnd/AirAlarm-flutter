@@ -18,7 +18,7 @@ void showPermissionDialog(BuildContext context) {
                     child: Text(
                   "Нет разрешения на уведомления",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 22, color: CustomColor.red),
+                  style: TextStyle(fontSize: 18, color: CustomColor.red),
                 )),
                 Icon(Icons.notifications_off_outlined),
               ],
@@ -28,7 +28,7 @@ void showPermissionDialog(BuildContext context) {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               color: CustomColor.systemTextBox,
               child: const Text("Что бы получать уведомления о начале и конце тревоги, нужно предоставить разрешения на уведомления в настройках",
-                  style: TextStyle(fontSize: 18), textAlign: TextAlign.center),
+                  style: TextStyle(fontSize: 14), textAlign: TextAlign.center),
             ),
             actionsAlignment: MainAxisAlignment.center,
             actions: <Widget>[

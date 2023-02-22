@@ -27,18 +27,20 @@ class _InfoDialog extends StatelessWidget {
               Text(contenInfo, textAlign: TextAlign.center),
             ],
           ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsOverflowAlignment: OverflowBarAlignment.center,
           actions: [
+            ElevatedButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(true);
+                },
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
+                child: Text(actionButtonStr)),
             TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
                 child: Text(
                   closeButtonStr,
                 )),
-            MaterialButton(
-                onPressed: () async {
-                  Navigator.of(context).pop(true);
-                },
-                color: CustomColor.primaryGreen.withOpacity(0.5),
-                child: Text(actionButtonStr)),
           ],
         ));
   }

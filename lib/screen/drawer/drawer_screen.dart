@@ -188,7 +188,7 @@ class CustomDrawer extends StatelessWidget {
         icon: const Icon(Icons.battery_alert, size: 40),
         actionButtonStr: "Да",
         closeButtonStr: "Нет",
-        contenInfo: "Этот режим потребляем больше заряда аккамулятора, включить функцию автоопределение области?",
+        contenInfo: "Этот режим потребляем больше заряда аккамулятора \n \n Включить функцию автоопределение области?",
       )) {
         if (await LocationService.enableAutoLocation()) {
           Navigator.of(context).pop();
