@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alarm/screen/main/main_screen.dart';
 import 'package:alarm/tools/connection/connection.dart';
 import 'package:alarm/tools/custom_color.dart';
@@ -239,8 +241,7 @@ class _LoaderScreanState extends State<LoaderScrean> {
     }
   }
 
-  void _goToMain()  => Navigator.pushAndRemoveUntil<void>(context, _createRoute(), (route) => false);
-
+  void _goToMain() => Navigator.pushAndRemoveUntil<void>(context, _createRoute(), (route) => false);
 
   Route _createRoute() {
     return PageTransition(

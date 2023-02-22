@@ -11,13 +11,13 @@ import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
 
 String _selectValue = "";
-AudioCache? _player;
-AudioPlayer? _controller;
+AudioPlayer _audioPlayer = AudioPlayer();
+String? prefix;
 
 Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) async {
   bool isSave = false;
   _selectValue = SheredPreferencesService.preferences.getString(isAlarmSound ? "alarmSong" : "cancelSong")!;
-  _player = AudioCache(prefix: "assets/song/${isAlarmSound ? "alarm/" : "cancel/"}");
+  prefix = "song/${isAlarmSound ? "alarm/" : "cancel/"}";
   await showDialog(
     context: context,
     barrierDismissible: false,
@@ -57,11 +57,7 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
       );
     },
   ).then((value) async {
-    _controller?.stop();
-    _controller?.dispose();
-    await _player?.clearAll();
-    _controller = null;
-    _player = null;
+    _audioPlayer.stop();
   });
 }
 
@@ -89,10 +85,7 @@ Widget _buildItem(String title, String fileName, void Function(Function()) setSt
           const Spacer(),
           if (fileName.isNotEmpty)
             IconButton(
-              onPressed: () async {
-                await _controller?.stop();
-                _controller = await _player!.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
-              },
+              onPressed: () async => await _audioPlayer.play(AssetSource("$prefix$fileName.mp3"), mode: PlayerMode.lowLatency, volume: 0.2),
               splashRadius: 25,
               icon: const Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
             )

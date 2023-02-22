@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:ui';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -40,9 +42,7 @@ Future<void> showSubscribeDialog(BuildContext context) async {
                     MaterialButton(
                         onPressed: () async {
                           setState(() => isSave = true);
-
                           await _saveSubscribe();
-
                           Navigator.of(context).pop();
                         },
                         color: CustomColor.primaryGreen.withOpacity(0.5),

@@ -1,6 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alarm/service/notification_service.dart';
 import 'package:alarm/tools/region/eregion.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -112,19 +113,19 @@ class _MainScreenState extends State<MainScreen> {
     return [
       _buildToolBarStatus(
         UiTools.getAlarmRegion(listRegion).length,
-        SvgPicture.asset("assets/icons/alarm.svg", width: 20, color: CustomColor.textColor),
+        SvgPicture.asset("assets/icons/alarm.svg", width: 20, colorFilter: const ColorFilter.mode(CustomColor.textColor, BlendMode.srcIn)),
         CustomColor.red,
       ),
       const SizedBox(width: 10),
       _buildToolBarStatus(
         UiTools.getCountWarningRegion(listRegion),
-        SvgPicture.asset("assets/icons/bomb.svg", width: 20, color: CustomColor.textColor),
+        SvgPicture.asset("assets/icons/bomb.svg", width: 20, colorFilter: const ColorFilter.mode(CustomColor.textColor, BlendMode.srcIn)),
         CustomColor.colorMapAtantion,
       ),
       const SizedBox(width: 10),
       _buildToolBarStatus(
         (listRegion.length - UiTools.getAlarmRegion(listRegion).length),
-        SvgPicture.asset("assets/icons/safety.svg", width: 20, color: CustomColor.textColor),
+        SvgPicture.asset("assets/icons/safety.svg", width: 20, colorFilter: const ColorFilter.mode(CustomColor.textColor, BlendMode.srcIn)),
         CustomColor.green,
       ),
     ];

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alarm/tools/ui_tools.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,10 +59,10 @@ class CustomDrawer extends StatelessWidget {
                       future: NotificationService.requestPermission(),
                       initialData: true,
                       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                        if (!(snapshot.data ?? true)) {
+                        if (!snapshot.hasData || snapshot.data! == false) {
                           return Container(
                             color: CustomColor.background,
-                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                             child: Column(
                               children: [
                                 const Text(
@@ -107,7 +109,7 @@ class CustomDrawer extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
               ),
             ),
           ],
@@ -139,7 +141,7 @@ class CustomDrawer extends StatelessWidget {
             const Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
             Text(
               "Уведомления",
-              style: Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
             ),
           ],
         ));
@@ -312,7 +314,7 @@ class CustomDrawer extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Text(
         "Версия: ${info.version}",
-        style: TextStyle(color: CustomColor.textColor, fontSize: 18),
+        style: const TextStyle(color: CustomColor.textColor, fontSize: 18),
       ),
     );
   }
