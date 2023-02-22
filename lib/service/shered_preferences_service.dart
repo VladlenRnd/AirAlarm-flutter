@@ -1,16 +1,30 @@
+import 'package:alarm/service/abstract_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../tools/region/eregion.dart';
 
-class SheredPreferencesService {
+class SheredPreferencesService implements AService {
   static SharedPreferences? _preferences;
-
   static SharedPreferences get preferences => _preferences!;
 
-  static Future<void> init() async {
-    _preferences = await SharedPreferences.getInstance();
+  SheredPreferencesService._privateConstructor();
+  static final SheredPreferencesService _instance = SheredPreferencesService._privateConstructor();
+  factory SheredPreferencesService() => _instance;
 
-    await _initDefaultData();
+  @override
+  bool isInitDone = false;
+
+  @override
+  Future<bool> init() async {
+    if (isInitDone) return true;
+    try {
+      _preferences = await SharedPreferences.getInstance();
+      await _initDefaultData();
+      isInitDone = true;
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static Future<void> _initDefaultData() async {
@@ -19,5 +33,6 @@ class SheredPreferencesService {
     _preferences!.getString("cancelSong") ?? await _preferences!.setString("cancelSong", "cancel_alarm");
     _preferences!.getStringList("siledStart") ?? await _preferences!.setStringList("siledStart", []);
     _preferences!.getStringList("siledEnd") ?? await _preferences!.setStringList("siledEnd", []);
+    _preferences!.getInt("sort") ?? await _preferences!.setInt("sort", 0);
   }
 }

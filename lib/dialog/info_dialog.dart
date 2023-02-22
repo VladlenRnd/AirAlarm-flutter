@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../tools/custom_color.dart';
@@ -13,30 +15,34 @@ class _InfoDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(title, textAlign: TextAlign.center),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          icon ?? const SizedBox.shrink(),
-          const SizedBox(height: 15),
-          Text(contenInfo, textAlign: TextAlign.center),
-        ],
-      ),
-      actions: [
-        TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
-              closeButtonStr,
-            )),
-        MaterialButton(
-            onPressed: () async {
-              Navigator.of(context).pop(true);
-            },
-            color: CustomColor.primaryGreen.withOpacity(0.5),
-            child: Text(actionButtonStr)),
-      ],
-    );
+    return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: AlertDialog(
+          title: Text(title, textAlign: TextAlign.center),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              icon ?? const SizedBox.shrink(),
+              const SizedBox(height: 15),
+              Text(contenInfo, textAlign: TextAlign.center),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsOverflowAlignment: OverflowBarAlignment.center,
+          actions: [
+            ElevatedButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(true);
+                },
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
+                child: Text(actionButtonStr)),
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  closeButtonStr,
+                )),
+          ],
+        ));
   }
 }
 

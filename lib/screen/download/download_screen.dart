@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,7 +10,6 @@ import 'package:path_provider/path_provider.dart';
 import '../../service/download_service.dart';
 import '../../tools/custom_color.dart';
 import '../../tools/update_info.dart';
-import '../main/main_screen.dart';
 
 class DownloadScreen extends StatefulWidget {
   const DownloadScreen({Key? key}) : super(key: key);
@@ -69,7 +70,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "ЗАГРУЗКА ОБНОВЛЕНИЯ",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -84,14 +85,14 @@ class _DownloadScreenState extends State<DownloadScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15,
-                        color: CustomColor.textColor,
+                        color: CustomColor.textColor.withOpacity(0.6),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                     Text(
                       "${mByteDownloadStr}MB / ${mByteTotalStr}MB",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         color: CustomColor.textColor,
                         fontWeight: FontWeight.bold,
@@ -129,16 +130,18 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
     if (pathToFile == "EXEPTION") {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ошибка загрузки обновления")));
-      await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+      Navigator.pop(context); //pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
       return;
     }
     if (pathToFile == "CODE_SERVER") {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ошибка Сервера")));
-      await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+      Navigator.pop(
+          context); //await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
       return;
     }
 
     await OpenFile.open(pathToFile, type: "application/vnd.android.package-archive");
-    await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+    Navigator.pop(
+        context); //await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
   }
 }

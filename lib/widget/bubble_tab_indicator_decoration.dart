@@ -54,6 +54,7 @@ class BubbleTabIndicator extends Decoration {
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _BubblePainter createBoxPainter([VoidCallback? onChanged]) {
     return _BubblePainter(this, onChanged);
   }

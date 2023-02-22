@@ -54,7 +54,7 @@ class _SelectRegionScreenState extends State<SelectRegionScreen> {
           children: [
             Text(
               region.title,
-              style: TextStyle(
+              style: const TextStyle(
                 color: CustomColor.textColor,
                 fontSize: 15,
               ),

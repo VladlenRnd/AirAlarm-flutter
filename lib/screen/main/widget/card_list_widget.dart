@@ -46,7 +46,7 @@ class _CardListState extends State<CardList> {
                 children: [
                   Text(
                     widget.model.region.title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: CustomColor.textColor,
                       fontSize: 13,
                     ),
@@ -90,12 +90,12 @@ class _CardListState extends State<CardList> {
     if (timeStart != null) {
       return Text(
         "Начало тревоги: \n$timeStart",
-        style: TextStyle(color: CustomColor.textColor),
+        style: const TextStyle(color: CustomColor.textColor),
       );
     } else if (timeEnd != null) {
       return Text(
         "Конец тревоги: \n$timeEnd",
-        style: TextStyle(color: CustomColor.textColor),
+        style: const TextStyle(color: CustomColor.textColor),
       );
     } else {
       return const SizedBox.shrink();

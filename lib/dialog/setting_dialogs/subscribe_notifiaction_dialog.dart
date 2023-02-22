@@ -1,3 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:ui';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -17,34 +21,34 @@ Future<void> showSubscribeDialog(BuildContext context) async {
       return StatefulBuilder(
         builder: ((BuildContext context, void Function(Function()) setState) {
           if (!isSave) {
-            return AlertDialog(
-              title: const Text("Отслеживание тревоги", textAlign: TextAlign.center),
-              contentPadding: const EdgeInsets.only(top: 15),
-              insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-              content: SelectRegionScreen(
-                selectRegion: (String selectValue) {
-                  _selectValue = selectValue;
-                },
-              ),
-              actionsAlignment: MainAxisAlignment.spaceBetween,
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Закрыть'.toUpperCase(),
-                    )),
-                MaterialButton(
-                    onPressed: () async {
-                      setState(() => isSave = true);
-
-                      await _saveSubscribe();
-
-                      Navigator.of(context).pop();
+            return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: AlertDialog(
+                  title: const Text("Отслеживание тревоги", textAlign: TextAlign.center),
+                  contentPadding: const EdgeInsets.only(top: 15),
+                  insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                  content: SelectRegionScreen(
+                    selectRegion: (String selectValue) {
+                      _selectValue = selectValue;
                     },
-                    color: CustomColor.primaryGreen.withOpacity(0.5),
-                    child: const Text("Сохранить")),
-              ],
-            );
+                  ),
+                  actionsAlignment: MainAxisAlignment.spaceBetween,
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Закрыть'.toUpperCase(),
+                        )),
+                    MaterialButton(
+                        onPressed: () async {
+                          setState(() => isSave = true);
+                          await _saveSubscribe();
+                          Navigator.of(context).pop();
+                        },
+                        color: CustomColor.primaryGreen.withOpacity(0.5),
+                        child: const Text("Сохранить")),
+                  ],
+                ));
           }
           return _buildSaveLoad();
         }),

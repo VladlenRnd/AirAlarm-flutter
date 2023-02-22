@@ -14,6 +14,40 @@ class UiTools {
     return alarmRegion;
   }
 
+  static bool isGlobalAlarm(List<RegionModel> allRegion) {
+    bool result = true;
+    for (RegionModel element in allRegion) {
+      if (!element.isAlarm) {
+        return false;
+      }
+    }
+    return result;
+  }
+
+  static bool isNoAlarm(List<RegionModel> allRegion) {
+    bool result = true;
+    for (RegionModel element in allRegion) {
+      if (element.isAlarm) {
+        return false;
+      }
+    }
+    return result;
+  }
+
+  static int getCountWarningRegion(List<RegionModel> allRegion) {
+    int warningCount = 0;
+    for (RegionModel element in allRegion) {
+      if (!element.isAlarm) {
+        try {
+          element.districts.firstWhere((d) => d.isAlarm == true);
+          warningCount++;
+          // ignore: empty_catches
+        } catch (e) {}
+      }
+    }
+    return warningCount;
+  }
+
   static int getPercentAlarm(List<RegionModel> allRegion) {
     double onePercent = 100 / allRegion.length;
 
@@ -22,10 +56,12 @@ class UiTools {
 
   static Widget buildIconStatus(bool isAlarm, bool isAlarmDistrict, {double size = 65}) {
     return isAlarm
-        ? SvgPicture.asset("assets/icons/alarm.svg", color: CustomColor.red, height: size, width: size)
+        ? SvgPicture.asset("assets/icons/alarm.svg", colorFilter: const ColorFilter.mode(CustomColor.red, BlendMode.srcIn), height: size, width: size)
         : isAlarmDistrict
-            ? SvgPicture.asset("assets/icons/bomb.svg", color: CustomColor.colorMapAtantion, height: size, width: size)
-            : SvgPicture.asset("assets/icons/safety.svg", color: CustomColor.green, height: size, width: size);
+            ? SvgPicture.asset("assets/icons/bomb.svg",
+                colorFilter: const ColorFilter.mode(CustomColor.colorMapAtantion, BlendMode.srcIn), height: size, width: size)
+            : SvgPicture.asset("assets/icons/safety.svg",
+                colorFilter: const ColorFilter.mode(CustomColor.green, BlendMode.srcIn), height: size, width: size);
   }
 
   static String? getDateToDay(DateTime date, bool showTime) {

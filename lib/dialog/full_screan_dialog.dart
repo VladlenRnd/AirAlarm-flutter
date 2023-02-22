@@ -1,22 +1,26 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 void showFullScreanDialog(BuildContext context, List<String> imgList) {
   showDialog(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        content: _buildDescription(imgList, context),
-        contentPadding: EdgeInsets.zero,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        actionsAlignment: MainAxisAlignment.spaceBetween,
-        actions: <Widget>[
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Закрыть'.toUpperCase(),
-              )),
-        ],
-      );
+      return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: AlertDialog(
+            content: _buildDescription(imgList, context),
+            contentPadding: EdgeInsets.zero,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    'Закрыть'.toUpperCase(),
+                  )),
+            ],
+          ));
     },
   );
 }

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +11,14 @@ import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
 
 String _selectValue = "";
-AudioCache? _player;
-AudioPlayer? _controller;
+AudioPlayer? _audioPlayer;
+String? prefix;
 
 Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) async {
   bool isSave = false;
   _selectValue = SheredPreferencesService.preferences.getString(isAlarmSound ? "alarmSong" : "cancelSong")!;
-  _player = AudioCache(prefix: "assets/song/${isAlarmSound ? "alarm/" : "cancel/"}");
+  prefix = "song/${isAlarmSound ? "alarm/" : "cancel/"}";
+  _audioPlayer = AudioPlayer();
   await showDialog(
     context: context,
     barrierDismissible: false,
@@ -23,41 +26,41 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
       return StatefulBuilder(
         builder: ((BuildContext context, void Function(Function()) setState) {
           if (!isSave) {
-            return AlertDialog(
-              title: Text(isAlarmSound ? "Звук тревоги" : "Звук отмены тревоги", textAlign: TextAlign.center),
-              backgroundColor: CustomColor.background,
-              contentPadding: const EdgeInsets.only(top: 15),
-              insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-              content: _buildSelectSound(isAlarmSound, setState),
-              actionsAlignment: MainAxisAlignment.spaceBetween,
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Закрыть'.toUpperCase(),
-                    )),
-                MaterialButton(
-                    onPressed: () async {
-                      setState(() => isSave = true);
-                      SheredPreferencesService.preferences.setString(isAlarmSound ? "alarmSong" : "cancelSong", _selectValue);
-                      NotificationService.init();
-                      Navigator.of(context).pop();
-                    },
-                    color: CustomColor.primaryGreen.withOpacity(0.5),
-                    child: const Text("Сохранить")),
-              ],
-            );
+            return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: AlertDialog(
+                  title: Text(isAlarmSound ? "Звук тревоги" : "Звук отмены тревоги", textAlign: TextAlign.center),
+                  backgroundColor: CustomColor.background,
+                  contentPadding: const EdgeInsets.only(top: 15),
+                  insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                  content: _buildSelectSound(isAlarmSound, setState),
+                  actionsAlignment: MainAxisAlignment.spaceBetween,
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Закрыть'.toUpperCase(),
+                        )),
+                    MaterialButton(
+                        onPressed: () async {
+                          setState(() => isSave = true);
+                          SheredPreferencesService.preferences.setString(isAlarmSound ? "alarmSong" : "cancelSong", _selectValue);
+                          NotificationService().init();
+                          Navigator.of(context).pop();
+                        },
+                        color: CustomColor.primaryGreen.withOpacity(0.5),
+                        child: const Text("Сохранить")),
+                  ],
+                ));
           }
           return _buildSaveLoad();
         }),
       );
     },
   ).then((value) async {
-    _controller?.stop();
-    _controller?.dispose();
-    await _player?.clearAll();
-    _controller = null;
-    _player = null;
+    _audioPlayer!.stop();
+    _audioPlayer!.dispose();
+    _audioPlayer = null;
   });
 }
 
@@ -80,17 +83,14 @@ Widget _buildItem(String title, String fileName, void Function(Function()) setSt
           const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
           Text(
             title,
-            style: TextStyle(fontSize: 15, color: CustomColor.textColor, fontFamily: "Days"),
+            style: const TextStyle(fontSize: 15, color: CustomColor.textColor, fontFamily: "Days"),
           ),
           const Spacer(),
           if (fileName.isNotEmpty)
             IconButton(
-              onPressed: () async {
-                await _controller?.stop();
-                _controller = await _player!.play("$fileName.mp3", mode: PlayerMode.LOW_LATENCY, volume: 0.1);
-              },
+              onPressed: () async => await _audioPlayer!.play(AssetSource("$prefix$fileName.mp3"), mode: PlayerMode.mediaPlayer, volume: 0.2),
               splashRadius: 25,
-              icon: Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
+              icon: const Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
             )
         ],
       ),

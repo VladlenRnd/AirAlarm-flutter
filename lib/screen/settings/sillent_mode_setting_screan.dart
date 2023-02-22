@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -108,7 +110,7 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
                     widget.onChange.call(startTime, endTime);
                   }
                 },
-                child: Text("Выбрать время", style: TextStyle(color: CustomColor.textColor)),
+                child: const Text("Выбрать время", style: TextStyle(color: CustomColor.textColor)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),
@@ -165,14 +167,25 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
   }
 
   Widget _buildDescription() {
-    return const ColoredBox(
-      color: CustomColor.backgroundLight,
+    return ColoredBox(
+      color: CustomColor.systemTextBox,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-        child: Text(
-          "Этот режим позволяет убрать звук оповещение о тревоги и её отмене в определённый промежуток времени",
-          style: TextStyle(fontSize: 13),
-          textAlign: TextAlign.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Icon(Icons.info_outline),
+            SizedBox(
+              width: 15,
+            ),
+            Expanded(
+              child: Text(
+                "Этот режим позволяет убрать звук оповещение о тревоги и её отмене в определённый промежуток времени",
+                style: TextStyle(fontSize: 13),
+                textAlign: TextAlign.start,
+              ),
+            )
+          ],
         ),
       ),
     );

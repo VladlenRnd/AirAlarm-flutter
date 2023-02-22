@@ -1,31 +1,36 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../screen/download/download_screen.dart';
 import '../tools/custom_color.dart';
 import '../tools/update_info.dart';
 
-void showUpdateDialog(BuildContext context) {
-  showDialog(
+Future<bool?> showUpdateDialog(BuildContext context) {
+  return showDialog<bool?>(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        title: _buildTitle(),
-        content: _buildDescription(),
-        actionsAlignment: MainAxisAlignment.spaceBetween,
-        actions: <Widget>[
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Закрыть'.toUpperCase(),
-              )),
-          MaterialButton(
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const DownloadScreen()), (route) => false);
-              },
-              color: CustomColor.primaryGreen.withOpacity(0.5),
-              child: const Text("Обновить")),
-        ],
-      );
+      return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: AlertDialog(
+            title: _buildTitle(),
+            content: _buildDescription(),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(
+                    'Закрыть'.toUpperCase(),
+                  )),
+              MaterialButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DownloadScreen()));
+                  },
+                  color: CustomColor.primaryGreen.withOpacity(0.5),
+                  child: const Text("Обновить")),
+            ],
+          ));
     },
   );
 }

@@ -64,7 +64,7 @@ class HistoryScreen extends StatelessWidget {
             indicatorColor: CustomColor.systemSecondary.withOpacity(0.15),
             borderColor: CustomColor.systemSecondary,
           ),
-          labelStyle: TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
+          labelStyle: const TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
           unselectedLabelColor: CustomColor.textColor.withOpacity(0.6),
           indicatorSize: TabBarIndicatorSize.tab,
           tabs: const [

@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alarm/tools/ui_tools.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -11,6 +14,7 @@ import '../../dialog/setting_dialogs/change_sound_dialog.dart';
 import '../../dialog/setting_dialogs/silent_mode_dialog.dart';
 import '../../dialog/setting_dialogs/subscribe_notifiaction_dialog.dart';
 import '../../service/location_service.dart';
+import '../../service/notification_service.dart';
 import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
 import '../../tools/region/eregion.dart';
@@ -51,6 +55,34 @@ class CustomDrawer extends StatelessWidget {
                         ],
                       ),
                     )),
+                    FutureBuilder<bool>(
+                      future: NotificationService.requestPermission(),
+                      initialData: true,
+                      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        if (!snapshot.hasData || snapshot.data! == false) {
+                          return Container(
+                            color: CustomColor.background,
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                            child: Column(
+                              children: [
+                                const Text(
+                                  "Уведомления не будут приходить, так как нет разрешения на уведомления",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: CustomColor.red),
+                                ),
+                                const SizedBox(height: 5),
+                                ElevatedButton(
+                                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
+                                  onPressed: () => AppSettings.openNotificationSettings(),
+                                  child: const Text("Разрешить уведомления"),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 25, top: 15),
                       child: _buildAppVersion(snapshot.data!),
@@ -77,7 +109,7 @@ class CustomDrawer extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
               ),
             ),
           ],
@@ -92,10 +124,10 @@ class CustomDrawer extends StatelessWidget {
         child: _buildAllertSetting(context, setState),
       ),
       header: _buildItemHeader(context),
-      theme: ExpandableThemeData(
+      theme: const ExpandableThemeData(
         iconColor: CustomColor.textColor,
         headerAlignment: ExpandablePanelHeaderAlignment.center,
-        iconPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        iconPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
     );
   }
@@ -109,7 +141,7 @@ class CustomDrawer extends StatelessWidget {
             const Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
             Text(
               "Уведомления",
-              style: Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
             ),
           ],
         ));
@@ -156,7 +188,7 @@ class CustomDrawer extends StatelessWidget {
         icon: const Icon(Icons.battery_alert, size: 40),
         actionButtonStr: "Да",
         closeButtonStr: "Нет",
-        contenInfo: "Этот режим потребляем больше заряда аккамулятора, включить функцию автоопределение области?",
+        contenInfo: "Этот режим потребляем больше заряда аккамулятора \n \n Включить функцию автоопределение области?",
       )) {
         if (await LocationService.enableAutoLocation()) {
           Navigator.of(context).pop();
@@ -282,7 +314,7 @@ class CustomDrawer extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Text(
         "Версия: ${info.version}",
-        style: TextStyle(color: CustomColor.textColor, fontSize: 18),
+        style: const TextStyle(color: CustomColor.textColor, fontSize: 18),
       ),
     );
   }
