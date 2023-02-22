@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -17,36 +19,38 @@ Future<void> showSilentModeDialog(BuildContext context) async {
       return StatefulBuilder(
         builder: ((BuildContext context, void Function(Function()) setState) {
           if (!isSave) {
-            return AlertDialog(
-              titlePadding: EdgeInsets.zero,
-              contentPadding: EdgeInsets.zero,
-              content: SilentModeSettingScrean(
-                onChange: (TimeOfDay timeStart, TimeOfDay timeEnd) {
-                  newStartTime = timeStart;
-                  newEndTime = timeEnd;
-                },
-                onClear: () async {
-                  await SheredPreferencesService.preferences.setStringList("siledStart", []);
-                  await SheredPreferencesService.preferences.setStringList("siledEnd", []);
-                },
-              ),
-              actionsAlignment: MainAxisAlignment.spaceBetween,
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Закрыть'.toUpperCase(),
-                    )),
-                MaterialButton(
-                    onPressed: () async {
-                      setState(() => isSave = true);
-                      await _onSave(newStartTime, newEndTime);
-                      Navigator.of(context).pop();
+            return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: AlertDialog(
+                  titlePadding: EdgeInsets.zero,
+                  contentPadding: EdgeInsets.zero,
+                  content: SilentModeSettingScrean(
+                    onChange: (TimeOfDay timeStart, TimeOfDay timeEnd) {
+                      newStartTime = timeStart;
+                      newEndTime = timeEnd;
                     },
-                    color: CustomColor.primaryGreen.withOpacity(0.5),
-                    child: const Text("Сохранить")),
-              ],
-            );
+                    onClear: () async {
+                      await SheredPreferencesService.preferences.setStringList("siledStart", []);
+                      await SheredPreferencesService.preferences.setStringList("siledEnd", []);
+                    },
+                  ),
+                  actionsAlignment: MainAxisAlignment.spaceBetween,
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Закрыть'.toUpperCase(),
+                        )),
+                    MaterialButton(
+                        onPressed: () async {
+                          setState(() => isSave = true);
+                          await _onSave(newStartTime, newEndTime);
+                          Navigator.of(context).pop();
+                        },
+                        color: CustomColor.primaryGreen.withOpacity(0.5),
+                        child: const Text("Сохранить")),
+                  ],
+                ));
           }
           return _buildSaveLoad();
         }),

@@ -44,7 +44,7 @@ Widget _buildAlarmCard(RegionModel alertModel) {
     decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.4)))),
     child: Column(
       children: [
-        Text(alertModel.title, style: const TextStyle(fontSize: 18)),
+        Text(alertModel.title, style: const TextStyle(fontSize: 18), textAlign: TextAlign.center),
         const SizedBox(height: 10),
         Expanded(
           child: Column(

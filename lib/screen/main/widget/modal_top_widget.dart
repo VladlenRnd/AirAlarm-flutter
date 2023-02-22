@@ -73,13 +73,17 @@ class _ModalTopWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  Icon(Icons.history_outlined, color: CustomColor.systemSecondary),
-                  SizedBox(width: 10),
-                  Text("Краткая история тревог", textAlign: TextAlign.start, style: TextStyle(fontSize: 14)),
-                ],
+              Flexible(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.history_outlined, color: CustomColor.systemSecondary),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text("Краткая история тревог", textAlign: TextAlign.start, style: TextStyle(fontSize: 16)),
+                    )
+                  ],
+                ),
               ),
               Flexible(
                   child: ElevatedButton(

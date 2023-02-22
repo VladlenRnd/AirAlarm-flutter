@@ -1,20 +1,20 @@
+import 'package:alarm/service/notification_service.dart';
 import 'package:alarm/tools/region/eregion.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import '../../dialog/update_dialog.dart';
-import '../../tools/connection/connection.dart';
+import '../../dialog/no_permission_dialog.dart';
 import '../../models/region_model.dart';
 import '../../tools/connection/response/alarm_response.dart';
 import '../../tools/connection/response/config_response.dart';
+import '../../tools/history.dart';
 import '../../tools/repository/config_repository.dart';
 import '../../tools/ui_tools.dart';
 import '../../tools/ukrain_svg.dart';
-import '../../tools/update_info.dart';
 import '../drawer/drawer_screen.dart';
 import '../drawer/end_drawer_screen.dart';
 import 'bloc/main_bloc.dart';
@@ -34,27 +34,12 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   ConfigResponse config = ConfigRepository.instance.config;
 
-  Future<bool> _isUpdateCheck() async {
-    bool result = false;
-    try {
-      UpdateInfo.infoUpdate = await Connection.chekUpdate();
-      PackageInfo infoApp = await PackageInfo.fromPlatform();
-
-      if (infoApp.version != UpdateInfo.infoUpdate.newVersion) {
-        result = true;
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
-    return result;
-  }
-
   @override
   void initState() {
+    getAllHistory();
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      if (await _isUpdateCheck()) {
-        showUpdateDialog(context);
+      if (await NotificationService.requestPermission() == false) {
+        showPermissionDialog(context);
       }
     });
     super.initState();
@@ -192,7 +177,9 @@ class _MainScreenState extends State<MainScreen> {
                   slivers: <Widget>[
                     SliverAppBar(
                       stretch: true,
-                      actions: [_buildAlarmCounter(UiTools.getAlarmRegion(state.listRegions).length)],
+                      actions: [
+                        _buildAlarmCounter(UiTools.getAlarmRegion(state.listRegions).length),
+                      ],
                       pinned: true,
                       floating: true,
                       expandedHeight: 383,

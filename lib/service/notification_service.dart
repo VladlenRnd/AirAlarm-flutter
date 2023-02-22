@@ -37,6 +37,10 @@ class NotificationService implements AService {
     // );
   }
 
+  static Future<bool> requestPermission() async =>
+      await _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission() ??
+      false;
+
   static Future<void> showNotification(bool isAlarm, String region, String alarmPath, String cancelPath, bool isSound) async {
     isAlarm
         ? await _showAlertNotification(notificationId: 1, body: region, pathSong: alarmPath, isSound: isSound)

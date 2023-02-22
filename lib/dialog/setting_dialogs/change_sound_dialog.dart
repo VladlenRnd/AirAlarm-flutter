@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,30 +25,32 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
       return StatefulBuilder(
         builder: ((BuildContext context, void Function(Function()) setState) {
           if (!isSave) {
-            return AlertDialog(
-              title: Text(isAlarmSound ? "Звук тревоги" : "Звук отмены тревоги", textAlign: TextAlign.center),
-              backgroundColor: CustomColor.background,
-              contentPadding: const EdgeInsets.only(top: 15),
-              insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-              content: _buildSelectSound(isAlarmSound, setState),
-              actionsAlignment: MainAxisAlignment.spaceBetween,
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Закрыть'.toUpperCase(),
-                    )),
-                MaterialButton(
-                    onPressed: () async {
-                      setState(() => isSave = true);
-                      SheredPreferencesService.preferences.setString(isAlarmSound ? "alarmSong" : "cancelSong", _selectValue);
-                      NotificationService().init();
-                      Navigator.of(context).pop();
-                    },
-                    color: CustomColor.primaryGreen.withOpacity(0.5),
-                    child: const Text("Сохранить")),
-              ],
-            );
+            return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: AlertDialog(
+                  title: Text(isAlarmSound ? "Звук тревоги" : "Звук отмены тревоги", textAlign: TextAlign.center),
+                  backgroundColor: CustomColor.background,
+                  contentPadding: const EdgeInsets.only(top: 15),
+                  insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                  content: _buildSelectSound(isAlarmSound, setState),
+                  actionsAlignment: MainAxisAlignment.spaceBetween,
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Закрыть'.toUpperCase(),
+                        )),
+                    MaterialButton(
+                        onPressed: () async {
+                          setState(() => isSave = true);
+                          SheredPreferencesService.preferences.setString(isAlarmSound ? "alarmSong" : "cancelSong", _selectValue);
+                          NotificationService().init();
+                          Navigator.of(context).pop();
+                        },
+                        color: CustomColor.primaryGreen.withOpacity(0.5),
+                        child: const Text("Сохранить")),
+                  ],
+                ));
           }
           return _buildSaveLoad();
         }),

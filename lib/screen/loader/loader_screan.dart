@@ -5,15 +5,18 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../../dialog/update_dialog.dart';
 import '../../service/firebase_service.dart';
 import '../../service/location_service.dart';
 import '../../service/notification_service.dart';
 import '../../service/shered_preferences_service.dart';
 import '../../tools/connection/response/alarm_response.dart';
-import '../../tools/history.dart';
 import '../../tools/repository/config_repository.dart';
+import '../../tools/update_info.dart';
 
 class LoaderScrean extends StatefulWidget {
   const LoaderScrean({super.key});
@@ -28,9 +31,45 @@ class _LoaderScreanState extends State<LoaderScrean> {
   double _loadPercent = 0.0;
   AlarmRespose? _listAlarm;
 
+  Future<bool> _isUpdateCheck() async {
+    bool result = false;
+    try {
+      UpdateInfo.infoUpdate = await Connection.chekUpdate();
+      PackageInfo infoApp = await PackageInfo.fromPlatform();
+
+      if (infoApp.version != UpdateInfo.infoUpdate.newVersion) {
+        result = true;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    return result;
+  }
+
+  Future<bool> _initConfig() async {
+    if (!await ConfigRepository.instance.init()) {
+      setState(() {
+        _eStatus = _EAllLoadedStatus.criticalError;
+      });
+      return false;
+    }
+    return true;
+  }
+
   @override
   void initState() {
-    _allDataLoaded();
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
+      if (!await _initConfig()) return;
+      if (await _isUpdateCheck()) {
+        if (await showUpdateDialog(context) ?? true) {
+          _allDataLoaded();
+        }
+      } else {
+        _allDataLoaded();
+      }
+    });
+
     super.initState();
   }
 
@@ -95,12 +134,13 @@ class _LoaderScreanState extends State<LoaderScrean> {
             ),
             const SizedBox(height: 20),
             CupertinoButton(
-                onPressed: () {
+                onPressed: () async {
                   setState(() {
                     _eStatus = _EAllLoadedStatus.proccesing;
                     _loadPercent = 0.0;
                     _loadServiceList = [];
                   });
+                  if (!await _initConfig()) return;
                   _allDataLoaded();
                 },
                 child: const Text("Повторить загрузку")),
@@ -135,12 +175,13 @@ class _LoaderScreanState extends State<LoaderScrean> {
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
                 child: const Text("Запустить упрощёную версию")),
             CupertinoButton(
-                onPressed: () {
+                onPressed: () async {
                   setState(() {
                     _eStatus = _EAllLoadedStatus.proccesing;
                     _loadPercent = 0.0;
                     _loadServiceList = [];
                   });
+                  if (!await _initConfig()) return;
                   _allDataLoaded();
                 },
                 child: const Text("Повторить загрузку")),
@@ -163,11 +204,9 @@ class _LoaderScreanState extends State<LoaderScrean> {
   void _allDataLoaded() async {
     await Future.delayed(const Duration(milliseconds: 500));
     _loadServiceList = [
-      _LoadModel(listMethosInit: [ConfigRepository.instance.init], isCritical: true),
       _LoadModel(listMethosInit: [SheredPreferencesService().init], isCritical: true),
       _LoadModel(listMethosInit: [LocationService().init, NotificationService().init, FirebaseService().init]),
       _LoadModel(listMethosInit: [_getAlarm], isCritical: true),
-      _LoadModel(listMethosInit: [getAllHistory]),
     ];
 
     double onePercent = 1 / _loadServiceList.length;
@@ -200,7 +239,8 @@ class _LoaderScreanState extends State<LoaderScrean> {
     }
   }
 
-  void _goToMain() => Navigator.pushAndRemoveUntil<void>(context, _createRoute(), (route) => false);
+  void _goToMain()  => Navigator.pushAndRemoveUntil<void>(context, _createRoute(), (route) => false);
+
 
   Route _createRoute() {
     return PageTransition(

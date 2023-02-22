@@ -1,4 +1,5 @@
 import 'package:alarm/tools/ui_tools.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -11,6 +12,7 @@ import '../../dialog/setting_dialogs/change_sound_dialog.dart';
 import '../../dialog/setting_dialogs/silent_mode_dialog.dart';
 import '../../dialog/setting_dialogs/subscribe_notifiaction_dialog.dart';
 import '../../service/location_service.dart';
+import '../../service/notification_service.dart';
 import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
 import '../../tools/region/eregion.dart';
@@ -51,6 +53,34 @@ class CustomDrawer extends StatelessWidget {
                         ],
                       ),
                     )),
+                    FutureBuilder<bool>(
+                      future: NotificationService.requestPermission(),
+                      initialData: true,
+                      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        if (!(snapshot.data ?? true)) {
+                          return Container(
+                            color: CustomColor.background,
+                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                            child: Column(
+                              children: [
+                                const Text(
+                                  "Уведомления не будут приходить, так как нет разрешения на уведомления",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: CustomColor.red),
+                                ),
+                                const SizedBox(height: 5),
+                                ElevatedButton(
+                                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
+                                  onPressed: () => AppSettings.openNotificationSettings(),
+                                  child: const Text("Разрешить уведомления"),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 25, top: 15),
                       child: _buildAppVersion(snapshot.data!),
