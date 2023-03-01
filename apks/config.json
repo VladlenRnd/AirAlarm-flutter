@@ -2,7 +2,7 @@
     "war": true,
     "startWarDate": "2022-02-24 00:00:00.000Z",
     "endWarDate": null,
-    "url_alarm": "https://emapa.fra1.cdn.digitaloceanspaces.com/statuses.json",
+    "url_alarm": "https://vadimklimenko.com/map/statuses.json",
     "url_history": "https://raw.githubusercontent.com/Vadimkin/ukrainian-air-raid-sirens-dataset/main/datasets/volunteer_data_uk.csv",
     "url_update": "https://raw.githubusercontent.com/VladlenRnd/AirAlarm-flutter/dev/apks/update.json"
 }
