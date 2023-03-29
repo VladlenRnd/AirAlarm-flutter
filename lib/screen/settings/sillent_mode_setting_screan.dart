@@ -180,7 +180,7 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
             ),
             Expanded(
               child: Text(
-                "Этот режим позволяет убрать звук оповещение о тревоги и её отмене в определённый промежуток времени",
+                "Этот режим позволяет убрать звук оповещение о тревоге и её отмене в определённый промежуток времени",
                 style: TextStyle(fontSize: 13),
                 textAlign: TextAlign.start,
               ),

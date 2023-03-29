@@ -197,25 +197,22 @@ class _MainScreenState extends State<MainScreen> {
                                 color: CustomColor.systemTextBox,
                                 height: 30,
                                 alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
                                   children: [
+                                    const SizedBox(width: 24),
                                     if (isNoAlarm) ..._buildNoAlarm(),
                                     if (!isNoAlarm && isGlobalAlarm) ..._buildGlobalAlarm(),
                                     if (!isNoAlarm && !isGlobalAlarm) ..._buildStatusAlert(state.listRegions),
                                     const Spacer(),
                                     PopupMenuButton<int>(
-                                      icon: const Icon(Icons.sort),
-                                      padding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                      tooltip: "Сортировка",
-                                      splashRadius: 1,
-                                      onSelected: (int sortIndex) => BlocProvider.of<MainBloc>(context).add(MainChangeSort(sortIndex: sortIndex)),
-                                      offset: const Offset(-30, 25),
-                                      itemBuilder: (BuildContext context) {
-                                        return _buildSortPopup(state.sortIndex);
-                                      },
-                                    ),
+                                        icon: const Icon(Icons.sort),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                        tooltip: "Сортировка",
+                                        splashRadius: 1,
+                                        onSelected: (int sortIndex) => BlocProvider.of<MainBloc>(context).add(MainChangeSort(sortIndex: sortIndex)),
+                                        offset: const Offset(-30, 25),
+                                        itemBuilder: (BuildContext context) => _buildSortPopup(state.sortIndex)),
                                   ],
                                 ),
                               ),
@@ -256,58 +253,29 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   List<PopupMenuItem<int>> _buildSortPopup(int selectSort) {
-    Widget checkIcon = const Icon(Icons.check, color: CustomColor.green);
     return [
-      PopupMenuItem(
-        value: 0,
-        padding: EdgeInsets.zero,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(children: [
-            const Padding(padding: EdgeInsetsDirectional.only(end: 8.0), child: Icon(Icons.warning_amber_rounded)),
-            const Text("Сперва тревоги"),
-            const Spacer(),
-            if (selectSort == 0) checkIcon,
-          ]),
-        ),
-      ),
-      PopupMenuItem(
-        value: 1,
-        padding: EdgeInsets.zero,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(children: [
-            const Padding(padding: EdgeInsetsDirectional.only(end: 8.0), child: Icon(Icons.shield_outlined)),
-            const Text("Сперва без тревоги"),
-            if (selectSort == 1) checkIcon,
-          ]),
-        ),
-      ),
-      PopupMenuItem(
-        value: 2,
-        padding: EdgeInsets.zero,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(children: [
-            const Padding(padding: EdgeInsetsDirectional.only(end: 8.0), child: Icon(Icons.sort_by_alpha_outlined)),
-            const Text("По алфавиту"),
-            if (selectSort == 2) checkIcon,
-          ]),
-        ),
-      ),
-      PopupMenuItem(
-        value: 3,
-        padding: EdgeInsets.zero,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(children: [
-            const Padding(padding: EdgeInsetsDirectional.only(end: 8.0), child: Icon(Icons.keyboard_double_arrow_down_outlined)),
-            const Text("от Я до А"),
-            if (selectSort == 3) checkIcon,
-          ]),
-        ),
-      ),
+      _buildPopupSortItem("Тревоги", const Icon(Icons.warning_amber_rounded), 0, selectSort == 0),
+      _buildPopupSortItem("Без тревоги", const Icon(Icons.shield_outlined), 1, selectSort == 1),
+      _buildPopupSortItem("от А до Я", const Icon(Icons.keyboard_double_arrow_up_outlined), 2, selectSort == 2),
+      _buildPopupSortItem("от Я до А", const Icon(Icons.keyboard_double_arrow_down_outlined), 3, selectSort == 3),
     ];
+  }
+
+  PopupMenuItem<int> _buildPopupSortItem(String title, Icon icon, int value, bool isSelect) {
+    Widget checkIcon = const Icon(Icons.check, color: CustomColor.green);
+    return PopupMenuItem(
+      value: value,
+      padding: EdgeInsets.zero,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(children: [
+          Padding(padding: const EdgeInsetsDirectional.only(end: 8.0), child: icon),
+          Text(title),
+          const Spacer(),
+          if (isSelect) checkIcon,
+        ]),
+      ),
+    );
   }
 
   Widget _buildMap(List<RegionModel> allRegion) {
@@ -374,10 +342,13 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildMapText(String region, List<RegionModel> regionlist, ERegion eregion, {double fontSize = 7}) {
     return GestureDetector(
       onTap: () async => await showDistrictDialog(context, regionlist.firstWhere((element) => eregion == element.region)),
-      child: Text(
-        region,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: fontSize),
+      child: SizedBox(
+        height: 25,
+        child: Text(
+          region,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: fontSize),
+        ),
       ),
     );
   }
