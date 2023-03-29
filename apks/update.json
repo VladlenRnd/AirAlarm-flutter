@@ -1,8 +1,7 @@
 {
-    "newVersion": "1.5.5",
-    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/releases/download/v.1.5.5/airAlarm.v1.5.5.apk",
+    "newVersion": "1.5.6",
+    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/releases/download/v.1.5.6/airAlarm.v1.5.6.apk",
     "descroption": [
-        "Доработан главный экран",
-        "Добавлена оптимизация"
+        "Небольшие исправления текста и интерфейса"
     ]
 }
