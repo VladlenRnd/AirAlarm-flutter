@@ -48,10 +48,10 @@ class CustomDrawer extends StatelessWidget {
                             showSilentModeDialog(context);
                           }),
                           const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                          _buildItemButton(context, "Новости", Icons.newspaper, Colors.blue, () async {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const NewsScreen()));
-                          }),
+                          // _buildItemButton(context, "Новости", Icons.newspaper, Colors.blue, () async {
+                          //   Navigator.of(context).pop();
+                          //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => const NewsScreen()));
+                          // }),
                         ],
                       ),
                     )),

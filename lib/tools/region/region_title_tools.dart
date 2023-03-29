@@ -241,7 +241,7 @@ class RegionTitleTools {
       case "donetsk":
         return "Донецкая область";
       case "jitomer":
-        return "Житомерская область";
+        return "Житомирская область";
       case "zakarpatska":
         return "Закарпатская область";
       case "ivanoFrankowsk":
@@ -273,7 +273,7 @@ class RegionTitleTools {
       case "chernivets":
         return "Черновицкая область";
       case "vinetsk":
-        return "Винетская область";
+        return "Винницкая область";
       case "volinska":
         return "Волынская  область";
       case "krim":
