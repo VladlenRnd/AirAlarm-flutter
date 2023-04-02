@@ -1,7 +1,7 @@
 {
-    "newVersion": "1.5.6",
-    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/releases/download/v.1.5.6/airAlarm.v1.5.6.apk",
+    "newVersion": "1.5.7",
+    "url": "https://github.com/VladlenRnd/AirAlarm-flutter/releases/download/v.1.5.7/airAlarm.v1.5.7.apk",
     "descroption": [
-        "Небольшие исправления текста и интерфейса"
+        "Техничиское исправление обновления приложения для android 13 и выше. Без этого обновления невозможно автоматически обновить версию приложения!"
     ]
 }
