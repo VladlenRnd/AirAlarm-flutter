@@ -19,6 +19,7 @@ import '../../service/shered_preferences_service.dart';
 import '../../tools/connection/response/alarm_response.dart';
 import '../../tools/repository/config_repository.dart';
 import '../../tools/update_info.dart';
+import '../download/download_screen.dart';
 
 class LoaderScrean extends StatefulWidget {
   const LoaderScrean({super.key});
@@ -63,13 +64,12 @@ class _LoaderScreanState extends State<LoaderScrean> {
   void initState() {
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (!await _initConfig()) return;
-      if (await _isUpdateCheck()) {
-        if (await showUpdateDialog(context) ?? true) {
-          _allDataLoaded();
-        }
-      } else {
-        _allDataLoaded();
+
+      if (await _isUpdateCheck() && (await showUpdateDialog(context) ?? false)) {
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DownloadScreen()));
       }
+
+      _allDataLoaded();
     });
 
     super.initState();

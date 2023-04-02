@@ -4,9 +4,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../dialog/custom_snack_bar.dart';
 import '../../service/download_service.dart';
 import '../../tools/custom_color.dart';
 import '../../tools/update_info.dart';
@@ -20,8 +21,8 @@ class DownloadScreen extends StatefulWidget {
 
 class _DownloadScreenState extends State<DownloadScreen> {
   double valueLoadFile = 0;
-  String mByteDownloadStr = "0.0";
-  String mByteTotalStr = "0.0";
+  String mByteDownloadStr = "0 ";
+  String mByteTotalStr = "0 ";
 
   @override
   void initState() {
@@ -59,8 +60,9 @@ class _DownloadScreenState extends State<DownloadScreen> {
             Positioned(
               child: Lottie.asset(
                 'assets/lottie/download.json',
-                width: 700,
-                height: 700,
+                width: 800,
+                height: 300,
+                fit: BoxFit.fill,
                 frameRate: FrameRate(60),
               ),
             ),
@@ -129,19 +131,17 @@ class _DownloadScreenState extends State<DownloadScreen> {
     String pathToFile = await DownloadService.downloadFile(UpdateInfo.infoUpdate.url, "flightAlarmUpdate.apk", localPathAA);
 
     if (pathToFile == "EXEPTION") {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ошибка загрузки обновления")));
-      Navigator.pop(context); //pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+      CustomSnackBar.error(context, title: "Ошибка загрузки обновления");
+      Navigator.pop(context);
       return;
     }
     if (pathToFile == "CODE_SERVER") {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Ошибка Сервера")));
-      Navigator.pop(
-          context); //await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+      CustomSnackBar.error(context, title: "Ошибка Сервера");
+      Navigator.pop(context);
       return;
     }
 
-    await OpenFile.open(pathToFile, type: "application/vnd.android.package-archive");
-    Navigator.pop(
-        context); //await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const MainScreen()), (route) => false);
+    await OpenFilex.open(pathToFile, type: "application/vnd.android.package-archive");
+    Navigator.pop(context);
   }
 }

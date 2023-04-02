@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../screen/download/download_screen.dart';
 import '../tools/custom_color.dart';
 import '../tools/update_info.dart';
 
@@ -17,18 +16,9 @@ Future<bool?> showUpdateDialog(BuildContext context) {
             content: _buildDescription(),
             actionsAlignment: MainAxisAlignment.spaceBetween,
             actions: <Widget>[
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(
-                    'Закрыть'.toUpperCase(),
-                  )),
+              TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text('Закрыть'.toUpperCase())),
               MaterialButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DownloadScreen()));
-                  },
-                  color: CustomColor.primaryGreen.withOpacity(0.5),
-                  child: const Text("Обновить")),
+                  onPressed: () => Navigator.of(context).pop(true), color: CustomColor.primaryGreen.withOpacity(0.5), child: const Text("Обновить")),
             ],
           ));
     },
