@@ -3,17 +3,15 @@ import 'package:fl_animated_linechart/chart/animated_line_chart.dart';
 import 'package:fl_animated_linechart/chart/line_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../bloc/history_bloc.dart';
-
 class TabGraphWidget extends StatelessWidget {
-  final HistoryLoadedState state;
-  const TabGraphWidget({super.key, required this.state});
+  final Map<int, int> historyGraph;
+  const TabGraphWidget({super.key, required this.historyGraph});
 
   Map<DateTime, double> _getDataChart() {
     Map<DateTime, double> data = {};
     DateTime dateNow = DateTime.now();
 
-    state.historyGraph.forEach((key, value) {
+    historyGraph.forEach((key, value) {
       data[DateTime(dateNow.year, dateNow.month, key)] = value.toDouble();
     });
 

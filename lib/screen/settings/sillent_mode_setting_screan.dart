@@ -167,13 +167,13 @@ class _SilentModeSettingScreanState extends State<SilentModeSettingScrean> {
   }
 
   Widget _buildDescription() {
-    return ColoredBox(
+    return const ColoredBox(
       color: CustomColor.systemTextBox,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Icon(Icons.info_outline),
             SizedBox(
               width: 15,

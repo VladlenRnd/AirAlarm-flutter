@@ -109,12 +109,12 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     ];
   }
 
-  List<List<String>> _getHistoryThreeDay(ERegion region) {
-    List<List<String>> result = [];
+  List<List<DateTime>> _getHistoryThreeDay(ERegion region) {
+    List<List<DateTime>> result = [];
     if (allHistory[region] == null) return [];
 
     result.addAll(allHistory[region]!.reversed.toList().where((element) {
-      DateTime date = DateTime.parse(element[0]).toLocal();
+      DateTime date = element[0];
       DateTime dateNow = DateTime.now().add(const Duration(days: -3));
 
       if (dateNow.isBefore(date)) return true;

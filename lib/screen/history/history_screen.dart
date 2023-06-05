@@ -90,7 +90,7 @@ class HistoryScreen extends StatelessWidget {
                 onChangeData: (DateTimeRange dateRange) =>
                     BlocProvider.of<HistoryBloc>(context).add(HistoryChangeDataEvent(selectStartDate: dateRange.start, selectEndDate: dateRange.end)),
               ),
-              TabGraphWidget(state: state)
+              TabGraphWidget(historyGraph: state.historyGraph)
             ]),
           )
         ],

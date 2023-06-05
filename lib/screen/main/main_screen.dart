@@ -355,27 +355,35 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildErrorWidget() {
     return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Lottie.asset(
-            'assets/lottie/no-connect.json',
-            width: 240,
-            height: 240,
-            frameRate: FrameRate(60),
-          ),
-          const Text(
-            "Потерянно соединение",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22),
-          ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-          const Text(
-            "проверьте интернет-соединение",
-            style: TextStyle(fontSize: 19),
-          )
-        ],
+      child: Container(
+        width: double.infinity,
+        height: 400,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/lottie/no-connect.json',
+              width: 240,
+              height: 240,
+              frameRate: FrameRate(60),
+            ),
+            const Text(
+              "Не могу получить данные",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22),
+            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+            Text(
+              "проверьте интернет-соединение",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 19, color: CustomColor.textColor.withOpacity(0.7)),
+            )
+          ],
+        ),
       ),
     );
   }

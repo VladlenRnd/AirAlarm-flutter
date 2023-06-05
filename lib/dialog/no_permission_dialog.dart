@@ -11,8 +11,8 @@ void showPermissionDialog(BuildContext context) {
       return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: AlertDialog(
-            title: Row(
-              children: const [
+            title: const Row(
+              children: [
                 Icon(Icons.notifications_off_outlined),
                 Expanded(
                     child: Text(

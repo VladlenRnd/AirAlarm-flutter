@@ -36,12 +36,12 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   }
 
   Future<void> _changeTimeData(DateTime selectStart, DateTime selectEnd) async {
-    List<List<String>> alarmHistory = _getHistoryData(selectStart, selectEnd);
+    List<List<DateTime>> alarmHistory = _getHistoryData(selectStart, selectEnd);
     add(
       HistoryLoadDataEvent(
         countAllAlarm: alarmHistory.length.toString(),
-        minDate: DateTime.parse(region.allHistory.last[0]),
-        maxData: DateTime.parse(region.allHistory.first[0]),
+        minDate: region.allHistory.last[0],
+        maxData: region.allHistory.first[0],
         selectStartData: selectStart,
         selectEndData: selectEnd,
         countMonthAlarm: _countMonthAlarm(region.allHistory),
@@ -56,13 +56,13 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   }
 
   void _initData() {
-    List<List<String>> alarmHistory = _getHistoryData(DateTime.parse(region.allHistory.last[0]), DateTime.parse(region.allHistory.first[0]));
+    List<List<DateTime>> alarmHistory = _getHistoryData(region.allHistory.last[0], region.allHistory.first[0]);
     add(HistoryLoadDataEvent(
       countAllAlarm: alarmHistory.length.toString(),
-      minDate: DateTime.parse(region.allHistory.last[0]),
-      maxData: DateTime.parse(region.allHistory.first[0]),
-      selectStartData: DateTime.parse(region.allHistory.last[0]),
-      selectEndData: DateTime.parse(region.allHistory.first[0]),
+      minDate: region.allHistory.last[0],
+      maxData: region.allHistory.first[0],
+      selectStartData: region.allHistory.last[0],
+      selectEndData: region.allHistory.first[0],
       countMonthAlarm: _countMonthAlarm(region.allHistory),
       countSevenDayAlarm: _countSevenDayAlarm(region.allHistory),
       historyData: alarmHistory,
@@ -73,18 +73,18 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     ));
   }
 
-  Map<int, int> _getHistoryGraph(List<List<String>> alarmHistory) {
+  Map<int, int> _getHistoryGraph(List<List<DateTime>> alarmHistory) {
     Map<int, int> result = {};
     DateTime now = DateTime.now();
 
     for (var e in alarmHistory) {
-      DateTime start = DateTime.parse(e[0]);
+      DateTime start = e[0];
       if (start.year == now.year && start.month == now.month) {
         if (result[start.day] == null) {
           result[start.day] = 1;
         } else {
-          int? value = result[start.day];
-          result[start.day] = value! + 1;
+          int countAlarm = result[start.day]! + 1;
+          result[start.day] = countAlarm;
         }
       }
     }
@@ -92,14 +92,14 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     return result;
   }
 
-  AlarmTimeModel _getShortAlarm(List<List<String>> alarmHistory) {
+  AlarmTimeModel _getShortAlarm(List<List<DateTime>> alarmHistory) {
     int inSecond = -1;
     String resultValue;
     DateTime resultDate = DateTime.now();
 
     for (var e in alarmHistory) {
-      DateTime start = DateTime.parse(e[0]);
-      DateTime end = DateTime.parse(e[1]);
+      DateTime start = e[0];
+      DateTime end = e[1];
       Duration duration = end.difference(start);
 
       if (inSecond > duration.inSeconds || inSecond == -1) {
@@ -130,14 +130,14 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     return AlarmTimeModel(date: resultDate, value: resultValue);
   }
 
-  AlarmTimeModel _getLongAlarm(List<List<String>> alarmHistory) {
+  AlarmTimeModel _getLongAlarm(List<List<DateTime>> alarmHistory) {
     int inSecond = -1;
     String resultValue;
     DateTime resultDate = DateTime.now();
 
     for (var e in alarmHistory) {
-      DateTime start = DateTime.parse(e[0]);
-      DateTime end = DateTime.parse(e[1]);
+      DateTime start = e[0];
+      DateTime end = e[1];
       Duration duration = end.difference(start);
 
       if (inSecond < duration.inSeconds || inSecond == -1) {
@@ -168,12 +168,12 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     return AlarmTimeModel(date: resultDate, value: resultValue);
   }
 
-  String _getAllTimeAlarm(List<List<String>> alarmHistory) {
+  String _getAllTimeAlarm(List<List<DateTime>> alarmHistory) {
     int inMinutes = -1;
 
     for (var e in alarmHistory) {
-      DateTime start = DateTime.parse(e[0]);
-      DateTime end = DateTime.parse(e[1]);
+      DateTime start = e[0];
+      DateTime end = e[1];
       Duration duration = end.difference(start);
 
       inMinutes += duration.inMinutes;
@@ -194,10 +194,10 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     }
   }
 
-  List<List<String>> _getHistoryData(DateTime startData, DateTime endData) {
+  List<List<DateTime>> _getHistoryData(DateTime startData, DateTime endData) {
     try {
       return region.allHistory.where((e) {
-        DateTime data = DateTime.parse(e[0]);
+        DateTime data = e[0];
         if (data.day == startData.day && data.month == startData.month && data.year == startData.year) return true;
         if (data.day == endData.day && data.month == endData.month && data.year == endData.year) return true;
         if (data.isAfter(startData) && data.isBefore(endData)) return true;
@@ -209,13 +209,13 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     }
   }
 
-  String _countSevenDayAlarm(List<List<String>> alarmHistory) {
+  String _countSevenDayAlarm(List<List<DateTime>> alarmHistory) {
     return alarmHistory
         .where((element) {
-          DateTime date = DateTime.parse(element[0]).toLocal();
-          DateTime dateNow = _nowData.add(Duration(days: -(_nowData.weekday + 1)));
+          DateTime date = element[0];
+          DateTime dateNow = DateTime.now().add(Duration(days: -(DateTime.now().weekday - 1)));
 
-          if (dateNow.isBefore(date)) return true;
+          if (DateTime(dateNow.year, dateNow.month, dateNow.day).isBefore(date)) return true;
 
           return false;
         })
@@ -223,10 +223,10 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
         .toString();
   }
 
-  String _countMonthAlarm(List<List<String>> alarmHistory) {
+  String _countMonthAlarm(List<List<DateTime>> alarmHistory) {
     return alarmHistory
         .where((element) {
-          DateTime curData = DateTime.parse(element[0]).toLocal();
+          DateTime curData = element[0];
           if (curData.month == _nowData.month && curData.year == _nowData.year) return true;
           return false;
         })
