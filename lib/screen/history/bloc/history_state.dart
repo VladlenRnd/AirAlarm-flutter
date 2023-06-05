@@ -24,7 +24,7 @@ class HistoryLoadedState extends HistoryState {
   final DateTime selectEndData;
   final Map<int, int> historyGraph;
 
-  final List<List<String>> historyData;
+  final List<List<DateTime>> historyData;
 
   const HistoryLoadedState({
     required this.countAllAlarm,

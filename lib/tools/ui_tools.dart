@@ -3,7 +3,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 import '../models/region_model.dart';
+import '../service/shered_preferences_service.dart';
 import 'custom_color.dart';
+import 'region/eregion.dart';
+import 'region/region_title_tools.dart';
 
 class UiTools {
   static List<RegionModel> getAlarmRegion(List<RegionModel> allRegion) {
@@ -22,6 +25,22 @@ class UiTools {
       }
     }
     return result;
+  }
+
+  static bool isAlarmSelectRegion(List<RegionModel> allRegion) {
+    ERegion subscribeRegion = RegionTitleTools.getEnumByEnumName(SheredPreferencesService.preferences.getString("subscribeRegion")!);
+
+    return allRegion.firstWhere((RegionModel e) => e.region == subscribeRegion).isAlarm;
+  }
+
+  static bool isAlarmDistrict(List<RegionModel> allRegion) {
+    ERegion subscribeRegion = RegionTitleTools.getEnumByEnumName(SheredPreferencesService.preferences.getString("subscribeRegion")!);
+    try {
+      allRegion.firstWhere((RegionModel e) => e.region == subscribeRegion).districts.firstWhere((d) => d.isAlarm == true);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static bool isNoAlarm(List<RegionModel> allRegion) {

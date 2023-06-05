@@ -30,7 +30,7 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
                 filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                 child: AlertDialog(
                   title: Text(isAlarmSound ? "Звук тревоги" : "Звук отмены тревоги", textAlign: TextAlign.center),
-                  backgroundColor: CustomColor.background,
+                  backgroundColor: CustomColor.backgroundLight,
                   contentPadding: const EdgeInsets.only(top: 15),
                   insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
                   content: _buildSelectSound(isAlarmSound, setState),
@@ -65,35 +65,48 @@ Future<void> showChangeSoundDialog(BuildContext context, bool isAlarmSound) asyn
 }
 
 Widget _buildItem(String title, String fileName, void Function(Function()) setState) {
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 5),
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    height: 50,
-    color: CustomColor.backgroundLight,
-    child: CupertinoButton(
-      padding: EdgeInsets.zero,
-      onPressed: () {
-        setState(() {
-          _selectValue = fileName;
-        });
-      },
-      child: Row(
-        children: [
-          fileName == _selectValue ? const Icon(Icons.done, color: CustomColor.green, size: 24) : const SizedBox(height: 24, width: 24),
-          const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 15, color: CustomColor.textColor, fontFamily: "Days"),
+  return ColoredBox(
+    color: CustomColor.background,
+    child: Column(
+      children: [
+        const Divider(height: 2, thickness: 1),
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          height: 50,
+          child: Row(
+            children: [
+              fileName == _selectValue ? const Icon(Icons.done, color: CustomColor.green, size: 24) : const SizedBox(height: 24, width: 24),
+              const Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+              Expanded(
+                child: CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      setState(() {
+                        _selectValue = fileName;
+                      });
+                    },
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        title,
+                        style: const TextStyle(fontSize: 15, color: CustomColor.textColor, fontFamily: "Days"),
+                      ),
+                    )),
+              ),
+              if (fileName.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: ElevatedButton(
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
+                    onPressed: () async => await _audioPlayer!.play(AssetSource("$prefix$fileName.mp3"), mode: PlayerMode.mediaPlayer, volume: 0.5),
+                    child: const Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
+                  ),
+                )
+            ],
           ),
-          const Spacer(),
-          if (fileName.isNotEmpty)
-            IconButton(
-              onPressed: () async => await _audioPlayer!.play(AssetSource("$prefix$fileName.mp3"), mode: PlayerMode.mediaPlayer, volume: 0.2),
-              splashRadius: 25,
-              icon: const Icon(Icons.play_arrow_rounded, color: CustomColor.textColor),
-            )
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }

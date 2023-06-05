@@ -4,15 +4,15 @@ import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
 import '../../tools/region/eregion.dart';
 
-class SelectRegionScreen extends StatefulWidget {
+class SelectRegionWidget extends StatefulWidget {
   final void Function(String)? selectRegion;
-  const SelectRegionScreen({Key? key, this.selectRegion}) : super(key: key);
+  const SelectRegionWidget({Key? key, this.selectRegion}) : super(key: key);
 
   @override
-  State<SelectRegionScreen> createState() => _SelectRegionScreenState();
+  State<SelectRegionWidget> createState() => _SelectRegionWidgetState();
 }
 
-class _SelectRegionScreenState extends State<SelectRegionScreen> {
+class _SelectRegionWidgetState extends State<SelectRegionWidget> {
   String _selectedRegion = "";
 
   @override
@@ -36,33 +36,38 @@ class _SelectRegionScreenState extends State<SelectRegionScreen> {
   }
 
   Widget _buildCard(ERegion region, String regionName) {
-    return SizedBox(
-      height: 80,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(horizontal: 20)),
-          backgroundColor: MaterialStateProperty.all<Color>(CustomColor.backgroundLight),
-        ),
-        onPressed: () {
-          setState(() {
-            _selectedRegion = regionName;
-            widget.selectRegion?.call(_selectedRegion);
-          });
-        },
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              region.title,
-              style: const TextStyle(
-                color: CustomColor.textColor,
-                fontSize: 15,
-              ),
+    return Column(
+      children: [
+        const Divider(height: 2, thickness: 1),
+        SizedBox(
+          height: 80,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(horizontal: 20)),
+              backgroundColor: MaterialStateProperty.all<Color>(CustomColor.background),
             ),
-            _selectedRegion.contains(regionName) ? const Icon(Icons.done, color: CustomColor.green) : const SizedBox.shrink(),
-          ],
-        ),
-      ),
+            onPressed: () {
+              setState(() {
+                _selectedRegion = regionName;
+                widget.selectRegion?.call(_selectedRegion);
+              });
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  region.title,
+                  style: const TextStyle(
+                    color: CustomColor.textColor,
+                    fontSize: 15,
+                  ),
+                ),
+                _selectedRegion.contains(regionName) ? const Icon(Icons.done, color: CustomColor.green) : const SizedBox.shrink(),
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 }

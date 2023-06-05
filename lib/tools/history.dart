@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'connection/connection.dart';
 import 'region/region_title_tools.dart';
 
-Map<ERegion, List<List<String>>> allHistory = {};
+Map<ERegion, List<List<DateTime>>> allHistory = {};
 
 Future<bool> getAllHistory() async {
   try {
@@ -16,10 +16,10 @@ Future<bool> getAllHistory() async {
       if (reg != null && element[3] != "True") {
         if (allHistory[reg] == null) {
           allHistory[reg] = [
-            [element[1], element[2]]
+            [DateTime.parse(element[1]).toLocal(), DateTime.parse(element[2]).toLocal()]
           ];
         } else {
-          allHistory[reg]!.add([element[1], element[2]]);
+          allHistory[reg]!.add([DateTime.parse(element[1]).toLocal(), DateTime.parse(element[2]).toLocal()]);
         }
       }
     }

@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:expandable/expandable.dart';
 
 import '../../dialog/custom_snack_bar.dart';
 import '../../dialog/info_dialog.dart';
@@ -17,10 +16,9 @@ import '../../service/location_service.dart';
 import '../../service/notification_service.dart';
 import '../../service/shered_preferences_service.dart';
 import '../../tools/custom_color.dart';
-import '../../tools/region/eregion.dart';
 import '../../models/region_model.dart';
 import '../../tools/region/region_title_tools.dart';
-import '../news/news_screen.dart';
+import 'expandet_title_widget.dart';
 
 class CustomDrawer extends StatelessWidget {
   final List<RegionModel> allRegion;
@@ -42,12 +40,23 @@ class CustomDrawer extends StatelessWidget {
                         child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          _buildNotificationSetting(context, setState),
+                          ExpandedTitleWidget(
+                              iconColor: CustomColor.systemSecondary,
+                              icons: Icons.map_outlined,
+                              title: "Область",
+                              child: _buildExpandedRegionSetting(context, setState)),
+
+                          const Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                          ExpandedTitleWidget(
+                              iconColor: CustomColor.drawerItemNotification,
+                              icons: Icons.notifications_active,
+                              title: "Уведомления",
+                              child: _buildExpandedAllertSetting(context, setState)),
                           const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                           _buildItemButton(context, "Режим тишины", Icons.notifications_off_outlined, Colors.blueGrey, () {
                             showSilentModeDialog(context);
                           }),
-                          const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                          const Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                           // _buildItemButton(context, "Новости", Icons.newspaper, Colors.blue, () async {
                           //   Navigator.of(context).pop();
                           //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => const NewsScreen()));
@@ -98,6 +107,52 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
+  Widget _buildTitleSetting(String title, {Function? onTap}) {
+    return CupertinoButton(
+        child: Text(title, style: TextStyle(color: CustomColor.textColor.withOpacity(0.8), fontFamily: "Days")),
+        onPressed: () {
+          onTap?.call();
+        });
+  }
+
+//********************************** */
+
+  Widget _buildExpandedAllertSetting(BuildContext context, Function(void Function()) setState) {
+    return ColoredBox(
+        color: CustomColor.backgroundLight,
+        child: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(border: Border(left: BorderSide(color: CustomColor.drawerItemNotification, width: 2))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitleSetting("Звук при тревоге", onTap: () => showChangeSoundDialog(context, true)),
+              _buildTitleSetting("Звук при отмене тревоги", onTap: () => showChangeSoundDialog(context, false)),
+            ],
+          ),
+        ));
+  }
+
+  Widget _buildExpandedRegionSetting(BuildContext context, Function(void Function()) setState) {
+    return ColoredBox(
+        color: CustomColor.backgroundLight,
+        child: Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(border: Border(left: BorderSide(color: CustomColor.systemSecondary, width: 2))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitleSetting("Автоопределение", onTap: () => _setOnAutolocation(context)),
+              _buildTitleSetting("Отслеживание тревоги", onTap: () async {
+                await showSubscribeDialog(context);
+                setState(() {});
+              }),
+            ],
+          ),
+        ));
+  }
+//********************************** */
+
   Widget _buildItemButton(BuildContext context, String title, IconData icon, Color color, void Function() onTap) {
     return CupertinoButton(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -114,63 +169,6 @@ class CustomDrawer extends StatelessWidget {
             ),
           ],
         ));
-  }
-
-  Widget _buildNotificationSetting(BuildContext context, Function(void Function()) setState) {
-    return ExpandablePanel(
-      collapsed: const SizedBox.shrink(),
-      expanded: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
-        child: _buildAllertSetting(context, setState),
-      ),
-      header: _buildItemHeader(context),
-      theme: const ExpandableThemeData(
-        iconColor: CustomColor.textColor,
-        headerAlignment: ExpandablePanelHeaderAlignment.center,
-        iconPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      ),
-    );
-  }
-
-  Widget _buildItemHeader(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Row(
-          children: [
-            Icon(Icons.notifications_active, color: CustomColor.drawerItemNotification),
-            const Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
-            Text(
-              "Уведомления",
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white),
-            ),
-          ],
-        ));
-  }
-
-  Widget _buildTitleSetting(String title, {Function? onTap}) {
-    return CupertinoButton(
-        child: Text(title, style: TextStyle(color: CustomColor.textColor.withOpacity(0.8), fontFamily: "Days")),
-        onPressed: () {
-          onTap?.call();
-        });
-  }
-
-  Widget _buildAllertSetting(BuildContext context, Function(void Function()) setState) {
-    return Container(
-      decoration: BoxDecoration(border: Border(left: BorderSide(color: CustomColor.drawerItemNotification, width: 2))),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildTitleSetting("Вкл/Выкл автоопределение", onTap: () => _setOnAutolocation(context)),
-          _buildTitleSetting("Отслеживание тревоги", onTap: () async {
-            await showSubscribeDialog(context);
-            setState(() {});
-          }),
-          _buildTitleSetting("Звук при тревоге", onTap: () => showChangeSoundDialog(context, true)),
-          _buildTitleSetting("Звук при отмене тревоги", onTap: () => showChangeSoundDialog(context, false)),
-        ],
-      ),
-    );
   }
 
   void _setOnAutolocation(BuildContext context) async {
@@ -217,31 +215,12 @@ class CustomDrawer extends StatelessWidget {
         Navigator.of(context).pop();
         CustomSnackBar.error(context, title: "Нет полных разрешений для геолокации");
       }
-    } else {
-      Navigator.of(context).pop();
-      CustomSnackBar.error(context, title: "Нет полных разрешений для геолокации");
-    }
-  }
-
-  bool _isAlarmSelectRegion() {
-    ERegion subscribeRegion = RegionTitleTools.getEnumByEnumName(SheredPreferencesService.preferences.getString("subscribeRegion")!);
-
-    return allRegion.firstWhere((RegionModel e) => e.region == subscribeRegion).isAlarm;
-  }
-
-  bool _isAlarmDistrict() {
-    ERegion subscribeRegion = RegionTitleTools.getEnumByEnumName(SheredPreferencesService.preferences.getString("subscribeRegion")!);
-    try {
-      allRegion.firstWhere((RegionModel e) => e.region == subscribeRegion).districts.firstWhere((d) => d.isAlarm == true);
-      return true;
-    } catch (e) {
-      return false;
     }
   }
 
   Widget _buildHead() {
-    bool isAlarm = _isAlarmSelectRegion();
-    bool isAlarmDistrict = _isAlarmDistrict();
+    bool isAlarm = UiTools.isAlarmSelectRegion(allRegion);
+    bool isAlarmDistrict = UiTools.isAlarmDistrict(allRegion);
     return Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -283,13 +262,13 @@ class CustomDrawer extends StatelessWidget {
                   builder: ((context, snapshot) {
                     if (snapshot.hasData) {
                       if (!snapshot.data!) return const SizedBox.shrink();
-                      return Column(
+                      return const Column(
                         children: [
-                          const Divider(),
+                          Divider(),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Icon(Icons.location_on_outlined, color: CustomColor.green),
                               Flexible(
                                 child:

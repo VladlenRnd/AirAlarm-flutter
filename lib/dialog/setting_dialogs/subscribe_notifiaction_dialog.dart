@@ -26,8 +26,9 @@ Future<void> showSubscribeDialog(BuildContext context) async {
                 child: AlertDialog(
                   title: const Text("Отслеживание тревоги", textAlign: TextAlign.center),
                   contentPadding: const EdgeInsets.only(top: 15),
+                  backgroundColor: CustomColor.backgroundLight,
                   insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-                  content: SelectRegionScreen(
+                  content: SelectRegionWidget(
                     selectRegion: (String selectValue) {
                       _selectValue = selectValue;
                     },

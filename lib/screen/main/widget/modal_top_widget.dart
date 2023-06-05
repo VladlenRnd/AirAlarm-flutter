@@ -50,60 +50,81 @@ class _ModalTopWidget extends StatelessWidget {
     return [
       Container(height: 5, color: Colors.black, margin: const EdgeInsets.symmetric(vertical: 15)),
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10, right: 15, bottom: 10),
-          child: Row(children: const [
+        const Padding(
+          padding: EdgeInsets.only(left: 10, right: 15, bottom: 10),
+          child: Row(children: [
             Icon(Icons.warning_amber_rounded, color: Colors.amber),
             SizedBox(width: 10),
             Text("Опасные районы", style: TextStyle(fontSize: 16)),
           ]),
         ),
         for (int i = 0; i < region.districts.length; i++)
-          if (region.districts[i].isAlarm && !region.isAlarm) _buildDistrict(region.districts[i])
+          if (!region.districts[i].isAlarm && !region.isAlarm) _buildDistrict(region.districts[i])
       ]),
     ];
   }
 
   Widget _buildHistory(BuildContext context) {
-    if (region.historyThreeDay.isEmpty) return const SizedBox.shrink();
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10, right: 3, top: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.history_outlined, color: CustomColor.systemSecondary),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text("Краткая история тревог", textAlign: TextAlign.start, style: TextStyle(fontSize: 16)),
-                    )
-                  ],
+    if (region.historyThreeDay.isEmpty && region.allHistory.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("За последнии 3 дня \nтревог нет", textAlign: TextAlign.start, style: TextStyle(fontSize: 16, color: CustomColor.green)),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => HistoryScreen(region: region)));
+              },
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
+              child: const Text("Полная история"),
+            ),
+          ],
+        ),
+      );
+    } else if (region.historyThreeDay.isNotEmpty) {
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 10, right: 3, top: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Flexible(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Icons.history_outlined, color: CustomColor.systemSecondary),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text("Краткая история тревог", textAlign: TextAlign.start, style: TextStyle(fontSize: 16)),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Flexible(
-                  child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => HistoryScreen(region: region)));
-                },
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
-                child: const Text("Полная история"),
-              )),
-            ],
+                Flexible(
+                    child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => HistoryScreen(region: region)));
+                  },
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
+                  child: const Text("Полная история"),
+                )),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 5),
-        SizedBox(
-          height: 400,
-          child: HistoryListWidget(historyData: region.historyThreeDay),
-        ),
-      ],
-    );
+          const SizedBox(height: 5),
+          SizedBox(
+            height: 400,
+            child: HistoryListWidget(historyData: region.historyThreeDay),
+          ),
+        ],
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   Widget _buildDistrict(DistrictModel districts) {

@@ -9,8 +9,8 @@ class RegionModel {
   final String? timeDurationAlarm;
   final String? timeDurationCancelAlarm;
   final String? timeEnd;
-  final List<List<String>> allHistory;
-  final List<List<String>> historyThreeDay;
+  final List<List<DateTime>> allHistory;
+  final List<List<DateTime>> historyThreeDay;
   final List<DistrictModel> districts;
 
   RegionModel(

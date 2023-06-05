@@ -5,15 +5,15 @@ import 'package:intl/intl.dart';
 import '../tools/custom_color.dart';
 
 class HistoryListWidget extends StatelessWidget {
-  final List<List<String>> historyData;
-  final Map<String, List<List<String>>> _groupedData = {};
+  final List<List<DateTime>> historyData;
+  final Map<String, List<List<DateTime>>> _groupedData = {};
   HistoryListWidget({super.key, required this.historyData}) {
     _getGroup();
   }
 
   void _getGroup() {
-    for (List<String> element in historyData) {
-      DateTime date = DateTime.parse(element[0]).toLocal();
+    for (List<DateTime> element in historyData) {
+      DateTime date = element[0];
       if (_groupedData[DateFormat("dd/MM/yyyy").format(date)] == null) {
         _groupedData[DateFormat("dd/MM/yyyy").format(date)] = [element];
       } else {
@@ -60,7 +60,7 @@ class HistoryListWidget extends StatelessWidget {
         header: _buildTitleHeader("Дата ${e.key}", "${e.value.length}"),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
-            (context, i) => _buildHistoryCard(DateTime.parse(e.value[i][0]).toLocal(), DateTime.parse(e.value[i][1]).toLocal()),
+            (context, i) => _buildHistoryCard(e.value[i][0], e.value[i][1]),
             childCount: e.value.length,
           ),
         ),

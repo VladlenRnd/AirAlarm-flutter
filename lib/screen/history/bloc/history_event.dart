@@ -30,7 +30,7 @@ class HistoryLoadDataEvent extends HistoryEvent {
   final DateTime selectEndData;
   final Map<int, int> historyGraph;
 
-  final List<List<String>> historyData;
+  final List<List<DateTime>> historyData;
 
   const HistoryLoadDataEvent({
     required this.countAllAlarm,

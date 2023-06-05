@@ -80,9 +80,14 @@ class _LoaderScreanState extends State<LoaderScrean> {
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: _buildBody(),
-        ),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              height: 130,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+              child: _buildBody(),
+            )),
       ),
     );
   }
@@ -99,7 +104,7 @@ class _LoaderScreanState extends State<LoaderScrean> {
               isRepeatingAnimation: false,
               animatedTexts: [
                 TypewriterAnimatedText(
-                  _eStatus == _EAllLoadedStatus.proccesing ? "Загрузка приложения" : "Загрузка завершена",
+                  _eStatus == _EAllLoadedStatus.proccesing ? "Загрузка" : "Загрузка завершена",
                   textAlign: TextAlign.center,
                   textStyle: TextStyle(
                     fontFamily: "8Bit",
@@ -115,6 +120,7 @@ class _LoaderScreanState extends State<LoaderScrean> {
             LinearProgressIndicator(
               minHeight: 7,
               value: _loadPercent,
+              backgroundColor: Colors.white.withOpacity(0.4),
               color: CustomColor.systemSecondary,
             ),
           ],
@@ -128,54 +134,13 @@ class _LoaderScreanState extends State<LoaderScrean> {
             AnimatedTextKit(
               isRepeatingAnimation: false,
               animatedTexts: [
-                TypewriterAnimatedText("Ошибка загрузки приложения",
+                TypewriterAnimatedText("Ошибка загрузки",
                     textAlign: TextAlign.center,
                     textStyle: const TextStyle(
                         fontFamily: "8Bit", fontSize: 16, fontWeight: FontWeight.w300, color: CustomColor.red, letterSpacing: 1.5, height: 1.5)),
               ],
             ),
-            const SizedBox(height: 20),
-            CupertinoButton(
-                onPressed: () async {
-                  setState(() {
-                    _eStatus = _EAllLoadedStatus.proccesing;
-                    _loadPercent = 0.0;
-                    _loadServiceList = [];
-                  });
-                  if (!await _initConfig()) return;
-                  _allDataLoaded();
-                },
-                child: const Text("Повторить загрузку")),
-          ],
-        );
-
-      case _EAllLoadedStatus.notCriticalError:
-        return Column(
-          key: ValueKey(_eStatus),
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedTextKit(
-              isRepeatingAnimation: false,
-              animatedTexts: [
-                TypewriterAnimatedText("Загрузка завершена c ошибкой",
-                    textAlign: TextAlign.center,
-                    textStyle: const TextStyle(
-                        fontFamily: "8Bit",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                        color: CustomColor.colorMapAtantion,
-                        letterSpacing: 1.5,
-                        height: 1.5)),
-              ],
-            ),
-            const SizedBox(height: 25),
-            ElevatedButton(
-                onPressed: () async {
-                  setState(() {});
-                  _goToMain();
-                },
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
-                child: const Text("Запустить упрощёную версию")),
+            const SizedBox(height: 10),
             CupertinoButton(
                 onPressed: () async {
                   setState(() {
@@ -224,7 +189,6 @@ class _LoaderScreanState extends State<LoaderScrean> {
         _eStatus = _EAllLoadedStatus.criticalError;
         break;
       }
-      if (element.status == _ELoadStatus.error && !element.isCritical) _eStatus = _EAllLoadedStatus.notCriticalError;
     }
 
     switch (_eStatus) {
@@ -235,7 +199,6 @@ class _LoaderScreanState extends State<LoaderScrean> {
         return;
       case _EAllLoadedStatus.proccesing:
       case _EAllLoadedStatus.criticalError:
-      case _EAllLoadedStatus.notCriticalError:
         setState(() {});
         break;
     }
@@ -247,7 +210,7 @@ class _LoaderScreanState extends State<LoaderScrean> {
     return PageTransition(
       child: MainScreen(initAlarm: _listAlarm),
       type: PageTransitionType.fade,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 2),
     );
   }
 }
@@ -273,6 +236,6 @@ class _LoadModel {
   _LoadModel({required this.listMethosInit, this.isCritical = false});
 }
 
-enum _EAllLoadedStatus { allDone, proccesing, criticalError, notCriticalError }
+enum _EAllLoadedStatus { allDone, proccesing, criticalError }
 
 enum _ELoadStatus { loading, ok, error }
