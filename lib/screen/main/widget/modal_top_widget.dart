@@ -59,7 +59,7 @@ class _ModalTopWidget extends StatelessWidget {
           ]),
         ),
         for (int i = 0; i < region.districts.length; i++)
-          if (!region.districts[i].isAlarm && !region.isAlarm) _buildDistrict(region.districts[i])
+          if (region.districts[i].isAlarm && !region.isAlarm) _buildDistrict(region.districts[i])
       ]),
     ];
   }
