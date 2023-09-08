@@ -9,6 +9,7 @@ import 'notification_service.dart';
 import 'shered_preferences_service.dart';
 
 class FirebaseService implements AService {
+  
   FirebaseService._privateConstructor();
   static final FirebaseService _instance = FirebaseService._privateConstructor();
   factory FirebaseService() => _instance;

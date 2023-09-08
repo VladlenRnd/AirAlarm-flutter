@@ -8,6 +8,7 @@ import 'region/region_title_tools.dart';
 Map<ERegion, List<List<DateTime>>> allHistory = {};
 
 Future<bool> getAllHistory() async {
+  if (allHistory.isNotEmpty) return true;
   try {
     String data = await Connection.getHistoryAlarm();
     List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(data);

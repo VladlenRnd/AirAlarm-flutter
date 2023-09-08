@@ -194,7 +194,7 @@ class _LoaderScreanState extends State<LoaderScrean> {
     switch (_eStatus) {
       case _EAllLoadedStatus.allDone:
         setState(() {});
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 800));
         _goToMain();
         return;
       case _EAllLoadedStatus.proccesing:
@@ -210,7 +210,7 @@ class _LoaderScreanState extends State<LoaderScrean> {
     return PageTransition(
       child: MainScreen(initAlarm: _listAlarm),
       type: PageTransitionType.fade,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1000),
     );
   }
 }

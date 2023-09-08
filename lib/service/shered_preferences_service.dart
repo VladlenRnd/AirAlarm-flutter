@@ -33,6 +33,7 @@ class SheredPreferencesService implements AService {
     _preferences!.getString("cancelSong") ?? await _preferences!.setString("cancelSong", "cancel_alarm");
     _preferences!.getStringList("siledStart") ?? await _preferences!.setStringList("siledStart", []);
     _preferences!.getStringList("siledEnd") ?? await _preferences!.setStringList("siledEnd", []);
+    _preferences!.getBool("isAutoSearch") ?? await _preferences!.setBool("isAutoSearch", false);
     _preferences!.getInt("sort") ?? await _preferences!.setInt("sort", 0);
   }
 }

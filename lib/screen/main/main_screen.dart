@@ -12,7 +12,6 @@ import '../../dialog/no_permission_dialog.dart';
 import '../../models/region_model.dart';
 import '../../tools/connection/response/alarm_response.dart';
 import '../../tools/connection/response/config_response.dart';
-import '../../tools/history.dart';
 import '../../tools/repository/config_repository.dart';
 import '../../tools/ui_tools.dart';
 import '../../tools/ukrain_svg.dart';
@@ -20,6 +19,7 @@ import '../drawer/drawer_screen.dart';
 import '../drawer/end_drawer_screen.dart';
 import 'bloc/main_bloc.dart';
 import '../../tools/custom_color.dart';
+import 'widget/info_title/info_title_widget.dart';
 import 'widget/card_list_widget.dart';
 import 'widget/modal_top_widget.dart';
 import 'widget/not_war_widget.dart';
@@ -37,7 +37,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    getAllHistory();
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       if (await NotificationService.requestPermission() == false) {
         showPermissionDialog(context);
@@ -138,12 +137,7 @@ class _MainScreenState extends State<MainScreen> {
         fit: BoxFit.cover,
         frameRate: FrameRate(60),
       ),
-      const Text("Всеобщая воздушная тревога", style: TextStyle(color: CustomColor.red)),
-      Lottie.asset(
-        'assets/lottie/warning.json',
-        fit: BoxFit.cover,
-        frameRate: FrameRate(60),
-      ),
+      const Text("Масштабная тревога", style: TextStyle(color: CustomColor.red)),
     ];
   }
 
@@ -178,9 +172,8 @@ class _MainScreenState extends State<MainScreen> {
                   slivers: <Widget>[
                     SliverAppBar(
                       stretch: true,
-                      actions: [
-                        _buildAlarmCounter(UiTools.getAlarmRegion(state.listRegions).length),
-                      ],
+                      actions: [_buildAlarmCounter(UiTools.getAlarmRegion(state.listRegions).length)],
+                      title: const InfoTitleWidget(),
                       pinned: true,
                       floating: true,
                       expandedHeight: 383,

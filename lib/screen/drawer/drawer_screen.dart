@@ -82,7 +82,7 @@ class CustomDrawer extends StatelessWidget {
                                 const SizedBox(height: 5),
                                 ElevatedButton(
                                   style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
-                                  onPressed: () => AppSettings.openNotificationSettings(),
+                                  onPressed: () => AppSettings.openAppSettings(),
                                   child: const Text("Разрешить уведомления"),
                                 ),
                               ],
@@ -137,19 +137,28 @@ class CustomDrawer extends StatelessWidget {
     return ColoredBox(
         color: CustomColor.backgroundLight,
         child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(border: Border(left: BorderSide(color: CustomColor.systemSecondary, width: 2))),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitleSetting("Автоопределение", onTap: () => _setOnAutolocation(context)),
-              _buildTitleSetting("Отслеживание тревоги", onTap: () async {
-                await showSubscribeDialog(context);
-                setState(() {});
-              }),
-            ],
-          ),
-        ));
+            width: double.infinity,
+            decoration: const BoxDecoration(border: Border(left: BorderSide(color: CustomColor.systemSecondary, width: 2))),
+            child: FutureBuilder<bool>(
+              future: FlutterBackgroundService().isRunning(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTitleSetting(snapshot.data! ? "Выключить \"Автопоиск\"" : "Включить \"Автопоиск\"",
+                          onTap: () => _setOnAutolocation(context)),
+                      if (!snapshot.data!)
+                        _buildTitleSetting("Отслеживание тревоги", onTap: () async {
+                          await showSubscribeDialog(context);
+                          setState(() {});
+                        }),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            )));
   }
 //********************************** */
 
@@ -175,7 +184,7 @@ class CustomDrawer extends StatelessWidget {
     if (await FlutterBackgroundService().isRunning()) {
       LocationService.disabledAutoLocation();
       Navigator.of(context).pop();
-      CustomSnackBar.error(context, title: "Автоопределение отключенно!");
+      CustomSnackBar.error(context, title: "Автопоиск отключен!");
       return;
     }
 
@@ -183,14 +192,14 @@ class CustomDrawer extends StatelessWidget {
       if (await showInfoDialog(
         context,
         title: "Внимание!",
-        icon: const Icon(Icons.battery_alert, size: 40),
+        icon: const Icon(Icons.battery_alert, size: 40, color: CustomColor.red),
         actionButtonStr: "Да",
         closeButtonStr: "Нет",
-        contenInfo: "Этот режим потребляем больше заряда аккамулятора \n \n Включить функцию автоопределение области?",
+        contenInfo: "Этот режим потребляет больше заряда аккамулятора \n \n Включить функцию \"Автопоиск\" области?",
       )) {
         if (await LocationService.enableAutoLocation()) {
           Navigator.of(context).pop();
-          CustomSnackBar.success(context, title: "Автоопределение включенно!");
+          CustomSnackBar.success(context, title: "Автопоиск включен!");
         } else {
           Navigator.of(context).pop();
           CustomSnackBar.error(context, title: "Упсс. Что то пошло не так...");
@@ -206,14 +215,15 @@ class CustomDrawer extends StatelessWidget {
       icon: const Icon(Icons.location_off_outlined, size: 40),
       actionButtonStr: "Перейти в настройки",
       contenInfo:
-          "Для корректной работы автоопределения области приложению нужно предоставить права на распознования гиолокации \n\n Если кнопка \n \"Перейти в настройки\" \n не работает, включите вручную",
+          "Для корректной работы \"Автопоиска области\" приложению нужно предоставить права на распознования геолокации \n\n Если кнопка \n \"Перейти в настройки\" \n не работает, включите вручную",
     )) {
       if (await LocationService.requestingPermission()) {
         _setOnAutolocation(context);
         return;
       } else {
         Navigator.of(context).pop();
-        CustomSnackBar.error(context, title: "Нет полных разрешений для геолокации");
+        CustomSnackBar.error(context,
+            title: "Для работы \"Автопоиска области\" нужно разрешение: \"Разрешить в любом режиме\"", duration: const Duration(seconds: 15));
       }
     }
   }
@@ -271,8 +281,8 @@ class CustomDrawer extends StatelessWidget {
                             children: [
                               Icon(Icons.location_on_outlined, color: CustomColor.green),
                               Flexible(
-                                child:
-                                    Text("Автоопределение области включено", textAlign: TextAlign.center, style: TextStyle(color: CustomColor.green)),
+                                child: Text("Автоматическое определение области",
+                                    textAlign: TextAlign.center, style: TextStyle(color: CustomColor.green)),
                               )
                             ],
                           )

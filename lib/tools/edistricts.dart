@@ -1,4 +1,5 @@
 enum EDistricts {
+  none(""),
   vinnetskij("Винницкий район"),
   gajsinskij("Гайсинский район"),
   zhmerinskij("Жмеринский район"),
@@ -120,7 +121,8 @@ enum EDistricts {
   konotopskij("Конотопский район"),
   chernivetskij("Черневецкий район"),
   dnestrovskij("Днестровский район"),
-  zolochevskij("Золочевский район");
+  zolochevskij("Золочевский район"),
+  zvagelevskij("Звягельский район");
 
   final String title;
   const EDistricts(this.title);
@@ -371,7 +373,10 @@ EDistricts getEDistrictsByString(String title) {
       return EDistricts.vladimirskij;
     case "Камінь-Каширський район":
       return EDistricts.kamenKashirskij;
+    case "Звягельський район":
+      return EDistricts.zvagelevskij;
     default:
-      throw Exception("No finde enum by string $title");
+      print("=========================No SUPORT Districts=================: $title");
+      return EDistricts.none;
   }
 }

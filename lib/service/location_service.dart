@@ -25,44 +25,51 @@ class LocationService implements AService {
   @override
   bool isInitDone = false;
 
+  static Future<bool> _initConfig({required bool isBootStart, required FlutterBackgroundService service}) async {
+    return await service.configure(
+      androidConfiguration: AndroidConfiguration(
+        // this will executed when app is in foreground or background in separated isolate
+        onStart: _onStart,
+        initialNotificationContent: "Приложение автоматически определяет область",
+        initialNotificationTitle: "Автопоиск области",
+
+        // auto start service
+        autoStart: false, // await FlutterBackgroundService().isRunning(),
+        isForegroundMode: true,
+        autoStartOnBoot: isBootStart,
+      ),
+      iosConfiguration: IosConfiguration(
+        // auto start service
+        autoStart: false,
+
+        // this will executed when app is in foreground in separated isolate
+        onForeground: ((service) => {}),
+
+        // you have to enable background fetch capability on xcode project
+        onBackground: (service) => true,
+      ),
+    );
+  }
+
   @override
   Future<bool> init() async {
     if (isInitDone) return true;
-    try {
-      _service = FlutterBackgroundService();
-
-      await _service.configure(
-        androidConfiguration: AndroidConfiguration(
-          // this will executed when app is in foreground or background in separated isolate
-          onStart: _onStart,
-          initialNotificationContent: "",
-          initialNotificationTitle: "Автоопределение области запущено",
-
-          // auto start service
-          autoStart: await FlutterBackgroundService().isRunning(),
-          isForegroundMode: true,
-        ),
-        iosConfiguration: IosConfiguration(
-          // auto start service
-          autoStart: true,
-
-          // this will executed when app is in foreground in separated isolate
-          onForeground: ((service) => {}),
-
-          // you have to enable background fetch capability on xcode project
-          onBackground: (service) => true,
-        ),
-      );
-      isInitDone = true;
-      return true;
-    } catch (e) {
-      return false;
-    }
+    _service = FlutterBackgroundService();
+    isInitDone = true;
+    return true;
   }
 
-  static Future<bool> enableAutoLocation() async => await _service.startService();
+  static Future<bool> enableAutoLocation() async {
+    await _initConfig(service: _service, isBootStart: true);
 
-  static void disabledAutoLocation() => FlutterBackgroundService().invoke("stopService");
+    bool result = await _service.startService();
+    return result;
+  }
+
+  static void disabledAutoLocation() async {
+    FlutterBackgroundService().invoke("stopService");
+    await _initConfig(service: _service, isBootStart: false);
+  }
 
   static Future<bool> requestingPermission() async {
     switch (await Geolocator.requestPermission()) {
@@ -118,7 +125,7 @@ class LocationService implements AService {
     }
   }
 
-  static Future<void> _location(ServiceInstance service) async {
+  static Future<void> _location() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
       return Future.error('Location services are disabled.');
     }
@@ -138,7 +145,7 @@ class LocationService implements AService {
     await NotificationService().init();
     await SheredPreferencesService().init();
     await Firebase.initializeApp();
-    _location(service);
+    _location();
     service.on('stopService').listen((event) {
       service.stopSelf();
     });
