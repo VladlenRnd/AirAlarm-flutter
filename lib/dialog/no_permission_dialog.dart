@@ -33,7 +33,7 @@ void showPermissionDialog(BuildContext context) {
             actionsAlignment: MainAxisAlignment.center,
             actions: <Widget>[
               ElevatedButton(
-                onPressed: () => AppSettings.openNotificationSettings(callback: () => Navigator.pop(context)),
+                onPressed: () => AppSettings.openAppSettings(),
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(CustomColor.systemSecondary)),
                 child: const Text("Перейти в настройки"),
               )
