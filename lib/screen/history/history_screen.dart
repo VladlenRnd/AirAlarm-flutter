@@ -53,17 +53,17 @@ class HistoryScreen extends StatelessWidget {
       child: Theme(
         data: ThemeData(
           highlightColor: Colors.transparent,
-          splashColor: CustomColor.systemSecondary,
+          splashColor: CustomColor.colorMapDefault,
         ),
         child: TabBar(
           labelPadding: const EdgeInsets.symmetric(horizontal: 22),
-          labelColor: CustomColor.systemText,
+          labelColor: CustomColor.colorMapDefault,
           indicator: BubbleTabIndicator(
             tabBarIndicatorSize: TabBarIndicatorSize.label,
             indicatorHeight: 20,
             padding: const EdgeInsets.symmetric(vertical: 7),
-            indicatorColor: CustomColor.systemSecondary.withOpacity(0.15),
-            borderColor: CustomColor.systemSecondary,
+            indicatorColor: CustomColor.colorMapDefault.withOpacity(0.15),
+            borderColor: CustomColor.colorMapDefault,
           ),
           labelStyle: const TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
           unselectedLabelColor: CustomColor.textColor.withOpacity(0.6),

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 enum EDistricts {
   none(""),
   vinnetskij("Винницкий район"),
@@ -376,7 +378,7 @@ EDistricts getEDistrictsByString(String title) {
     case "Звягельський район":
       return EDistricts.zvagelevskij;
     default:
-      print("=========================No SUPORT Districts=================: $title");
+      if (kDebugMode) print("=========================No SUPORT Districts=================: $title");
       return EDistricts.none;
   }
 }

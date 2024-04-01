@@ -38,7 +38,9 @@ class NotificationService implements AService {
   }
 
   static Future<bool> requestPermission() async =>
-      await _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestPermission() ??
+      await _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission() ??
       false;
 
   static Future<void> showNotification(bool isAlarm, String region, String alarmPath, String cancelPath, bool isSound) async {
@@ -115,7 +117,7 @@ class NotificationService implements AService {
       icon: "ic_update",
       priority: Priority.max,
       enableLights: true,
-      color: CustomColor.systemSecondary,
+      color: CustomColor.colorMapDefault,
       autoCancel: true,
       visibility: NotificationVisibility.public,
     ));

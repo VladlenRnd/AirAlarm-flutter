@@ -23,8 +23,7 @@ class Connection {
   }
 
   static Future<AlarmRespose> getAlarm() async {
-    final response = await _get(Uri.parse(ConfigRepository.instance.config.urlAlarm));
-
+    final response = await _get(Uri.parse(ConfigRepository.instance.config!.urlAlarm));
     if (response.statusCode == 200) {
       return AlarmRespose.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
@@ -32,18 +31,18 @@ class Connection {
     }
   }
 
-  static Future<UpdateResposeOld> chekUpdate() async {
-    final response = await _get(Uri.parse(ConfigRepository.instance.config.urlUpdate));
+  static Future<UpdateRespose> chekUpdate() async {
+    final response = await _get(Uri.parse(ConfigRepository.instance.config!.urlUpdate));
 
     if (response.statusCode == 200) {
-      return UpdateResposeOld.fromJson(jsonDecode(response.body));
+      return UpdateRespose.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load update JSON');
     }
   }
 
   static Future<String> getHistoryAlarm() async {
-    final response = await _get(Uri.parse(ConfigRepository.instance.config.urlHistory));
+    final response = await _get(Uri.parse(ConfigRepository.instance.config!.urlHistory));
 
     if (response.statusCode == 200) {
       return response.body;

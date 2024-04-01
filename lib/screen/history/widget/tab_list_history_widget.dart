@@ -18,7 +18,7 @@ class TabListHistoryWidget extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: CustomColor.listCardColor,
+            color: CustomColor.colorMapDefault,
           ),
           margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
           width: double.infinity,

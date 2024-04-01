@@ -1,27 +1,55 @@
+import 'package:equatable/equatable.dart';
+
 import '../tools/region/eregion.dart';
 import 'district_model.dart';
 
-class RegionModel {
+class RegionModel extends Equatable {
   final String title;
   final ERegion region;
   final bool isAlarm;
-  final String? timeStart;
-  final String? timeDurationAlarm;
-  final String? timeDurationCancelAlarm;
-  final String? timeEnd;
+  final String? timeStartStr;
+  final String? timeDurationAlarmStr;
+  final Duration timeDurationAlarm;
+  final Duration timeDurationCancelAlarm;
+  final String? timeDurationCancelAlarmStr;
+  final String? timeEndStr;
   final List<List<DateTime>> allHistory;
   final List<List<DateTime>> historyThreeDay;
   final List<DistrictModel> districts;
+  final String? curfewStr;
+  final bool? isCurfew;
 
-  RegionModel(
-      {required this.title,
-      required this.isAlarm,
-      required this.timeDurationCancelAlarm,
-      required this.timeDurationAlarm,
-      required this.timeEnd,
-      required this.timeStart,
-      required this.districts,
-      required this.allHistory,
-      required this.historyThreeDay,
-      required this.region});
+  const RegionModel({
+    required this.title,
+    required this.isAlarm,
+    required this.timeDurationCancelAlarmStr,
+    required this.timeDurationCancelAlarm,
+    required this.timeDurationAlarmStr,
+    required this.timeDurationAlarm,
+    required this.timeEndStr,
+    required this.timeStartStr,
+    required this.districts,
+    required this.allHistory,
+    required this.historyThreeDay,
+    required this.region,
+    required this.curfewStr,
+    required this.isCurfew,
+  });
+
+  @override
+  List<Object?> get props => [
+        title,
+        region,
+        isAlarm,
+        timeStartStr,
+        timeDurationAlarmStr,
+        timeDurationAlarm,
+        timeDurationCancelAlarmStr,
+        timeEndStr,
+        allHistory,
+        historyThreeDay,
+        districts,
+        curfewStr,
+        isCurfew,
+      ];
 }

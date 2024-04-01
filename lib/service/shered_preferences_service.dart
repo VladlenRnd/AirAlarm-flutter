@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:alarm/service/abstract_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../tools/region/eregion.dart';
+import 'settings_service.dart';
 
 class SheredPreferencesService implements AService {
   static SharedPreferences? _preferences;
@@ -16,10 +17,10 @@ class SheredPreferencesService implements AService {
 
   @override
   Future<bool> init() async {
-    if (isInitDone) return true;
     try {
       _preferences = await SharedPreferences.getInstance();
-      await _initDefaultData();
+      await _preferences!.reload();
+      await _initData();
       isInitDone = true;
       return true;
     } catch (e) {
@@ -27,13 +28,11 @@ class SheredPreferencesService implements AService {
     }
   }
 
-  static Future<void> _initDefaultData() async {
-    _preferences!.getString("subscribeRegion") ?? await _preferences!.setString("subscribeRegion", ERegion.dnipro.name);
-    _preferences!.getString("alarmSong") ?? await _preferences!.setString("alarmSong", "alarm");
-    _preferences!.getString("cancelSong") ?? await _preferences!.setString("cancelSong", "cancel_alarm");
-    _preferences!.getStringList("siledStart") ?? await _preferences!.setStringList("siledStart", []);
-    _preferences!.getStringList("siledEnd") ?? await _preferences!.setStringList("siledEnd", []);
-    _preferences!.getBool("isAutoSearch") ?? await _preferences!.setBool("isAutoSearch", false);
-    _preferences!.getInt("sort") ?? await _preferences!.setInt("sort", 0);
+  static Future<void> _initData() async {
+    if (_preferences!.getString("settings") == null) {
+      SettingsService.setDefault();
+      await _preferences!.setString("settings", json.encode(SettingsService.toJson()));
+    }
+    SettingsService.fromJson(json.decode(_preferences!.getString("settings")!));
   }
 }

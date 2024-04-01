@@ -21,7 +21,7 @@ class TabGraphWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<DateTime, double> mapData = _getDataChart();
-    LineChart dataChart = LineChart.fromDateTimeMaps([mapData], [CustomColor.systemSecondary], ["Тревоги за текущий месяц"]);
+    LineChart dataChart = LineChart.fromDateTimeMaps([mapData], [CustomColor.colorMapDefault], ["Тревоги за текущий месяц"]);
     if (mapData.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 30, top: 25, right: 24),
@@ -37,7 +37,7 @@ class TabGraphWidget extends StatelessWidget {
                 tapText: (prefix, y, unit) {
                   return "Кол-во тревог: ${y.toInt()}\nДата: ${prefix.replaceAll("24:00", "")}";
                 },
-                toolTipColor: CustomColor.systemSecondary,
+                toolTipColor: CustomColor.colorMapDefault,
               )),
             ]),
       );

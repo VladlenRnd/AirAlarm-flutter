@@ -16,9 +16,13 @@ Future<bool?> showUpdateDialog(BuildContext context) {
             content: _buildDescription(),
             actionsAlignment: MainAxisAlignment.spaceBetween,
             actions: <Widget>[
-              TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text('Закрыть'.toUpperCase())),
-              MaterialButton(
-                  onPressed: () => Navigator.of(context).pop(true), color: CustomColor.primaryGreen.withOpacity(0.5), child: const Text("Обновить")),
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text('Закрыть'.toUpperCase(), style: const TextStyle(color: CustomColor.textColor))),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text("Обновить", style: TextStyle(color: CustomColor.textColor)),
+              ),
             ],
           ));
     },
@@ -34,11 +38,15 @@ Widget _buildDescription() {
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
       ),
-      Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: UpdateInfo.infoUpdate.descroption.map((data) => _buildTextDescription(data)).toList()),
+      Expanded(
+        child: SingleChildScrollView(
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: UpdateInfo.infoUpdate.descroption.map((data) => _buildTextDescription(data)).toList()),
+        ),
+      ),
     ],
   );
 }
@@ -54,7 +62,7 @@ Widget _buildTextDescription(String description) {
           height: 5,
           margin: const EdgeInsets.only(top: 7),
           decoration: BoxDecoration(
-            color: Colors.grey,
+            color: CustomColor.actionColor,
             borderRadius: BorderRadius.circular(15),
           ),
         ),
@@ -73,17 +81,16 @@ Widget _buildTextDescription(String description) {
 Widget _buildTitle() {
   return Column(
     children: [
-      const Text("Доступна новая версия", textAlign: TextAlign.center),
+      const Text("Доступна новая версия", textAlign: TextAlign.center, style: TextStyle(fontSize: 21)),
       const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
       Container(
-          width: 80,
-          height: 30,
+          padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            color: CustomColor.primaryGreen.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(15),
+            color: CustomColor.backgroundCard.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Center(
-            child: Text(UpdateInfo.infoUpdate.newVersion),
+            child: Text(UpdateInfo.infoUpdate.newVersion, style: const TextStyle(fontSize: 19)),
           )),
     ],
   );
