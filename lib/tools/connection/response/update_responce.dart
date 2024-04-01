@@ -1,5 +1,5 @@
-class UpdateResposeOld {
-  UpdateResposeOld({
+class UpdateRespose {
+  UpdateRespose({
     required this.newVersion,
     required this.url,
     required this.descroption,
@@ -8,7 +8,7 @@ class UpdateResposeOld {
   late final String url;
   late final List<String> descroption;
 
-  UpdateResposeOld.fromJson(Map<String, dynamic> json) {
+  UpdateRespose.fromJson(Map<String, dynamic> json) {
     newVersion = json['newVersion'];
     url = json['url'];
     descroption = List.castFrom<dynamic, String>(json['descroption']);

@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:alarm/service/abstract_service.dart';
 import 'package:alarm/service/notification_service.dart';
+import 'package:alarm/service/settings_service.dart';
 import 'package:alarm/tools/region/region_title_tools.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -59,11 +60,28 @@ class LocationService implements AService {
     return true;
   }
 
+  static void _subscribeServiceListeners() {
+    _service.on('updateLocation').listen((event) async {
+      await SheredPreferencesService().init();
+    });
+
+    _service.on('locationIsDisabled').listen((event) async {
+      disabledAutoLocation();
+      SettingsService.setParametr(isAutoSearchParam: false);
+    });
+  }
+
   static Future<bool> enableAutoLocation() async {
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      return false;
+    }
+
+    _subscribeServiceListeners();
+
     await _initConfig(service: _service, isBootStart: true);
 
-    bool result = await _service.startService();
-    return result;
+    await _service.startService();
+    return true;
   }
 
   static void disabledAutoLocation() async {
@@ -108,10 +126,9 @@ class LocationService implements AService {
       if (placemarks.isNotEmpty) {
         ERegion? region = RegionTitleTools.getRegionByGeolocation(placemarks[0].administrativeArea ?? "", placemarks[0].locality ?? "");
         if (region != null) {
-          ERegion subscribeRegion = RegionTitleTools.getEnumByEnumName(SheredPreferencesService.preferences.getString("subscribeRegion")!);
-          if (subscribeRegion != region) {
-            await FirebaseMessaging.instance.unsubscribeFromTopic(subscribeRegion.name);
-            await SheredPreferencesService.preferences.setString("subscribeRegion", region.name);
+          if (RegionTitleTools.getEnumByEnumName(SettingsService.subscribeRegion!) != region) {
+            await FirebaseMessaging.instance.unsubscribeFromTopic(SettingsService.subscribeRegion!);
+            await SettingsService.setParametr(subscribeRegionParam: region.name);
             await FirebaseMessaging.instance.subscribeToTopic(region.name);
             return true;
           }
@@ -125,17 +142,32 @@ class LocationService implements AService {
     }
   }
 
-  static Future<void> _location() async {
+  static Future<bool> setRegionByLocation() async {
+    if (await Geolocator.isLocationServiceEnabled()) {
+      Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+      return _changeLocation(pos.latitude, pos.longitude);
+    }
+    return Future.error('Location services are disabled.');
+  }
+
+  static Future<void> _location(ServiceInstance service) async {
     if (!await Geolocator.isLocationServiceEnabled()) {
+      service.invoke("locationIsDisabled");
       return Future.error('Location services are disabled.');
     }
 
-    Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    _changeLocation(pos.latitude, pos.longitude);
+    if (await setRegionByLocation()) {
+      service.invoke("updateLocation");
+    }
 
     Timer.periodic(const Duration(minutes: 15), (timer) async {
-      Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      _changeLocation(pos.latitude, pos.longitude);
+      try {
+        if (await setRegionByLocation()) {
+          service.invoke("updateLocation");
+        }
+      } catch (e) {
+        service.invoke("locationIsDisabled");
+      }
     });
   }
 
@@ -145,7 +177,7 @@ class LocationService implements AService {
     await NotificationService().init();
     await SheredPreferencesService().init();
     await Firebase.initializeApp();
-    _location();
+    _location(service);
     service.on('stopService').listen((event) {
       service.stopSelf();
     });

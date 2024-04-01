@@ -1,15 +1,15 @@
+import 'package:alarm/service/settings_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../tools/nottification_tools.dart';
+import '../tools/notification_tools.dart';
 import 'abstract_service.dart';
 import 'notification_service.dart';
 import 'shered_preferences_service.dart';
 
 class FirebaseService implements AService {
-  
   FirebaseService._privateConstructor();
   static final FirebaseService _instance = FirebaseService._privateConstructor();
   factory FirebaseService() => _instance;
@@ -24,7 +24,7 @@ class FirebaseService implements AService {
       await Firebase.initializeApp();
       _initOnMessage();
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-      FirebaseMessaging.instance.subscribeToTopic(SheredPreferencesService.preferences.getString("subscribeRegion")!);
+      FirebaseMessaging.instance.subscribeToTopic(SettingsService.subscribeRegion!);
       FirebaseMessaging.instance.subscribeToTopic("update");
 
       if (kDebugMode) {
@@ -40,11 +40,11 @@ class FirebaseService implements AService {
   static void _initOnMessage() {
     FirebaseMessaging.onMessage.listen((RemoteMessage event) async {
       if (kDebugMode) {
-        print("==========FOREGROUND MESSAGE============");
+        print("========== FOREGROUND MESSAGE ============");
       }
 
-      String alertSong = SheredPreferencesService.preferences.getString("alarmSong")!;
-      String cancelSong = SheredPreferencesService.preferences.getString("cancelSong")!;
+      String alertSong = SettingsService.alarmSoundFilaName!;
+      String cancelSong = SettingsService.cancelSoundFilaName!;
 
       if (event.data.isNotEmpty) {
         if (event.data["test"] != null) {
@@ -61,7 +61,14 @@ class FirebaseService implements AService {
         }
 
         NotificationService.showNotification(
-            event.data["isAlarm"].toLowerCase() == 'true', event.data["region"], alertSong, cancelSong, isSoundNotification());
+            event.data["isAlarm"].toLowerCase() == 'true',
+            event.data["region"],
+            alertSong,
+            cancelSong,
+            isSoundNotification(
+              DateTime.tryParse(SettingsService.siledStart ?? ""),
+              DateTime.tryParse(SettingsService.siledEnd ?? ""),
+            ));
       }
 
       if (kDebugMode) {
@@ -77,10 +84,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   await Firebase.initializeApp();
   await NotificationService().init();
-
   await SheredPreferencesService().init();
-  String alertSong = SheredPreferencesService.preferences.getString("alarmSong")!;
-  String cancelSong = SheredPreferencesService.preferences.getString("cancelSong")!;
+
+  String alertSong = SettingsService.alarmSoundFilaName!;
+  String cancelSong = SettingsService.cancelSoundFilaName!;
 
   if (message.data.isNotEmpty) {
     if (message.data["test"] != null) {
@@ -97,7 +104,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     }
 
     NotificationService.showNotification(
-        message.data["isAlarm"].toLowerCase() == 'true', message.data["region"], alertSong, cancelSong, isSoundNotification());
+        message.data["isAlarm"].toLowerCase() == 'true',
+        message.data["region"],
+        alertSong,
+        cancelSong,
+        isSoundNotification(
+          DateTime.tryParse(SettingsService.siledStart ?? ""),
+          DateTime.tryParse(SettingsService.siledEnd ?? ""),
+        ));
   }
 
   if (kDebugMode) print("___________________________________________");

@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
+import '../models/district_model.dart';
 import '../models/region_model.dart';
-import '../service/shered_preferences_service.dart';
 import 'custom_color.dart';
 import 'region/eregion.dart';
-import 'region/region_title_tools.dart';
 
 class UiTools {
   static List<RegionModel> getAlarmRegion(List<RegionModel> allRegion) {
@@ -27,16 +26,53 @@ class UiTools {
     return result;
   }
 
-  static bool isAlarmSelectRegion(List<RegionModel> allRegion) {
-    ERegion subscribeRegion = RegionTitleTools.getEnumByEnumName(SheredPreferencesService.preferences.getString("subscribeRegion")!);
+  static Color getAlarmColor(RegionModel model) {
+    bool isAlarmRegion = false;
 
-    return allRegion.firstWhere((RegionModel e) => e.region == subscribeRegion).isAlarm;
+    try {
+      isAlarmRegion = model.districts.firstWhere((element) => element.isAlarm == true).isAlarm;
+    } catch (e) {
+      isAlarmRegion = false;
+    }
+
+    return model.isAlarm
+        ? model.timeDurationAlarm.inDays > 1
+            ? CustomColor.darkRed
+            : CustomColor.red
+        : isAlarmRegion
+            ? CustomColor.atantion
+            : model.timeDurationCancelAlarm.inDays > 2
+                ? CustomColor.wihteGreen
+                : CustomColor.green;
   }
 
-  static bool isAlarmDistrict(List<RegionModel> allRegion) {
-    ERegion subscribeRegion = RegionTitleTools.getEnumByEnumName(SheredPreferencesService.preferences.getString("subscribeRegion")!);
+  static String getAlarmStr(bool isAlarm, List<DistrictModel> listDistrict) {
+    bool isAlarmRegion = false;
+
     try {
-      allRegion.firstWhere((RegionModel e) => e.region == subscribeRegion).districts.firstWhere((d) => d.isAlarm == true);
+      isAlarmRegion = listDistrict.firstWhere((element) => element.isAlarm == true).isAlarm;
+    } catch (e) {
+      isAlarmRegion = false;
+    }
+
+    return isAlarm
+        ? "Воздушная тревога"
+        : isAlarmRegion
+            ? "Опасность в области"
+            : "Тревоги нет";
+  }
+
+  static bool isAlarmRegion(List<RegionModel> allRegion, ERegion selectRegion) {
+    return allRegion.firstWhere((RegionModel e) => e.region == selectRegion).isAlarm;
+  }
+
+  static RegionModel getRegion(List<RegionModel> allRegion, ERegion selectRegion) {
+    return allRegion.firstWhere((RegionModel e) => e.region == selectRegion);
+  }
+
+  static bool isAlarmDistrict(List<RegionModel> allRegion, ERegion selectRegion) {
+    try {
+      allRegion.firstWhere((RegionModel e) => e.region == selectRegion).districts.firstWhere((d) => d.isAlarm == true);
       return true;
     } catch (e) {
       return false;
@@ -67,6 +103,26 @@ class UiTools {
     return warningCount;
   }
 
+  static int getCountNoAlarmRegion(List<RegionModel> allRegion) {
+    int noAlarmCount = 0;
+    for (RegionModel element in allRegion) {
+      if (!element.isAlarm) {
+        noAlarmCount++;
+      }
+    }
+    return noAlarmCount;
+  }
+
+  static int getCountAlarmRegion(List<RegionModel> allRegion) {
+    int alarmCount = 0;
+    for (RegionModel element in allRegion) {
+      if (element.isAlarm) {
+        alarmCount++;
+      }
+    }
+    return alarmCount;
+  }
+
   static int getPercentAlarm(List<RegionModel> allRegion) {
     double onePercent = 100 / allRegion.length;
 
@@ -78,7 +134,7 @@ class UiTools {
         ? SvgPicture.asset("assets/icons/alarm.svg", colorFilter: const ColorFilter.mode(CustomColor.red, BlendMode.srcIn), height: size, width: size)
         : isAlarmDistrict
             ? SvgPicture.asset("assets/icons/bomb.svg",
-                colorFilter: const ColorFilter.mode(CustomColor.colorMapAtantion, BlendMode.srcIn), height: size, width: size)
+                colorFilter: const ColorFilter.mode(CustomColor.atantion, BlendMode.srcIn), height: size, width: size)
             : SvgPicture.asset("assets/icons/safety.svg",
                 colorFilter: const ColorFilter.mode(CustomColor.green, BlendMode.srcIn), height: size, width: size);
   }

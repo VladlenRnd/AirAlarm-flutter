@@ -25,7 +25,7 @@ class HistoryListWidget extends StatelessWidget {
   Widget _buildTitleHeader(String title, String subTitle) {
     return Container(
       height: 40,
-      color: CustomColor.listCardColor,
+      // color: CustomColor.listCardColor,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       alignment: Alignment.centerLeft,
       child: Row(
@@ -41,7 +41,7 @@ class HistoryListWidget extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              color: CustomColor.systemSecondary,
+              //color: CustomColor.systemSecondary,
             ),
             child: Text(
               subTitle,

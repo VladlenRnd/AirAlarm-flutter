@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -43,80 +42,61 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return PopScope(
+        canPop: false,
         child: Scaffold(
           backgroundColor: CustomColor.background,
           body: _buildBody(),
-        ),
-        onWillPop: () async => false);
+        ));
   }
 
   Widget _buildBody() {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Stack(
-          alignment: AlignmentDirectional.center,
-          children: [
-            Positioned(
-              child: Lottie.asset(
-                'assets/lottie/download.json',
-                width: 800,
-                height: 300,
-                fit: BoxFit.fill,
-                frameRate: FrameRate(60),
-              ),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "ЗАГРУЗКА ОБНОВЛЕНИЯ",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 21,
+              color: CustomColor.textColor,
+              fontWeight: FontWeight.bold,
             ),
-            Positioned(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 180),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "ЗАГРУЗКА ОБНОВЛЕНИЯ",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 21,
-                        color: CustomColor.textColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                    Text(
-                      "Не закрывайте приложение",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: CustomColor.textColor.withOpacity(0.6),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                    Text(
-                      "${mByteDownloadStr}MB / ${mByteTotalStr}MB",
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: CustomColor.textColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Padding(padding: EdgeInsets.symmetric(vertical: 7)),
-                    ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      child: LinearProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(CustomColor.primaryGreen.withOpacity(0.8)),
-                        color: CustomColor.primaryGreen,
-                        backgroundColor: CustomColor.backgroundLight,
-                        minHeight: 15,
-                        value: valueLoadFile,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
-        ));
+          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+          Text(
+            "Не закрывайте приложение",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 15,
+              color: CustomColor.textColor.withOpacity(0.6),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+          Text(
+            "${mByteDownloadStr}MB / ${mByteTotalStr}MB",
+            style: const TextStyle(
+              fontSize: 15,
+              color: CustomColor.textColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 7)),
+          ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            child: LinearProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(CustomColor.actionColor.withOpacity(0.8)),
+              backgroundColor: CustomColor.backgroundCard,
+              minHeight: 8,
+              value: valueLoadFile,
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Future<void> _runUpdate() async {
@@ -136,7 +116,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
       return;
     }
     if (pathToFile == "CODE_SERVER") {
-      CustomSnackBar.error(context, title: "Ошибка Сервера");
+      CustomSnackBar.error(context, title: "Ошибка Сервера. Попробуйте позже");
       Navigator.pop(context);
       return;
     }
