@@ -119,106 +119,106 @@ class RegionTitleTools {
     String findBy = address.isNotEmpty ? address : locality;
 
     switch (findBy) {
-      case "Луганська область":
-      case "Луганская область":
+      case "Luhans'ka oblast":
+      case "Luhansk Oblast":
       case "Луганск":
       case "Луганськ":
         return ERegion.lugan;
 
-      case "Донецкая область":
-      case "Донецька область":
+      case "Donets'ka oblast":
+      case "Donetsk Oblast":
       case "Донецьк":
       case "Донецк":
         return ERegion.donetsk;
 
-      case "Харківська область":
-      case "Харьковская область":
+      case "Kharkivs'ka oblast":
+      case "Kharkiv oblast":
         return ERegion.harkiv;
 
-      case "Дніпропетровська область":
-      case "Днепропетровская область":
+      case "Dnipropetrovs'ka oblast":
+      case "Dnipropetrovsk Oblast":
         return ERegion.dnipro;
 
-      case "Запорізька область":
-      case "Запорожская область":
+      case "Zaporiz'ka oblast":
+      case "Zaporizhia Oblast":
         return ERegion.zapor;
 
-      case "Сумська область":
-      case "Сумская область":
+      case "Sums'ka oblast":
+      case "Sumy oblast":
         return ERegion.sumska;
 
-      case "Полтавская область":
-      case "Полтавська область":
+      case "Poltavs'ka oblast":
+      case "Poltava oblast":
         return ERegion.poltava;
 
-      case "Херсонська область":
-      case "Херсонская область":
+      case "Khersons'ka oblast":
+      case "Kherson oblast":
         return ERegion.herson;
 
-      case "Черниговская область":
-      case "Чернігівська область":
+      case "Chernihivs'ka oblast":
+      case "Chernihiv oblast":
         return ERegion.chernigev;
 
-      case "Київська область":
-      case "Киевская область":
-      case "Київ":
+      case "Kyivs'ka oblast":
+      case "Kyiv Oblast":
+      case "Kyiv":
       case "Киев":
         return ERegion.kyiv;
 
-      case "Черкаська область":
-      case "Черкасская область":
+      case "Cherkas'ka oblast":
+      case "Cherkasy Oblast":
         return ERegion.cherkasy;
 
-      case "Кіровоградська область":
-      case "Кировоградская область":
+      case "Kirovohrads'ka oblast":
+      case "Kirovohrad Oblast":
         return ERegion.kirovograd;
 
-      case "Николаевская область":
-      case "Миколаївська область":
+      case "Mykolaivs'ka oblast":
+      case "Mykolaiv oblast":
         return ERegion.mikolaev;
 
-      case "Житомирська область":
-      case "Житомирская область":
+      case "Zhytomyrs'ka oblast":
+      case "Zhytomyr oblast":
         return ERegion.jitomer;
 
-      case "Вінницька область":
-      case "Винницкая область":
+      case "Vinnyts'ka oblast":
+      case "Vinnytsia Oblast":
         return ERegion.vinetsk;
 
-      case "Одеська область":
-      case "Одесская область":
+      case "Odes'ka oblast":
+      case "Odesa Oblast":
         return ERegion.odesa;
 
-      case "Рівненська область":
-      case "Ровенская область":
+      case "Rivnens'ka oblast":
+      case "Rivne Oblast":
         return ERegion.rivno;
 
-      case "Хмельницька область":
-      case "Хмельницкая область":
+      case "Khmel'nyts'ka oblast":
+      case "Khmelnytskyi Oblast":
         return ERegion.hmelnytsk;
 
-      case "Тернопільська область":
-      case "Тернопольская область":
+      case "Ternopil's'ka oblast":
+      case "Ternopil Oblast":
         return ERegion.ternopil;
 
-      case "Івано-Франківська область":
-      case "Ивано-Франковская область":
+      case "Ivano-Frankivs'ka oblast":
+      case "Ivano-Frankivsk Oblast":
         return ERegion.ivanoFrankowsk;
 
-      case "Чернівецька область":
-      case "Черновицкая область":
+      case "Chernivets'ka oblast":
+      case "Chernivtsi Oblast":
         return ERegion.chernivets;
 
-      case "Закарпатська область":
-      case "Закарпатская область":
+      case "Zakarpattia Oblast":
+      case "Zakarpats'ka oblast":
         return ERegion.zakarpatska;
 
-      case "Львовская область":
-      case "Львівська область":
+      case "Lviv Oblast":
+      case "L'vivs'ka oblast":
         return ERegion.lvow;
 
-      case "Волинська область":
-      case "Волынская область":
+      case "Volyns'ka oblast":
+      case "Volyn Oblast":
         return ERegion.volinska;
 
       default:

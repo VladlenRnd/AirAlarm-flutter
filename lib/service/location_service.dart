@@ -122,7 +122,7 @@ class LocationService implements AService {
 
   static Future<bool> _changeLocation(double latitude, double longitude) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude, localeIdentifier: "ru_RU");
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
       if (placemarks.isNotEmpty) {
         ERegion? region = RegionTitleTools.getRegionByGeolocation(placemarks[0].administrativeArea ?? "", placemarks[0].locality ?? "");
         if (region != null) {
@@ -144,7 +144,7 @@ class LocationService implements AService {
 
   static Future<bool> setRegionByLocation() async {
     if (await Geolocator.isLocationServiceEnabled()) {
-      Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+      Position pos = await Geolocator.getCurrentPosition();
       return _changeLocation(pos.latitude, pos.longitude);
     }
     return Future.error('Location services are disabled.');
