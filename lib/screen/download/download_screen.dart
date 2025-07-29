@@ -71,7 +71,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 15,
-              color: CustomColor.textColor.withOpacity(0.6),
+              color: CustomColor.textColor.withValues(alpha: (0.6)),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -88,7 +88,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
           ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             child: LinearProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(CustomColor.actionColor.withOpacity(0.8)),
+              valueColor: AlwaysStoppedAnimation<Color>(CustomColor.actionColor.withValues(alpha: (0.8))),
               backgroundColor: CustomColor.backgroundCard,
               minHeight: 8,
               value: valueLoadFile,

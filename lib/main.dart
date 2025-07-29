@@ -24,7 +24,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,23 +38,22 @@ class MyApp extends StatelessWidget {
   ThemeData _getTheme() {
     return ThemeData(
       fontFamily: "Roboto",
-      dialogBackgroundColor: CustomColor.backgroundCard,
-      dialogTheme: DialogTheme(
-        
+      dialogTheme: DialogThemeData(
+          backgroundColor: CustomColor.backgroundCard,
           shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-      )),
+            borderRadius: BorderRadius.circular(14),
+          )),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(8)),
-          backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> state) {
-            if (state.contains(MaterialState.disabled)) {
-              return CustomColor.actionColor.withOpacity(0.4);
+          padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.all(8)),
+          backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> state) {
+            if (state.contains(WidgetState.disabled)) {
+              return CustomColor.actionColor.withValues(alpha: 0.4);
             }
             return CustomColor.actionColor;
           }),
-          textStyle: MaterialStateProperty.all<TextStyle>(const TextStyle(color: CustomColor.textColor, fontWeight: FontWeight.w600, fontSize: 16)),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          textStyle: WidgetStateProperty.all<TextStyle>(const TextStyle(color: CustomColor.textColor, fontWeight: FontWeight.w600, fontSize: 16)),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
               side: const BorderSide(color: CustomColor.actionColor),
@@ -62,9 +61,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      colorScheme: ThemeData.dark().colorScheme.copyWith(
-            secondary: CustomColor.background.withOpacity(0.1),
-          ),
+      colorScheme: ThemeData.dark().colorScheme.copyWith(secondary: CustomColor.background.withValues(alpha: 0.1)),
     );
   }
 }

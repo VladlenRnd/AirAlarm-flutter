@@ -95,7 +95,7 @@ class MapWidget extends StatelessWidget {
       },
       child: Text(
         region,
-        style: TextStyle(fontSize: fontSize, color: Colors.white.withOpacity(0.8), fontWeight: FontWeight.w800, letterSpacing: 0.8),
+        style: TextStyle(fontSize: fontSize, color: Colors.white.withValues(alpha: (0.8)), fontWeight: FontWeight.w800, letterSpacing: 0.8),
       ),
     );
   }

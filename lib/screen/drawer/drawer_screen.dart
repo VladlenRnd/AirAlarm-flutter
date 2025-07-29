@@ -108,7 +108,7 @@
 
 //   Widget _buildTitleSetting(String title, {Function? onTap}) {
 //     return CupertinoButton(
-//         child: Text(title, style: TextStyle(color: CustomColor.textColor.withOpacity(0.8), fontFamily: "Days")),
+//         child: Text(title, style: TextStyle(color: CustomColor.textColor.withValues(alpha: (0.8), fontFamily: "Days")),
 //         onPressed: () {
 //           onTap?.call();
 //         });

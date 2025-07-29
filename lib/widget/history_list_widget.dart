@@ -80,7 +80,7 @@ class HistoryListWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: align,
       children: [
-        Text(title, style: TextStyle(color: Colors.white.withOpacity(0.6))),
+        Text(title, style: TextStyle(color: Colors.white.withValues(alpha: (0.6)))),
         const SizedBox(height: 15),
         Text(date),
         Text(time),

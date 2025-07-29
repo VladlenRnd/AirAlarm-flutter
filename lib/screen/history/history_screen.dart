@@ -62,11 +62,11 @@ class HistoryScreen extends StatelessWidget {
             tabBarIndicatorSize: TabBarIndicatorSize.label,
             indicatorHeight: 20,
             padding: const EdgeInsets.symmetric(vertical: 7),
-            indicatorColor: CustomColor.colorMapDefault.withOpacity(0.15),
+            indicatorColor: CustomColor.colorMapDefault.withValues(alpha: (0.15)),
             borderColor: CustomColor.colorMapDefault,
           ),
           labelStyle: const TextStyle(fontSize: 18, color: CustomColor.textColor, fontFamily: "Days"),
-          unselectedLabelColor: CustomColor.textColor.withOpacity(0.6),
+          unselectedLabelColor: CustomColor.textColor.withValues(alpha: (0.6)),
           indicatorSize: TabBarIndicatorSize.tab,
           tabs: const [
             Tab(text: "Список тревог"),

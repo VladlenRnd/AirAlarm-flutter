@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Lottie.asset(
             'assets/lottie/no-connect.json',
-            width: 200,
+            width: 190,
             height: 200,
             frameRate: FrameRate(60),
           ),
@@ -142,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             "проверьте интернет-соединение",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: CustomColor.textColor.withOpacity(0.7)),
+            style: TextStyle(fontSize: 14, color: CustomColor.textColor.withValues(alpha: 0.7)),
           )
         ],
       ),

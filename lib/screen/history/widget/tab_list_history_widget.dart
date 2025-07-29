@@ -132,7 +132,7 @@ class TabListHistoryWidget extends StatelessWidget {
           textAlign: TextAlign.center,
           text: TextSpan(
             text: title,
-            style: TextStyle(fontSize: 12, color: CustomColor.textColor.withOpacity(0.6), fontFamily: "Days"),
+            style: TextStyle(fontSize: 12, color: CustomColor.textColor.withValues(alpha: (0.6)), fontFamily: "Days"),
             children: [
               TextSpan(
                 text: titleTwo,

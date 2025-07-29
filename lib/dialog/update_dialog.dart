@@ -86,7 +86,7 @@ Widget _buildTitle() {
       Container(
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            color: CustomColor.backgroundCard.withOpacity(0.8),
+            color: CustomColor.backgroundCard.withValues(alpha: (0.8)),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Center(

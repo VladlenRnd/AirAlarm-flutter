@@ -151,7 +151,7 @@ class ListScreen extends StatelessWidget {
         child: Column(
       crossAxisAlignment: align,
       children: [
-        Text(title, textAlign: TextAlign.end, style: TextStyle(fontSize: 14, color: CustomColor.textColor.withOpacity(0.6))),
+        Text(title, textAlign: TextAlign.end, style: TextStyle(fontSize: 14, color: CustomColor.textColor.withValues(alpha: (0.6)))),
         Text(value, textAlign: TextAlign.end, style: const TextStyle(fontSize: 15)),
       ],
     ));
@@ -189,7 +189,7 @@ class ListScreen extends StatelessWidget {
           Text(
             "проверьте интернет-соединение",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: CustomColor.textColor.withOpacity(0.7)),
+            style: TextStyle(fontSize: 14, color: CustomColor.textColor.withValues(alpha: (0.7))),
           )
         ],
       ),

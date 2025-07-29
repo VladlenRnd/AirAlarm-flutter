@@ -36,7 +36,7 @@ class SettingsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text("Настройки", style: TextStyle(fontSize: 21)),
-                          Text("Версия ${state.version}", style: TextStyle(fontSize: 13, color: CustomColor.textColor.withOpacity(0.6))),
+                          Text("Версия ${state.version}", style: TextStyle(fontSize: 13, color: CustomColor.textColor.withValues(alpha: (0.6)))),
                         ],
                       ),
                       const SizedBox(height: 25),
@@ -273,7 +273,7 @@ class SettingsScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text(title, style: TextStyle(color: CustomColor.textColor.withOpacity(0.6)))),
+              Expanded(child: Text(title, style: TextStyle(color: CustomColor.textColor.withValues(alpha: (0.6))))),
               const SizedBox(width: 15),
               selectWidget,
             ],
