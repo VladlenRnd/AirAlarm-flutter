@@ -9,10 +9,9 @@ import 'package:path_provider/path_provider.dart';
 import '../../dialog/custom_snack_bar.dart';
 import '../../service/download_service.dart';
 import '../../tools/custom_color.dart';
-import '../../tools/update_info.dart';
 
 class DownloadScreen extends StatefulWidget {
-  const DownloadScreen({Key? key}) : super(key: key);
+  const DownloadScreen({super.key});
 
   @override
   State<DownloadScreen> createState() => _DownloadScreenState();
@@ -26,7 +25,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
   @override
   void initState() {
     _initDownloadCallback();
-    _runUpdate();
+    //  _runUpdate();
     super.initState();
   }
 
@@ -99,29 +98,29 @@ class _DownloadScreenState extends State<DownloadScreen> {
     );
   }
 
-  Future<void> _runUpdate() async {
-    Directory? tempDir = await getExternalStorageDirectory();
-    Directory direct = Directory(tempDir!.path);
+  // Future<void> _runUpdate() async {
+  //   Directory? tempDir = await getExternalStorageDirectory();
+  //   Directory direct = Directory(tempDir!.path);
 
-    if (!await direct.exists()) {
-      await direct.create();
-    }
-    String localPathAA = direct.path;
+  //   if (!await direct.exists()) {
+  //     await direct.create();
+  //   }
+  //   String localPathAA = direct.path;
 
-    String pathToFile = await DownloadService.downloadFile(UpdateInfo.infoUpdate.url, "flightAlarmUpdate.apk", localPathAA);
+  //   String pathToFile = await DownloadService.downloadFile(UpdateInfo.infoUpdate.url, "flightAlarmUpdate.apk", localPathAA);
 
-    if (pathToFile == "EXEPTION") {
-      CustomSnackBar.error(context, title: "Ошибка загрузки обновления");
-      Navigator.pop(context);
-      return;
-    }
-    if (pathToFile == "CODE_SERVER") {
-      CustomSnackBar.error(context, title: "Ошибка Сервера. Попробуйте позже");
-      Navigator.pop(context);
-      return;
-    }
+  //   if (pathToFile == "EXEPTION") {
+  //     CustomSnackBar.error(context, title: "Ошибка загрузки обновления");
+  //     Navigator.pop(context);
+  //     return;
+  //   }
+  //   if (pathToFile == "CODE_SERVER") {
+  //     CustomSnackBar.error(context, title: "Ошибка Сервера. Попробуйте позже");
+  //     Navigator.pop(context);
+  //     return;
+  //   }
 
-    await OpenFilex.open(pathToFile, type: "application/vnd.android.package-archive");
-    Navigator.pop(context);
-  }
+  //   await OpenFilex.open(pathToFile, type: "application/vnd.android.package-archive");
+  //   Navigator.pop(context);
+  // }
 }

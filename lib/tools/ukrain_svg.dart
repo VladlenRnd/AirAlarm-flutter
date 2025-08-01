@@ -6,7 +6,14 @@ import '../models/region_model.dart';
 import 'ui_tools.dart';
 
 class UkrainSvg {
-  static String _getColorToHex(Color color) => "#${color.value.toRadixString(16).replaceRange(0, 2, "")}";
+  static String _getColorToHex(Color color, {bool includeAlpha = false}) {
+    final argb = color.toARGB32(); // 0xAARRGGBB
+
+    final int value = includeAlpha ? argb : (argb & 0x00FFFFFF);
+    final int width = includeAlpha ? 8 : 6;
+
+    return '#${value.toRadixString(16).padLeft(width, '0').toUpperCase()}';
+  }
 
   static String getSvgStr({
     required List<RegionModel> regions,
@@ -40,80 +47,80 @@ class UkrainSvg {
     Color krim = defaultColor;
 
     for (RegionModel model in regions) {
-      switch (model.region) {
-        case ERegion.dnipro:
+      switch (model.uid) {
+        case "9":
           dnepr = UiTools.getAlarmColor(model);
           break;
-        case ERegion.zapor:
+        case "12":
           zaporija = UiTools.getAlarmColor(model);
           break;
-        case ERegion.kyiv:
+        case "14":
           kiev = UiTools.getAlarmColor(model);
           break;
-        case ERegion.lugan:
+        case "16":
           luhansk = UiTools.getAlarmColor(model);
           break;
-        case ERegion.harkiv:
+        case "22":
           kharkiv = UiTools.getAlarmColor(model);
           break;
-        case ERegion.donetsk:
+        case "28":
           donets = UiTools.getAlarmColor(model);
           break;
-        case ERegion.jitomer:
+        case "10":
           zitomer = UiTools.getAlarmColor(model);
           break;
-        case ERegion.zakarpatska:
+        case "11":
           zakarpotia = UiTools.getAlarmColor(model);
           break;
-        case ERegion.ivanoFrankowsk:
+        case "13":
           ivanoFrankivs = UiTools.getAlarmColor(model);
           break;
-        case ERegion.kirovograd:
+        case "15":
           kirovograd = UiTools.getAlarmColor(model);
           break;
-        case ERegion.lvow:
+        case "27":
           lvov = UiTools.getAlarmColor(model);
           break;
-        case ERegion.mikolaev:
+        case "17":
           nikolaev = UiTools.getAlarmColor(model);
           break;
-        case ERegion.odesa:
+        case "18":
           odessa = UiTools.getAlarmColor(model);
           break;
-        case ERegion.poltava:
+        case "19":
           poltava = UiTools.getAlarmColor(model);
           break;
-        case ERegion.rivno:
+        case "5":
           rivne = UiTools.getAlarmColor(model);
           break;
-        case ERegion.sumska:
+        case "20":
           symi = UiTools.getAlarmColor(model);
           break;
-        case ERegion.ternopil:
+        case "21":
           ternopil = UiTools.getAlarmColor(model);
           break;
-        case ERegion.herson:
+        case "23":
           kherson = UiTools.getAlarmColor(model);
           break;
-        case ERegion.hmelnytsk:
+        case "3":
           hmelnitskiy = UiTools.getAlarmColor(model);
           break;
-        case ERegion.cherkasy:
+        case "24":
           cherkasy = UiTools.getAlarmColor(model);
           break;
-        case ERegion.chernigev:
+        case "25":
           chernihiv = UiTools.getAlarmColor(model);
           break;
-        case ERegion.chernivets:
+        case "26":
           chernivtsi = UiTools.getAlarmColor(model);
           break;
-        case ERegion.vinetsk:
+        case "4":
           vinetsa = UiTools.getAlarmColor(model);
           break;
-        case ERegion.volinska:
+        case "8":
           volin = UiTools.getAlarmColor(model);
           break;
-        case ERegion.krim:
+        case "29":
           krim = UiTools.getAlarmColor(model);
           break;
       }

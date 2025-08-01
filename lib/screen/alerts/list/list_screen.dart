@@ -5,50 +5,51 @@ import 'package:lottie/lottie.dart';
 import '../../../models/region_model.dart';
 import '../../../tools/custom_color.dart';
 import '../../../tools/ui_tools.dart';
-import '../bloc/home_bloc.dart';
+import '../cubit/alert_cubit.dart';
 
 class ListScreen extends StatelessWidget {
-  final AlertBloc bloc = AlertBloc();
+  final AlertCubit bloc = AlertCubit();
 
   ListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 45),
-      child: BlocBuilder(
-        bloc: bloc,
-        builder: (context, state) {
-          if (state is HomeUpdateState) {
-            return Column(
-              children: [
-                _buildInfoStatLineContaner(
-                    alert: UiTools.getCountAlarmRegion(state.listRegions),
-                    atantion: UiTools.getCountWarningRegion(state.listRegions),
-                    noAlert: UiTools.getCountNoAlarmRegion(state.listRegions)),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        for (int i = 0; i < state.listRegions.length; i++) _buildCard(state.listRegions[i]),
-                        const SizedBox(height: 25),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-          if (state is HomeErrorDataState) {
-            return _buildErrorWidget();
-          }
-          if (state is HomeLoadingState) {
-            return _buildLoader();
-          }
-          return const SizedBox.shrink();
-        },
-      ),
-    );
+    return SizedBox.shrink();
+    // return Padding(
+    //   padding: const EdgeInsets.only(top: 45),
+    //   child: BlocBuilder<AlertCubit,AlertState>(
+    //     bloc: bloc,
+    //     builder: (context, state) {
+
+    //       switch(state)
+    //       {
+    //         case AlertLoadingState():
+    //            return _buildLoader();
+    //         case AlertErrorDataState():
+    //               return _buildErrorWidget();
+    //         case AlertLoadedDataState():
+    //                       return Column(
+    //           children: [
+    //             _buildInfoStatLineContaner(
+    //                 alert: UiTools.getCountAlarmRegion(state.listRegions),
+    //                 atantion: UiTools.getCountWarningRegion(state.listRegions),
+    //                 noAlert: UiTools.getCountNoAlarmRegion(state.listRegions)),
+    //             Expanded(
+    //               child: SingleChildScrollView(
+    //                 child: Column(
+    //                   children: [
+    //                     for (int i = 0; i < state.listRegions.length; i++) _buildCard(state.listRegions[i]),
+    //                     const SizedBox(height: 25),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         )
+    //       }
+    //     },
+    //   ),
+    // );
   }
 
   Widget _buildInfoStatLineContaner({required int noAlert, required int atantion, required int alert}) {
@@ -63,9 +64,9 @@ class ListScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Без тревоги: $noAlert", style: const TextStyle(fontSize: 13, color: CustomColor.green)),
+              Text("Без тревоги: $noAlert", style: const TextStyle(fontSize: 13, color: CustomColor.noAlert)),
               Text("Опасность: $atantion", style: const TextStyle(fontSize: 13, color: CustomColor.atantion)),
-              Text("Тревоги: $alert", style: const TextStyle(fontSize: 13, color: CustomColor.red)),
+              Text("Тревоги: $alert", style: const TextStyle(fontSize: 13, color: CustomColor.airAlert)),
             ],
           ),
         ],
@@ -93,58 +94,58 @@ class ListScreen extends StatelessWidget {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
       child: Row(
         children: [
-          Expanded(flex: (onePercent * noAlert).toInt(), child: Container(color: CustomColor.green)),
+          Expanded(flex: (onePercent * noAlert).toInt(), child: Container(color: CustomColor.noAlert)),
           Expanded(flex: (onePercent * atantion).toInt(), child: Container(color: CustomColor.atantion)),
-          Expanded(flex: (onePercent * alert).toInt(), child: Container(color: CustomColor.red))
+          Expanded(flex: (onePercent * alert).toInt(), child: Container(color: CustomColor.airAlert))
         ],
       ),
     );
   }
 
-  Widget _buildCard(RegionModel model) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: CustomColor.backgroundCard,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              _buildValue(value: model.title, size: 16, flex: 2),
-              _buildValue(
-                  size: 16, value: UiTools.getAlarmStr(model.isAlarm, model.districts), align: TextAlign.end, color: UiTools.getAlarmColor(model)),
-            ],
-          ),
-          const Divider(height: 35),
-          model.isAlarm ? _buildAlertData(model) : _buildNotAlertData(model),
-        ],
-      ),
-    );
-  }
+  // Widget _buildCard(RegionModel model) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+  //     margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //     width: double.infinity,
+  //     decoration: BoxDecoration(
+  //       color: CustomColor.backgroundCard,
+  //       borderRadius: BorderRadius.circular(8),
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         Row(
+  //           children: [
+  //             _buildValue(value: model.title, size: 16, flex: 2),
+  //             _buildValue(
+  //                 size: 16, value: UiTools.getAlarmStr(model.isAlarm, model.districts), align: TextAlign.end, color: UiTools.getAlarmColor(model)),
+  //           ],
+  //         ),
+  //         const Divider(height: 35),
+  //         model.isAlarm ? _buildAlertData(model) : _buildNotAlertData(model),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildAlertData(RegionModel model) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        _buildTitleValue(title: "Время тревоги", value: model.timeDurationAlarmStr!),
-        _buildTitleValue(title: "Начало тревоги", value: model.timeStartStr!, align: CrossAxisAlignment.end),
-      ],
-    );
-  }
+  // Widget _buildAlertData(RegionModel model) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.start,
+  //     children: [
+  //       _buildTitleValue(title: "Время тревоги", value: model.timeDurationAlarmStr!),
+  //       _buildTitleValue(title: "Начало тревоги", value: model.timeStartStr!, align: CrossAxisAlignment.end),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildNotAlertData(RegionModel model) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        _buildTitleValue(title: "Время без тревоги", value: model.timeDurationCancelAlarmStr!),
-        _buildTitleValue(title: "Конец тревоги", value: model.timeEndStr!, align: CrossAxisAlignment.end),
-      ],
-    );
-  }
+  // Widget _buildNotAlertData(RegionModel model) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.start,
+  //     children: [
+  //       _buildTitleValue(title: "Время без тревоги", value: model.timeDurationCancelAlarmStr!),
+  //       _buildTitleValue(title: "Конец тревоги", value: model.timeEndStr!, align: CrossAxisAlignment.end),
+  //     ],
+  //   );
+  // }
 
   Widget _buildTitleValue({required String title, required String value, CrossAxisAlignment align = CrossAxisAlignment.start}) {
     return Expanded(

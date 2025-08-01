@@ -237,7 +237,7 @@
 //           begin: Alignment.bottomRight,
 //           end: Alignment.topLeft,
 //           colors: [
-//             CustomColor.green,
+//             CustomColor.noAlert,
 //             CustomColor.colorMapDefault,
 //             CustomColor.colorMapDefault,
 //           ],

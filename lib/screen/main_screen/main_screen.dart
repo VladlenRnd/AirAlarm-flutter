@@ -1,18 +1,14 @@
+import 'package:alarm/service/firebase_config_service.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../dialog/info_dialog.dart';
 import '../../dialog/update_dialog.dart';
-import '../../tools/connection/connection.dart';
-import '../../tools/connection/response/config_response.dart';
 import '../../tools/custom_color.dart';
-import '../../tools/repository/config_repository.dart';
-import '../../tools/update_info.dart';
 import '../alerts/home/home_screen.dart';
 import '../alerts/list/list_screen.dart';
 import '../download/download_screen.dart';
@@ -28,8 +24,6 @@ class MainScreen extends StatefulWidget {
 EScreen _selectScreen = EScreen.home;
 
 class _MainScreenState extends State<MainScreen> {
-  ConfigResponse? get config => ConfigRepository.instance.config;
-
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: CustomColor.background));
@@ -62,9 +56,12 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: CustomColor.background,
-        body: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: (config?.war ?? false)
+        body: SafeArea(
+          left: false,
+          top: true,
+          bottom: true,
+          right: false,
+          child: (Config.isWar ?? false)
               ? switch (_selectScreen) {
                   EScreen.home => _buildScreen(const HomeScreen()),
                   EScreen.settings => _buildScreen(SettingsScreen()),
@@ -147,18 +144,22 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<bool> _isUpdateCheck() async {
     bool result = false;
-    try {
-      UpdateInfo.infoUpdate = await Connection.chekUpdate();
-      PackageInfo infoApp = await PackageInfo.fromPlatform();
 
-      if (infoApp.version != UpdateInfo.infoUpdate.newVersion) {
-        result = true;
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
+    //TODO Nead realization
 
-    return result;
+    return false;
+    // try {
+    //   UpdateInfo.infoUpdate = await Connection.chekUpdate();
+    //   PackageInfo infoApp = await PackageInfo.fromPlatform();
+
+    //   if (infoApp.version != UpdateInfo.infoUpdate.newVersion) {
+    //     result = true;
+    //   }
+    // } catch (e) {
+    //   debugPrint(e.toString());
+    // }
+
+    // return result;
   }
 }
 

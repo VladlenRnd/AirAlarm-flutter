@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
-import '../models/district_model.dart';
 import '../models/region_model.dart';
 import 'custom_color.dart';
 import 'region/eregion.dart';
@@ -11,7 +10,7 @@ class UiTools {
   static List<RegionModel> getAlarmRegion(List<RegionModel> allRegion) {
     List<RegionModel> alarmRegion = [];
     for (RegionModel element in allRegion) {
-      if (element.isAlarm) alarmRegion.add(element);
+      if (element.isAlert) alarmRegion.add(element);
     }
     return alarmRegion;
   }
@@ -19,7 +18,7 @@ class UiTools {
   static bool isGlobalAlarm(List<RegionModel> allRegion) {
     bool result = true;
     for (RegionModel element in allRegion) {
-      if (!element.isAlarm) {
+      if (!element.isAlert) {
         return false;
       }
     }
@@ -27,100 +26,7 @@ class UiTools {
   }
 
   static Color getAlarmColor(RegionModel model) {
-    bool isAlarmRegion = false;
-
-    try {
-      isAlarmRegion = model.districts.firstWhere((element) => element.isAlarm == true).isAlarm;
-    } catch (e) {
-      isAlarmRegion = false;
-    }
-
-    return model.isAlarm
-        ? model.timeDurationAlarm.inDays > 1
-            ? CustomColor.darkRed
-            : CustomColor.red
-        : isAlarmRegion
-            ? CustomColor.atantion
-            : model.timeDurationCancelAlarm.inDays > 2
-                ? CustomColor.wihteGreen
-                : CustomColor.green;
-  }
-
-  static String getAlarmStr(bool isAlarm, List<DistrictModel> listDistrict) {
-    bool isAlarmRegion = false;
-
-    try {
-      isAlarmRegion = listDistrict.firstWhere((element) => element.isAlarm == true).isAlarm;
-    } catch (e) {
-      isAlarmRegion = false;
-    }
-
-    return isAlarm
-        ? "Воздушная тревога"
-        : isAlarmRegion
-            ? "Опасность в области"
-            : "Тревоги нет";
-  }
-
-  static bool isAlarmRegion(List<RegionModel> allRegion, ERegion selectRegion) {
-    return allRegion.firstWhere((RegionModel e) => e.region == selectRegion).isAlarm;
-  }
-
-  static RegionModel getRegion(List<RegionModel> allRegion, ERegion selectRegion) {
-    return allRegion.firstWhere((RegionModel e) => e.region == selectRegion);
-  }
-
-  static bool isAlarmDistrict(List<RegionModel> allRegion, ERegion selectRegion) {
-    try {
-      allRegion.firstWhere((RegionModel e) => e.region == selectRegion).districts.firstWhere((d) => d.isAlarm == true);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  static bool isNoAlarm(List<RegionModel> allRegion) {
-    bool result = true;
-    for (RegionModel element in allRegion) {
-      if (element.isAlarm) {
-        return false;
-      }
-    }
-    return result;
-  }
-
-  static int getCountWarningRegion(List<RegionModel> allRegion) {
-    int warningCount = 0;
-    for (RegionModel element in allRegion) {
-      if (!element.isAlarm) {
-        try {
-          element.districts.firstWhere((d) => d.isAlarm == true);
-          warningCount++;
-          // ignore: empty_catches
-        } catch (e) {}
-      }
-    }
-    return warningCount;
-  }
-
-  static int getCountNoAlarmRegion(List<RegionModel> allRegion) {
-    int noAlarmCount = 0;
-    for (RegionModel element in allRegion) {
-      if (!element.isAlarm) {
-        noAlarmCount++;
-      }
-    }
-    return noAlarmCount;
-  }
-
-  static int getCountAlarmRegion(List<RegionModel> allRegion) {
-    int alarmCount = 0;
-    for (RegionModel element in allRegion) {
-      if (element.isAlarm) {
-        alarmCount++;
-      }
-    }
-    return alarmCount;
+    return model.isAlert ? CustomColor.airAlert : CustomColor.noAlert;
   }
 
   static int getPercentAlarm(List<RegionModel> allRegion) {
@@ -131,23 +37,39 @@ class UiTools {
 
   static Widget buildIconStatus(bool isAlarm, bool isAlarmDistrict, {double size = 65}) {
     return isAlarm
-        ? SvgPicture.asset("assets/icons/alarm.svg", colorFilter: const ColorFilter.mode(CustomColor.red, BlendMode.srcIn), height: size, width: size)
+        ? SvgPicture.asset("assets/icons/alarm.svg",
+            colorFilter: const ColorFilter.mode(CustomColor.airAlert, BlendMode.srcIn), height: size, width: size)
         : isAlarmDistrict
             ? SvgPicture.asset("assets/icons/bomb.svg",
                 colorFilter: const ColorFilter.mode(CustomColor.atantion, BlendMode.srcIn), height: size, width: size)
             : SvgPicture.asset("assets/icons/safety.svg",
-                colorFilter: const ColorFilter.mode(CustomColor.green, BlendMode.srcIn), height: size, width: size);
+                colorFilter: const ColorFilter.mode(CustomColor.noAlert, BlendMode.srcIn), height: size, width: size);
   }
 
-  static String? getDateToDay(DateTime date, bool showTime) {
+  static String getElapsedTimeFormatted(DateTime from) {
+    final difference = DateTime.now().difference(from);
+
+    if (difference.inDays >= 1) {
+      final days = difference.inDays;
+      final suffix = declinationWordByNumber(days, "День", "Дня", "Дней");
+      return '($days $suffix)';
+    } else {
+      final hours = difference.inHours.toString().padLeft(2, '0');
+      final minutes = (difference.inMinutes % 60).toString().padLeft(2, '0');
+      return '$hours:$minutes';
+    }
+  }
+
+  static String getDateToDay(DateTime date, bool showTime) {
     DateTime now = DateTime.now();
+    if (!showTime) return "";
     switch (DateTime.utc(now.year, now.month, now.day).difference(DateTime.utc(date.year, date.month, date.day)).inDays) {
       case 0:
-        return "Сегодня ${showTime ? DateFormat("HH:mm").format(date) : ""}";
+        return "Сегодня ${DateFormat("HH:mm").format(date)}";
       case 1:
-        return "Вчера ${showTime ? DateFormat("HH:mm").format(date) : ""}";
+        return "Вчера ${DateFormat("HH:mm").format(date)}";
       default:
-        return null;
+        return DateFormat("dd/MM/yyyy HH:mm").format(date);
     }
   }
 
