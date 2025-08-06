@@ -1,15 +1,24 @@
 import 'dart:ui';
 
 import 'package:alarm/tools/custom_color.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+
+import '../tools/ui_tools.dart';
 
 class RegionModel extends Equatable {
   final int? id;
   final bool isAlert;
+  final bool isAlertDistrict;
   final String? title;
   final ELocationType? locationType;
+
   final DateTime? startedAt;
+  final String? startedAtEstimate;
+
   final DateTime? finishedAt;
+  final String? finishedAtEstimate;
+
   final DateTime? updatedAt;
   final EAlertType? alertType;
   final String? uid;
@@ -24,7 +33,10 @@ class RegionModel extends Equatable {
     bool? isAlert,
     EAlertType? alertType,
     bool? calculated,
+    DateTime? startedAt,
+    String? startedAtEstimate,
     DateTime? finishedAt,
+    String? finishedAtEstimate,
     String? locationOblast,
     int? locationOblastUid,
     String? locationRaion,
@@ -32,7 +44,6 @@ class RegionModel extends Equatable {
     ELocationType? locationType,
     String? uid,
     String? notes,
-    DateTime? startedAt,
     DateTime? updatedAt,
     List<RegionModel>? listDistrict,
   }) {
@@ -55,7 +66,7 @@ class RegionModel extends Equatable {
     );
   }
 
-  const RegionModel({
+  RegionModel({
     required this.isAlert,
     this.id,
     this.title,
@@ -71,7 +82,9 @@ class RegionModel extends Equatable {
     this.notes,
     this.calculated,
     this.listDistrict,
-  });
+  })  : finishedAtEstimate = UiTools.getElapsedTimeFormatted(finishedAt),
+        startedAtEstimate = UiTools.getElapsedTimeFormatted(startedAt),
+        isAlertDistrict = listDistrict?.firstWhereOrNull((e) => e.isAlert) != null;
 
   factory RegionModel.fromJson(Map<String, dynamic> json) {
     return RegionModel(
@@ -101,7 +114,9 @@ class RegionModel extends Equatable {
         title,
         locationType,
         startedAt,
+        startedAtEstimate,
         finishedAt,
+        finishedAtEstimate,
         updatedAt,
         alertType,
         uid,

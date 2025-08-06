@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import '../models/sound_model.dart';
-import '../tools/region/eregion.dart';
 import 'shered_preferences_service.dart';
 
 class SettingsService {
@@ -14,7 +13,7 @@ class SettingsService {
   static List<String>? filterList;
 
   static void setDefault() {
-    subscribeRegion = ERegion.dnipro.name;
+    subscribeRegion = "";
     alarmSoundFilaName = SoundService.alarmSounds[1].fileName;
     cancelSoundFilaName = SoundService.cancelSounds[1].fileName;
     isAutoSearch = false;

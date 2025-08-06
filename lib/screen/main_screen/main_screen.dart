@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../dialog/info_dialog.dart';
@@ -29,8 +31,10 @@ class _MainScreenState extends State<MainScreen> {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: CustomColor.background));
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _checkPermition(!context.mounted ? context : context);
-      if (await _isUpdateCheck() && (await showUpdateDialog(!context.mounted ? context : context) ?? false)) {
-        await Navigator.of(!context.mounted ? context : context).push(MaterialPageRoute(builder: (context) => const DownloadScreen()));
+      if (await _isUpdateCheck()) {
+        if (await showUpdateDialog(!context.mounted ? context : context) ?? false) {
+          await Navigator.of(!context.mounted ? context : context).push(MaterialPageRoute(builder: (context) => const DownloadScreen()));
+        }
       }
     });
 
@@ -65,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
               ? switch (_selectScreen) {
                   EScreen.home => _buildScreen(const HomeScreen()),
                   EScreen.settings => _buildScreen(SettingsScreen()),
-                  EScreen.list => _buildScreen(ListScreen()),
+                  EScreen.history => _buildScreen(ListScreen()),
                 }
               : _buildNotWar(),
         ));
@@ -100,16 +104,24 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Expanded(
                 child: _buildAppBarItem(
-              icon: Icons.list,
-              title: "Список",
-              isSelected: _selectScreen == EScreen.list,
-              setScreen: () => _setScreen(EScreen.list),
+              icon: Icons.history,
+              title: EScreen.history.title,
+              isSelected: _selectScreen == EScreen.history,
+              setScreen: () async => await showInfoDialog(
+                context,
+                title: 'История в разработке',
+                contentInfo: 'Ждите в ближайшем обновлении :-)',
+                actionButtonStr: 'Хорошо!',
+                closeButtonStr: "",
+              ),
+
+              // _setScreen(EScreen.history),
             )),
             const Spacer(),
             Expanded(
                 child: _buildAppBarItem(
               icon: Icons.settings,
-              title: "Настройки",
+              title: EScreen.settings.title,
               isSelected: _selectScreen == EScreen.settings,
               setScreen: () => _setScreen(EScreen.settings),
             )),
@@ -145,26 +157,25 @@ class _MainScreenState extends State<MainScreen> {
   Future<bool> _isUpdateCheck() async {
     bool result = false;
 
-    //TODO Nead realization
+    try {
+      PackageInfo infoApp = await PackageInfo.fromPlatform();
+      if (Config.watNew?.newVersion != null && infoApp.version != Config.watNew!.newVersion) {
+        result = true;
+      }
+    } catch (e) {
+      Logger().e("_isUpdateCheck error:", error: e);
+    }
 
-    return false;
-    // try {
-    //   UpdateInfo.infoUpdate = await Connection.chekUpdate();
-    //   PackageInfo infoApp = await PackageInfo.fromPlatform();
-
-    //   if (infoApp.version != UpdateInfo.infoUpdate.newVersion) {
-    //     result = true;
-    //   }
-    // } catch (e) {
-    //   debugPrint(e.toString());
-    // }
-
-    // return result;
+    return result;
   }
 }
 
 enum EScreen {
-  home,
-  settings,
-  list,
+  home("Главная"),
+  settings("Настройки"),
+  history("История");
+
+  const EScreen(this.title);
+
+  final String title;
 }

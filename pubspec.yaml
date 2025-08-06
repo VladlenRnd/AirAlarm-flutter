@@ -38,6 +38,7 @@ dependencies:
   firebase_messaging: ^16.0.0
   firebase_core: ^4.0.0
   firebase_remote_config: ^6.0.0
+  firebase_crashlytics: ^5.0.0
   flutter_svg: ^2.0.2
   expandable: ^5.0.1
   audioplayers: ^6.1.1

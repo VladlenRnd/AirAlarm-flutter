@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../service/firebase_config_service.dart';
 import '../tools/custom_color.dart';
 
 Future<bool?> showUpdateDialog(BuildContext context) {
@@ -37,14 +38,13 @@ Widget _buildDescription() {
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
       ),
-      Expanded(
+      Flexible(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [], //UpdateInfo.infoUpdate.descroption.map((data) => _buildTextDescription(data)).toList()),
-          ),
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: Config.watNew?.discription == null ? [] : Config.watNew!.discription.map((data) => _buildTextDescription(data)).toList()),
         ),
       )
     ],
@@ -84,15 +84,14 @@ Widget _buildTitle() {
       const Text("Доступна новая версия", textAlign: TextAlign.center, style: TextStyle(fontSize: 21)),
       const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
       Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: CustomColor.backgroundCard.withValues(alpha: (0.8)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        // child: Center(
-        //   child: Text(UpdateInfo.infoUpdate.newVersion, style: const TextStyle(fontSize: 19)),
-        // )
-      ),
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: CustomColor.backgroundCard.withValues(alpha: (0.8)),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: Text(Config.watNew?.newVersion ?? "", style: const TextStyle(fontSize: 19)),
+          )),
     ],
   );
 }

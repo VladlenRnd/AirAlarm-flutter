@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screen/main_screen/main_screen.dart';
 import 'service/firebase_config_service.dart';
+import 'service/firebase_crashlytics_service.dart';
 import 'service/firebase_notification_service.dart';
 import 'service/location_service.dart';
 import 'service/notification_service.dart';
@@ -19,8 +20,7 @@ void main() async {
   await NotificationService().init();
   await FirebaseNotificationService().init();
   await FirebaseConfigService().init();
-
-
+  await FirebaseCrashlyticsService().init();
 
   runApp(const MyApp());
 }

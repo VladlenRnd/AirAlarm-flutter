@@ -25,8 +25,12 @@ class UiTools {
     return result;
   }
 
-  static Color getAlarmColor(RegionModel model) {
-    return model.isAlert ? CustomColor.airAlert : CustomColor.noAlert;
+  static Color? getAlarmColor(RegionModel model,{bool returnNullIfdistrict = false}) {
+    return model.isAlert
+        ? model.alertType?.colorAlert ?? CustomColor.airAlert
+        : model.isAlertDistrict
+            ? returnNullIfdistrict ? null : CustomColor.districtAlert
+            : CustomColor.noAlert;
   }
 
   static int getPercentAlarm(List<RegionModel> allRegion) {
@@ -46,7 +50,8 @@ class UiTools {
                 colorFilter: const ColorFilter.mode(CustomColor.noAlert, BlendMode.srcIn), height: size, width: size);
   }
 
-  static String getElapsedTimeFormatted(DateTime from) {
+  static String? getElapsedTimeFormatted(DateTime? from) {
+    if (from == null) return null;
     final difference = DateTime.now().difference(from);
 
     if (difference.inDays >= 1) {
