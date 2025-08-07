@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ...region.listDistrict!.where((e) => e.isAlert).map((e) => _buildDistrictAlarm(district: e)),
           ],
           if (region.startedAtEstimate != null) _buildTitleValue(title: "Время тревоги:", value: region.startedAtEstimate!),
-          if (region.startedAt != null) _buildTitleValue(title: "Начало Тревоги:", value: UiTools.getDateToDay(region.startedAt!, true)),
+          if (region.startedAt != null) _buildTitleValue(title: "Начало тревоги:", value: UiTools.getDateToDay(region.startedAt!, true)),
           if (region.notes != null) ...[
             Divider(),
             _buildTitleValue(title: "Информация:", value: region.notes!),
@@ -203,9 +203,6 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(district.title ?? "", style: TextStyle(color: district.alertType?.colorAlert, fontSize: 14)),
                 Text("Время тревоги: ${district.startedAtEstimate!}", style: TextStyle(fontSize: 12)),
-                // Text("Начало Тревоги: ${UiTools.getDateToDay(district.startedAt!, true)}", style: TextStyle(fontSize: 12)),
-                //  if (district.startedAtEstimate != null) _buildTitleValue(title: "Время тревоги:", value: district.startedAtEstimate!),
-                // if (district.startedAt != null) _buildTitleValue(title: "Начало Тревоги:", value: UiTools.getDateToDay(district.startedAt!, true)),
               ],
             ),
             Container(
