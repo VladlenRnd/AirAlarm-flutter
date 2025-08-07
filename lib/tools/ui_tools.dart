@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 
 import '../models/region_model.dart';
 import 'custom_color.dart';
-import 'region/eregion.dart';
 
 class UiTools {
   static List<RegionModel> getAlarmRegion(List<RegionModel> allRegion) {

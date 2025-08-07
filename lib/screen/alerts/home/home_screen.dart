@@ -10,6 +10,7 @@ import 'package:lottie/lottie.dart';
 import '../../../dialog/custom_snack_bar.dart';
 import '../../../models/region_model.dart';
 
+import '../../../service/settings_service.dart';
 import '../../../tools/ui_tools.dart';
 import '../cubit/alert_cubit.dart';
 import 'widget/map_widget.dart';
@@ -164,26 +165,31 @@ class _HomeScreenState extends State<HomeScreen> {
             Divider(),
             _buildTitleValue(title: "Информация:", value: region.notes!),
           ],
+          if (SettingsService.isAutoSearch == true) ...[
+            Divider(),
+            _buildTitleValue(title: "Автоопределение области", value: "Включено", valueColor: CustomColor.noAlert),
+          ],
           if (!isSubscribe) ...[
-            SizedBox(height: 10),
+            Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
                     onPressed: () => {_bloc.selectRegion(selectUID: null)},
                     child: Text('Закрыть'.toUpperCase(), style: const TextStyle(color: CustomColor.textColor))),
-                ElevatedButton(
-                  onPressed: () async {
-                    showDialog(context: context, barrierDismissible: false, builder: (BuildContext context) => _buildSaveLoad());
-                    bool result = await _bloc.subscribeRegion(region.uid);
-                    Navigator.pop(context);
+                if (SettingsService.isAutoSearch == false)
+                  ElevatedButton(
+                    onPressed: () async {
+                      showDialog(context: context, barrierDismissible: false, builder: (BuildContext context) => _buildSaveLoad());
+                      bool result = await _bloc.subscribeRegion(region.uid);
+                      Navigator.pop(context);
 
-                    if (result == false) {
-                      CustomSnackBar.error(context, title: "Ошибка. Попробуйте ещё раз");
-                    }
-                  },
-                  child: Text("Отслеживать", style: const TextStyle(color: CustomColor.textColor)),
-                ),
+                      if (result == false) {
+                        CustomSnackBar.error(context, title: "Ошибка. Попробуйте ещё раз");
+                      }
+                    },
+                    child: Text("Отслеживать", style: const TextStyle(color: CustomColor.textColor)),
+                  ),
               ],
             ),
           ]
@@ -193,56 +199,54 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDistrictAlarm({required RegionModel district}) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(district.title ?? "", style: TextStyle(color: district.alertType?.colorAlert, fontSize: 14)),
+              Text("Время тревоги: ${district.startedAtEstimate!}", style: TextStyle(fontSize: 12)),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: CustomColor.background),
+            child: Row(
               children: [
-                Text(district.title ?? "", style: TextStyle(color: district.alertType?.colorAlert, fontSize: 14)),
-                Text("Время тревоги: ${district.startedAtEstimate!}", style: TextStyle(fontSize: 12)),
+                Text(
+                  textAlign: TextAlign.center,
+                  district.alertType!.title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontSize: 10,
+                        color: district.alertType?.colorAlert,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                SizedBox(width: 5),
+                SvgPicture.asset(
+                  district.alertType!.svgPath,
+                  width: 20,
+                  height: 20,
+                  colorFilter: ColorFilter.mode(district.alertType?.colorAlert ?? Colors.white.withValues(alpha: 0.6), BlendMode.srcIn),
+                ),
               ],
             ),
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: CustomColor.background),
-              child: Row(
-                children: [
-                  Text(
-                    textAlign: TextAlign.center,
-                    district.alertType!.title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontSize: 10,
-                          color: district.alertType?.colorAlert,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  SizedBox(width: 5),
-                  SvgPicture.asset(
-                    district.alertType!.svgPath,
-                    width: 20,
-                    height: 20,
-                    colorFilter: ColorFilter.mode(district.alertType?.colorAlert ?? Colors.white.withValues(alpha: 0.6), BlendMode.srcIn),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Divider(),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildTitleValue({required String title, required String value}) {
+  Widget _buildTitleValue({required String title, required String value, Color? valueColor}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [Expanded(child: Text(title)), Expanded(child: Text(value, textAlign: TextAlign.end))],
+        children: [Expanded(child: Text(title)), Expanded(child: Text(value, textAlign: TextAlign.end, style: TextStyle(color: valueColor)))],
       ),
     );
   }
