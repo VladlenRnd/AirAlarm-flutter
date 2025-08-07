@@ -20,7 +20,6 @@ class CustomColor {
   static const Color chemical = Color(0xFFC2B000); // оливково-жёлтый
   static const Color nuclear = Color(0xFFE4A600); // янтарный
   static const Color noAlert = Color(0xFF4CAF50); // мягкий зелёный
-  static const Color districtAlert = Color(0xFFDC143C);
 
   static const Color gray = Colors.grey;
 }

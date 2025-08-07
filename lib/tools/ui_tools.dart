@@ -25,11 +25,13 @@ class UiTools {
     return result;
   }
 
-  static Color? getAlarmColor(RegionModel model,{bool returnNullIfdistrict = false}) {
+  static Color? getAlarmColor(RegionModel model, {bool returnNullIfdistrict = false}) {
     return model.isAlert
         ? model.alertType?.colorAlert ?? CustomColor.airAlert
         : model.isAlertDistrict
-            ? returnNullIfdistrict ? null : CustomColor.districtAlert
+            ? returnNullIfdistrict
+                ? null
+                : CustomColor.airAlert
             : CustomColor.noAlert;
   }
 
