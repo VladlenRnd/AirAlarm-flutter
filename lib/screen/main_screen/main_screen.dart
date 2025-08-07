@@ -65,21 +65,55 @@ class _MainScreenState extends State<MainScreen> {
           top: true,
           bottom: true,
           right: false,
-          child: (Config.isWar ?? false)
-              ? switch (_selectScreen) {
-                  EScreen.home => _buildScreen(const HomeScreen()),
-                  EScreen.settings => _buildScreen(SettingsScreen()),
-                  EScreen.history => _buildScreen(ListScreen()),
-                }
-              : _buildNotWar(),
+          child: Config.isTechnicalWork ?? false
+              ? _buildTechnicalWork()
+              : Config.isWar ?? false
+                  ? switch (_selectScreen) {
+                      EScreen.home => _buildScreen(const HomeScreen()),
+                      EScreen.settings => _buildScreen(SettingsScreen()),
+                      EScreen.history => _buildScreen(ListScreen()),
+                    }
+                  : _buildNotWar(),
         ));
+  }
+
+  Widget _buildTechnicalWork() {
+    return const Scaffold(
+      backgroundColor: CustomColor.background,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.build, size: 48, color: CustomColor.atantion),
+              SizedBox(height: 10),
+              Text(
+                "Технические работы",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 23, color: CustomColor.atantion),
+              ),
+              SizedBox(height: 5),
+              Text(
+                "В данный момент проводятся технические работы, просим извинения за неудобства",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildNotWar() {
     return const Scaffold(
       backgroundColor: CustomColor.background,
-      body: Center(
-        child: Text("Нет данных о тревогах", textAlign: TextAlign.center, style: TextStyle(fontSize: 18)),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Center(
+          child: Text("На данный момент, нет данных о тревогах", textAlign: TextAlign.center, style: TextStyle(fontSize: 21)),
+        ),
       ),
     );
   }
