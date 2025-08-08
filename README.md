@@ -2,7 +2,7 @@
 
 Application for detecting air raid alerts on the territory of Ukraine
 
-**Website data used: https://vadimklimenko.com/map/**
+**Website data used: https://alerts.in.ua/**
 
 > Releases https://github.com/VladlenRnd/AirAlarm-flutter/releases
 
