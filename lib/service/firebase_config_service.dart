@@ -55,7 +55,7 @@ class Config {
   static bool? isWar;
   static DateTime? startWarDate;
   static String? baseUrl;
-  static WatNewModel? watNew; 
+  static WatNewModel? watNew;
 
   Config.init() {
     isTechnicalWork = FirebaseConfigService.getBool(EConfigKey.isTechnicalWork);
@@ -82,7 +82,7 @@ class Config {
     } else {
       isTechnicalWork = false;
       isWar = true;
-      baseUrl = "http://192.168.0.111:3100";
+      baseUrl = "http://178.219.87.46:3100";
       watNew = null;
       startWarDate = DateTime.parse("2022-02-24 00:00:00.000Z");
       endWarDate = null;
