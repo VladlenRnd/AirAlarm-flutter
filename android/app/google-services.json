@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "925740707424",
     "project_id": "fly-alarm",
-    "storage_bucket": "fly-alarm.appspot.com"
+    "storage_bucket": "fly-alarm.firebasestorage.app"
   },
   "client": [
     {
@@ -12,12 +12,7 @@
           "package_name": "com.example.alarm"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "925740707424-fs9j5kdhgd5qlcueno3rn5q7jscre36k.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyBb__H-TyhgOCScV5Xyq7GmpFHgUa35DjM"
@@ -25,12 +20,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "925740707424-fs9j5kdhgd5qlcueno3rn5q7jscre36k.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

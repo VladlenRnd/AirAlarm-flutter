@@ -1,9 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screen/main_screen/main_screen.dart';
 import 'service/firebase_config_service.dart';
 import 'service/firebase_crashlytics_service.dart';
 import 'service/firebase_notification_service.dart';
+import 'service/firebase_options.dart';
 import 'service/location_service.dart';
 import 'service/notification_service.dart';
 import 'service/shered_preferences_service.dart';
@@ -15,6 +17,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: CustomColor.background));
 
   //==========Init Service==============
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SheredPreferencesService().init();
   await LocationService().init();
   await NotificationService().init();
