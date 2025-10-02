@@ -36,8 +36,8 @@ dependencies:
   open_filex: ^4.3.2
   permission_handler: ^12.0.1
   firebase_messaging: ^16.0.0
-  firebase_core: ^4.0.0
-  firebase_remote_config: ^6.0.0
+  firebase_core: ^4.1.1
+  firebase_remote_config: ^6.0.2
   firebase_crashlytics: ^5.0.0
   flutter_svg: ^2.0.2
   expandable: ^5.0.1

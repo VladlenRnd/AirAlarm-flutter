@@ -47,3 +47,4 @@ app.*.map.json
 windows/flutter/generated_plugin_registrant.cc
 windows/flutter/generated_plugins.cmake
 pubspec.lock
+/ios/build/ios/XCBuildData
