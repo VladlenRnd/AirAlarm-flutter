@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screen/main_screen/main_screen.dart';
-import 'service/firebase_service.dart';
+import 'service/firebase_config_service.dart';
+import 'service/firebase_crashlytics_service.dart';
+import 'service/firebase_notification_service.dart';
 import 'service/location_service.dart';
 import 'service/notification_service.dart';
 import 'service/shered_preferences_service.dart';
 import 'tools/custom_color.dart';
-import 'tools/repository/config_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +15,12 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: CustomColor.background));
 
   //==========Init Service==============
-  await ConfigRepository.instance.init();
   await SheredPreferencesService().init();
   await LocationService().init();
   await NotificationService().init();
-  await FirebaseService().init();
+  await FirebaseNotificationService().init();
+  await FirebaseConfigService().init();
+  await FirebaseCrashlyticsService().init();
 
   runApp(const MyApp());
 }

@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../service/firebase_config_service.dart';
 import '../tools/custom_color.dart';
-import '../tools/update_info.dart';
 
 Future<bool?> showUpdateDialog(BuildContext context) {
   return showDialog<bool?>(
@@ -38,15 +38,15 @@ Widget _buildDescription() {
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
       ),
-      Expanded(
+      Flexible(
         child: SingleChildScrollView(
           child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: UpdateInfo.infoUpdate.descroption.map((data) => _buildTextDescription(data)).toList()),
+              children: Config.watNew?.discription == null ? [] : Config.watNew!.discription.map((data) => _buildTextDescription(data)).toList()),
         ),
-      ),
+      )
     ],
   );
 }
@@ -90,7 +90,7 @@ Widget _buildTitle() {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Center(
-            child: Text(UpdateInfo.infoUpdate.newVersion, style: const TextStyle(fontSize: 19)),
+            child: Text(Config.watNew?.newVersion ?? "", style: const TextStyle(fontSize: 19)),
           )),
     ],
   );

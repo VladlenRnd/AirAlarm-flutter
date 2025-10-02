@@ -1,18 +1,16 @@
+import 'package:alarm/service/firebase_config_service.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../dialog/info_dialog.dart';
 import '../../dialog/update_dialog.dart';
-import '../../tools/connection/connection.dart';
-import '../../tools/connection/response/config_response.dart';
 import '../../tools/custom_color.dart';
-import '../../tools/repository/config_repository.dart';
-import '../../tools/update_info.dart';
 import '../alerts/home/home_screen.dart';
 import '../alerts/list/list_screen.dart';
 import '../download/download_screen.dart';
@@ -28,15 +26,15 @@ class MainScreen extends StatefulWidget {
 EScreen _selectScreen = EScreen.home;
 
 class _MainScreenState extends State<MainScreen> {
-  ConfigResponse? get config => ConfigRepository.instance.config;
-
   @override
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: CustomColor.background));
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _checkPermition(!context.mounted ? context : context);
-      if (await _isUpdateCheck() && (await showUpdateDialog(!context.mounted ? context : context) ?? false)) {
-        await Navigator.of(!context.mounted ? context : context).push(MaterialPageRoute(builder: (context) => const DownloadScreen()));
+      if (await _isUpdateCheck()) {
+        if (await showUpdateDialog(!context.mounted ? context : context) ?? false) {
+          await Navigator.of(!context.mounted ? context : context).push(MaterialPageRoute(builder: (context) => const DownloadScreen()));
+        }
       }
     });
 
@@ -62,23 +60,60 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: CustomColor.background,
-        body: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: (config?.war ?? false)
-              ? switch (_selectScreen) {
-                  EScreen.home => _buildScreen(const HomeScreen()),
-                  EScreen.settings => _buildScreen(SettingsScreen()),
-                  EScreen.list => _buildScreen(ListScreen()),
-                }
-              : _buildNotWar(),
+        body: SafeArea(
+          left: false,
+          top: true,
+          bottom: true,
+          right: false,
+          child: Config.isTechnicalWork ?? false
+              ? _buildTechnicalWork()
+              : Config.isWar ?? false
+                  ? switch (_selectScreen) {
+                      EScreen.home => _buildScreen(const HomeScreen()),
+                      EScreen.settings => _buildScreen(SettingsScreen()),
+                      EScreen.history => _buildScreen(ListScreen()),
+                    }
+                  : _buildNotWar(),
         ));
+  }
+
+  Widget _buildTechnicalWork() {
+    return const Scaffold(
+      backgroundColor: CustomColor.background,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.build, size: 48, color: CustomColor.atantion),
+              SizedBox(height: 10),
+              Text(
+                "Технические работы",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 23, color: CustomColor.atantion),
+              ),
+              SizedBox(height: 5),
+              Text(
+                "В данный момент проводятся технические работы, просим извинения за неудобства",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildNotWar() {
     return const Scaffold(
       backgroundColor: CustomColor.background,
-      body: Center(
-        child: Text("Нет данных о тревогах", textAlign: TextAlign.center, style: TextStyle(fontSize: 18)),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Center(
+          child: Text("На данный момент, нет данных о тревогах", textAlign: TextAlign.center, style: TextStyle(fontSize: 21)),
+        ),
       ),
     );
   }
@@ -103,16 +138,24 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Expanded(
                 child: _buildAppBarItem(
-              icon: Icons.list,
-              title: "Список",
-              isSelected: _selectScreen == EScreen.list,
-              setScreen: () => _setScreen(EScreen.list),
+              icon: Icons.history,
+              title: EScreen.history.title,
+              isSelected: _selectScreen == EScreen.history,
+              setScreen: () async => await showInfoDialog(
+                context,
+                title: 'История в разработке',
+                contentInfo: 'Ждите в ближайшем обновлении :-)',
+                actionButtonStr: 'Хорошо!',
+                closeButtonStr: "",
+              ),
+
+              // _setScreen(EScreen.history),
             )),
             const Spacer(),
             Expanded(
                 child: _buildAppBarItem(
               icon: Icons.settings,
-              title: "Настройки",
+              title: EScreen.settings.title,
               isSelected: _selectScreen == EScreen.settings,
               setScreen: () => _setScreen(EScreen.settings),
             )),
@@ -147,15 +190,14 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<bool> _isUpdateCheck() async {
     bool result = false;
-    try {
-      UpdateInfo.infoUpdate = await Connection.chekUpdate();
-      PackageInfo infoApp = await PackageInfo.fromPlatform();
 
-      if (infoApp.version != UpdateInfo.infoUpdate.newVersion) {
+    try {
+      PackageInfo infoApp = await PackageInfo.fromPlatform();
+      if (Config.watNew?.newVersion != null && infoApp.version != Config.watNew!.newVersion) {
         result = true;
       }
     } catch (e) {
-      debugPrint(e.toString());
+      Logger().e("_isUpdateCheck error:", error: e);
     }
 
     return result;
@@ -163,7 +205,11 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 enum EScreen {
-  home,
-  settings,
-  list,
+  home("Главная"),
+  settings("Настройки"),
+  history("История");
+
+  const EScreen(this.title);
+
+  final String title;
 }
