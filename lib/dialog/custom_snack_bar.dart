@@ -30,7 +30,7 @@ class CustomSnackBar {
               ],
             ),
             duration: duration,
-            backgroundColor: CustomColor.green,
+            backgroundColor: CustomColor.noAlert,
           ))
           .closed
           .then((value) => isOpen = false);
@@ -60,7 +60,7 @@ class CustomSnackBar {
                 ],
               ),
               duration: duration,
-              backgroundColor: CustomColor.red,
+              backgroundColor: CustomColor.airAlert,
             ),
           )
           .closed

@@ -8,11 +8,11 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../dialog/custom_snack_bar.dart';
 import '../../service/download_service.dart';
+import '../../service/firebase_config_service.dart';
 import '../../tools/custom_color.dart';
-import '../../tools/update_info.dart';
 
 class DownloadScreen extends StatefulWidget {
-  const DownloadScreen({Key? key}) : super(key: key);
+  const DownloadScreen({super.key});
 
   @override
   State<DownloadScreen> createState() => _DownloadScreenState();
@@ -108,7 +108,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
     }
     String localPathAA = direct.path;
 
-    String pathToFile = await DownloadService.downloadFile(UpdateInfo.infoUpdate.url, "flightAlarmUpdate.apk", localPathAA);
+    String pathToFile = await DownloadService.downloadFile(Config.watNew?.url ?? "", "airAlert.apk", localPathAA);
 
     if (pathToFile == "EXEPTION") {
       CustomSnackBar.error(context, title: "Ошибка загрузки обновления");

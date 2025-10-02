@@ -1,20 +1,19 @@
 import 'dart:ui';
 
-import 'package:alarm/service/settings_service.dart';
 import 'package:alarm/tools/custom_color.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
-import 'package:rxdart/rxdart.dart';
 
+import '../../../dialog/custom_snack_bar.dart';
 import '../../../models/region_model.dart';
 
-import '../../../tools/region/region_title_tools.dart';
+import '../../../service/settings_service.dart';
 import '../../../tools/ui_tools.dart';
-import '../bloc/home_bloc.dart';
+import '../cubit/alert_cubit.dart';
 import 'widget/map_widget.dart';
-import 'widget/info_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,74 +23,231 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final BehaviorSubject<bool> expandedStream = BehaviorSubject<bool>();
-  RegionModel? selectRegionModel;
-  final AlertBloc bloc = AlertBloc();
+  final AlertCubit _bloc = AlertCubit();
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AlertBloc, HomeState>(
-      bloc: bloc,
-      builder: (BuildContext context, HomeState state) {
-        if (state is HomeUpdateState) {
-          return Column(
-            children: [
-              MapWidget(
-                allRegion: state.listRegions,
-                onTap: (RegionModel rm) {
-                  selectRegionModel = rm;
-                  expandedStream.add(SettingsService.subscribeRegion != rm.region.name);
-                },
-              ),
-              Expanded(
+    return BlocBuilder<AlertCubit, AlertState>(
+      bloc: _bloc,
+      builder: (BuildContext context, AlertState state) {
+        switch (state) {
+          case AlertLoadingState():
+            return _buildLoader();
+          case AlertErrorDataState():
+            return _buildErrorWidget();
+          case AlertLoadedDataState():
+            return Column(
+              children: [
+                MapWidget(
+                  allRegion: state.regionList,
+                  onTap: (RegionModel rm) {
+                    _bloc.selectRegion(selectUID: rm.uid);
+                  },
+                ),
+                Expanded(
                   child: SingleChildScrollView(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Column(
                       children: [
-                        if (UiTools.isGlobalAlarm(state.listRegions)) const InfoWidget.globalAlarmWidget(),
-                        StreamBuilder(
-                            stream: expandedStream,
-                            initialData: false,
-                            builder: (context, snapshot) {
-                              return AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 600),
-                                switchInCurve: Curves.easeOutExpo,
-                                switchOutCurve: Curves.easeInOutExpo,
-                                reverseDuration: const Duration(milliseconds: 200),
-                                transitionBuilder: (child, animation) {
-                                  return SizeTransition(sizeFactor: animation, child: child);
-                                },
-                                child: snapshot.data!
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(bottom: 10),
-                                        child: InfoWidget.auxiliaryInfoWidget(
-                                          selectRegion: selectRegionModel!,
-                                          onClose: () => expandedStream.add(false),
-                                          onSave: () => onSaveNewLocation(),
-                                        ),
-                                      )
-                                    : null,
-                              );
-                            }),
-                        InfoWidget.infoWidget(
-                            selectRegion: UiTools.getRegion(state.listRegions, RegionTitleTools.getEnumByEnumName(SettingsService.subscribeRegion!))),
-                        const SizedBox(height: 25),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          switchInCurve: Curves.fastOutSlowIn,
+                          switchOutCurve: Curves.easeInExpo,
+                          reverseDuration: const Duration(milliseconds: 400),
+                          transitionBuilder: (child, animation) {
+                            return SizeTransition(sizeFactor: animation, child: child);
+                          },
+                          child: state.selectRegion?.uid != state.subscribeRegion?.uid
+                              ? state.selectRegion == null
+                                  ? SizedBox.shrink()
+                                  : _buildInfoCard(region: state.selectRegion!, isSubscribe: state.selectRegion?.uid == state.subscribeRegion?.uid)
+                              : null,
+                        ),
+                        state.subscribeRegion != null ? _buildInfoCard(region: state.subscribeRegion!, isSubscribe: true) : _buildEmptySubscribe()
                       ],
-                    )),
-              ))
-            ],
-          );
+                    ),
+                  ),
+                )
+              ],
+            );
         }
-
-        if (state is HomeErrorDataState) {
-          return _buildErrorWidget();
-        }
-        if (state is HomeLoadingState) {
-          return _buildLoader();
-        }
-        return const SizedBox.shrink();
       },
+    );
+  }
+
+  Widget _buildEmptySubscribe() {
+    return Container(
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: CustomColor.backgroundCard,
+        ),
+        child: Text(
+          "Выберите область, чтобы получать уведомления о воздушных тревогах.",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          textAlign: TextAlign.center,
+        ));
+  }
+
+  Widget _buildInfoCard({required RegionModel region, required bool isSubscribe}) {
+    return Container(
+      margin: EdgeInsets.all(8),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: CustomColor.backgroundCard,
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: region.isAlert ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  region.title ?? "",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontSize: 18,
+                        color: UiTools.getAlarmColor(region),
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+              if (region.alertType != null && region.alertType != EAlertType.unknown && region.isAlert)
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: CustomColor.background),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Text(
+                          textAlign: TextAlign.center,
+                          region.alertType!.title,
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontSize: 14,
+                                color: region.alertType?.colorAlert,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        )),
+                        SizedBox(width: 5),
+                        SvgPicture.asset(
+                          region.alertType!.svgPath,
+                          width: 45,
+                          height: 45,
+                          colorFilter: ColorFilter.mode(region.alertType?.colorAlert ?? Colors.white.withValues(alpha: 0.6), BlendMode.srcIn),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          Divider(),
+          if (!region.isAlert && !region.isAlertDistrict) ...[
+            Text("Тревоги нет", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+            if (region.finishedAtEstimate != null) _buildTitleValue(title: "Время без тревоги:", value: region.finishedAtEstimate!),
+            if (region.finishedAt != null) _buildTitleValue(title: "Конец тревоги:", value: UiTools.getDateToDay(region.finishedAt!, true)),
+          ],
+          if (!region.isAlert && region.isAlertDistrict) ...[
+            Text("Тревога по районам", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            SizedBox(height: 10),
+          ],
+          if (region.listDistrict != null) ...[
+            ...region.listDistrict!.where((e) => e.isAlert).map((e) => _buildDistrictAlarm(district: e)),
+          ],
+          if (region.startedAtEstimate != null) _buildTitleValue(title: "Время тревоги:", value: region.startedAtEstimate!),
+          if (region.startedAt != null) _buildTitleValue(title: "Начало тревоги:", value: UiTools.getDateToDay(region.startedAt!, true)),
+          if (region.notes != null) ...[
+            Divider(),
+            _buildTitleValue(title: "Информация:", value: region.notes!),
+          ],
+          if (SettingsService.isAutoSearch == true) ...[
+            Divider(),
+            _buildTitleValue(title: "Автоопределение области", value: "Включено", valueColor: CustomColor.noAlert),
+          ],
+          if (!isSubscribe) ...[
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                    onPressed: () => {_bloc.selectRegion(selectUID: null)},
+                    child: Text('Закрыть'.toUpperCase(), style: const TextStyle(color: CustomColor.textColor))),
+                if (SettingsService.isAutoSearch == false)
+                  ElevatedButton(
+                    onPressed: () async {
+                      showDialog(context: context, barrierDismissible: false, builder: (BuildContext context) => _buildSaveLoad());
+                      bool result = await _bloc.subscribeRegion(region.uid);
+                      Navigator.pop(context);
+
+                      if (result == false) {
+                        CustomSnackBar.error(context, title: "Ошибка. Попробуйте ещё раз");
+                      }
+                    },
+                    child: Text("Отслеживать", style: const TextStyle(color: CustomColor.textColor)),
+                  ),
+              ],
+            ),
+          ]
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDistrictAlarm({required RegionModel district}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(district.title ?? "", style: TextStyle(color: district.alertType?.colorAlert, fontSize: 14)),
+              Text("Время тревоги: ${district.startedAtEstimate!}", style: TextStyle(fontSize: 12)),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: CustomColor.background),
+            child: Row(
+              children: [
+                Text(
+                  textAlign: TextAlign.center,
+                  district.alertType!.title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontSize: 10,
+                        color: district.alertType?.colorAlert,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                SizedBox(width: 5),
+                SvgPicture.asset(
+                  district.alertType!.svgPath,
+                  width: 20,
+                  height: 20,
+                  colorFilter: ColorFilter.mode(district.alertType?.colorAlert ?? Colors.white.withValues(alpha: 0.6), BlendMode.srcIn),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitleValue({required String title, required String value, Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [Expanded(child: Text(title)), Expanded(child: Text(value, textAlign: TextAlign.end, style: TextStyle(color: valueColor)))],
+      ),
     );
   }
 
@@ -123,53 +279,55 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildErrorWidget() {
     return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Lottie.asset(
-            'assets/lottie/no-connect.json',
-            width: 190,
-            height: 200,
-            frameRate: FrameRate(60),
-          ),
-          const Text(
-            "Не могу получить данные",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 19),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            "проверьте интернет-соединение",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: CustomColor.textColor.withValues(alpha: 0.7)),
-          )
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/lottie/no-connect.json',
+              width: 190,
+              height: 200,
+              frameRate: FrameRate(60),
+            ),
+            const Text(
+              "Не могу получить данные с сервера",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 19),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              "Сервер недоступен или отсутствует подключение к сети. Проверьте интернет-соединение или попробуйте позже.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: CustomColor.textColor.withValues(alpha: 0.7)),
+            )
+          ],
+        ),
       ),
     );
   }
 
 //*******TOOLS METHOD***** */
 
-  void onSaveNewLocation() async {
-    showDialog(context: context, barrierDismissible: false, builder: (BuildContext context) => _buildSaveLoad());
+  // void onSaveNewLocation() async {
+  //   showDialog(context: context, barrierDismissible: false, builder: (BuildContext context) => _buildSaveLoad());
 
-    String selectName = selectRegionModel!.region.name;
-    if (SettingsService.subscribeRegion! != selectName && selectName.isNotEmpty) {
-      await FirebaseMessaging.instance.unsubscribeFromTopic(SettingsService.subscribeRegion!);
-      await SettingsService.setParametr(subscribeRegionParam: selectName);
-      await FirebaseMessaging.instance.subscribeToTopic(selectName);
-    }
+  //   String selectName = selectRegionModel!.region.name;
+  //   if (SettingsService.subscribeRegion! != selectName && selectName.isNotEmpty) {
+  //     await FirebaseMessaging.instance.unsubscribeFromTopic(SettingsService.subscribeRegion!);
+  //     await SettingsService.setParametr(subscribeRegionParam: selectName);
+  //     await FirebaseMessaging.instance.subscribeToTopic(selectName);
+  //   }
 
-    Navigator.pop(!context.mounted ? context : context);
-    bloc.add(HomeSaveRegionEvent());
-    expandedStream.add(false);
-  }
+  //   Navigator.pop(!context.mounted ? context : context);
+  //   bloc.add(HomeSaveRegionEvent());
+  //   expandedStream.add(false);
+  // }
 
   @override
   void dispose() {
-    expandedStream.close();
-    bloc.close();
+    _bloc.close();
     super.dispose();
   }
 }

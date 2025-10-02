@@ -9,11 +9,17 @@ class CustomColor {
   static const Color colorMapDefault = Colors.grey;
   static const Color colorMapEmbossing = Color.fromARGB(255, 95, 95, 95);
 
-  static const Color red = Color(0xFFF15A69);
-  static const Color darkRed = Color.fromARGB(255, 207, 59, 76);
-  static const Color green = Color(0xFF30AF7D);
-  static const Color wihteGreen = Color.fromARGB(255, 68, 204, 120);
+  //static const Color darkRed = Color.fromARGB(255, 207, 59, 76);
+
+  //static const Color wihteGreen = Color.fromARGB(255, 68, 204, 120);
   static const Color atantion = Color(0xFFFFAD2C);
+
+  static const Color airAlert = Color(0xFFD64545); // кораллово-красный
+  static const Color artilleryShelling = Color(0xFFD9822B); // тёмно-оранжевый
+  static const Color urbanFights = Color(0xFF6A4C93); // баклажановый
+  static const Color chemical = Color(0xFFC2B000); // оливково-жёлтый
+  static const Color nuclear = Color(0xFFE4A600); // янтарный
+  static const Color noAlert = Color(0xFF4CAF50); // мягкий зелёный
 
   static const Color gray = Colors.grey;
 }
