@@ -24,10 +24,22 @@
 @import firebase_core;
 #endif
 
+#if __has_include(<firebase_crashlytics/FLTFirebaseCrashlyticsPlugin.h>)
+#import <firebase_crashlytics/FLTFirebaseCrashlyticsPlugin.h>
+#else
+@import firebase_crashlytics;
+#endif
+
 #if __has_include(<firebase_messaging/FLTFirebaseMessagingPlugin.h>)
 #import <firebase_messaging/FLTFirebaseMessagingPlugin.h>
 #else
 @import firebase_messaging;
+#endif
+
+#if __has_include(<firebase_remote_config/FirebaseRemoteConfigPlugin.h>)
+#import <firebase_remote_config/FirebaseRemoteConfigPlugin.h>
+#else
+@import firebase_remote_config;
 #endif
 
 #if __has_include(<flutter_background_service_ios/FlutterBackgroundServicePlugin.h>)
@@ -96,7 +108,9 @@
   [AppSettingsPlugin registerWithRegistrar:[registry registrarForPlugin:@"AppSettingsPlugin"]];
   [AudioplayersDarwinPlugin registerWithRegistrar:[registry registrarForPlugin:@"AudioplayersDarwinPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
+  [FLTFirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCrashlyticsPlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
+  [FirebaseRemoteConfigPlugin registerWithRegistrar:[registry registrarForPlugin:@"FirebaseRemoteConfigPlugin"]];
   [FlutterBackgroundServicePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterBackgroundServicePlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
   [FlutterNativeSplashPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterNativeSplashPlugin"]];
