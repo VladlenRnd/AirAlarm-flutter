@@ -21,6 +21,7 @@ class LocationService implements AService {
   LocationService._privateConstructor();
   static final LocationService _instance = LocationService._privateConstructor();
   factory LocationService() => _instance;
+  static final Geocoding _geocoding = Geocoding();
 
   @override
   bool isInitDone = false;
@@ -121,7 +122,7 @@ class LocationService implements AService {
 
   static Future<bool> _changeLocation(double latitude, double longitude) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> placemarks = await _geocoding.placemarkFromCoordinates(latitude, longitude);
       if (placemarks.isNotEmpty) {
         String? regionUID = _getRegionByGeolocation(placemarks[0].administrativeArea ?? "", placemarks[0].locality ?? "");
         if (regionUID != null) {

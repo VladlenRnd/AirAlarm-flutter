@@ -28,7 +28,12 @@ EScreen _selectScreen = EScreen.home;
 class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: CustomColor.background));
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: CustomColor.background,
+        systemNavigationBarContrastEnforced: false,
+      ),
+    );
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _checkPermition(!context.mounted ? context : context);
       if (await _isUpdateCheck()) {
@@ -63,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
         body: SafeArea(
           left: false,
           top: true,
-          bottom: true,
+          bottom: false,
           right: false,
           child: Config.isTechnicalWork ?? false
               ? _buildTechnicalWork()

@@ -22,7 +22,7 @@ class NotificationService implements AService {
     try {
       const InitializationSettings initializationSettings =
           InitializationSettings(android: AndroidInitializationSettings('ic_start_alarm'), macOS: null);
-      await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await _flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
       isInitDone = true;
       return true;
     } catch (e) {
@@ -77,7 +77,13 @@ class NotificationService implements AService {
       autoCancel: false,
     ));
 
-    await _flutterLocalNotificationsPlugin.show(notificationId, "Воздушная тревога!", body, platformChannelSpecifics, payload: 'test');
+    await _flutterLocalNotificationsPlugin.show(
+      id: notificationId,
+      title: "Воздушная тревога!",
+      body: body,
+      notificationDetails: platformChannelSpecifics,
+      payload: 'test',
+    );
   }
 
   static Future<void> _showCanceledAlertNotification(
@@ -101,7 +107,13 @@ class NotificationService implements AService {
       icon: "ic_cancel_alarm",
     ));
 
-    await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Отмена воздушной тревоги", body, platformChannelSpecifics, payload: 'test');
+    await _flutterLocalNotificationsPlugin.show(
+      id: notificationId + 100,
+      title: "Отмена воздушной тревоги",
+      body: body,
+      notificationDetails: platformChannelSpecifics,
+      payload: 'test',
+    );
   }
 
   static Future<void> showUpdateNotification({String body = "", required int notificationId}) async {
@@ -122,7 +134,11 @@ class NotificationService implements AService {
       visibility: NotificationVisibility.public,
     ));
 
-    await _flutterLocalNotificationsPlugin.show(222, "Доступна новая версия! $body", "Доступно обновление для приложения", platformChannelSpecifics,
+    await _flutterLocalNotificationsPlugin.show(
+        id: 222,
+        title: "Доступна новая версия! $body",
+        body: "Доступно обновление для приложения",
+        notificationDetails: platformChannelSpecifics,
         payload: 'update');
   }
 
@@ -143,10 +159,16 @@ class NotificationService implements AService {
       timeoutAfter: 10000,
     ));
 
-    await _flutterLocalNotificationsPlugin.show(notificationId + 100, "Тестовое оповещение", body, platformChannelSpecifics, payload: 'test');
+    await _flutterLocalNotificationsPlugin.show(
+      id: notificationId + 100,
+      title: "Тестовое оповещение",
+      body: body,
+      notificationDetails: platformChannelSpecifics,
+      payload: 'test',
+    );
   }
 
   static void cancelNotification({required int notificationId}) async {
-    await _flutterLocalNotificationsPlugin.cancel(notificationId);
+    await _flutterLocalNotificationsPlugin.cancel(id: notificationId);
   }
 }
