@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../../models/region_model.dart';
 import '../../../tools/custom_color.dart';
-import '../../../tools/ui_tools.dart';
 import '../cubit/alert_cubit.dart';
 
 class ListScreen extends StatelessWidget {

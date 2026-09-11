@@ -24,6 +24,28 @@ class UiTools {
     return result;
   }
 
+  /// [0] No Alert
+  /// [1] Alert in region
+  /// [2] All region alert
+  static int isWhereAlarm({required RegionModel region}) {
+    int count = 0;
+    if (region.isAlert) return 2;
+
+    if (region.listDistrict != null) {
+      for (RegionModel e in region.listDistrict!) {
+        if (e.isAlert) {
+          count++;
+        }
+      }
+
+      if (count == 0) return 0;
+      if (count > 0 && count != region.listDistrict!.length) return 1;
+      if (count > 0 && count == region.listDistrict!.length) return 2;
+    }
+
+    return 0;
+  }
+
   static Color? getAlarmColor(RegionModel model, {bool returnNullIfDistrict = false}) {
     return model.isAlert
         ? model.alertType?.colorAlert ?? CustomColor.airAlert

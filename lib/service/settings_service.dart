@@ -1,38 +1,31 @@
 import 'dart:convert';
 
-import '../models/sound_model.dart';
+import '../models/alert_setting_model.dart';
 import 'shered_preferences_service.dart';
 
 class SettingsService {
-  static String? subscribeRegion;
-  static String? alarmSoundFilaName;
-  static String? cancelSoundFilaName;
+  static List<SubscribeAlertModel>? subscribeRegions;
   static bool? isAutoSearch;
   static String? siledStart;
   static String? siledEnd;
   static List<String>? filterList;
 
   static void setDefault() {
-    subscribeRegion = "";
-    alarmSoundFilaName = SoundService.alarmSounds[1].fileName;
-    cancelSoundFilaName = SoundService.cancelSounds[1].fileName;
+    subscribeRegions = [];
     isAutoSearch = false;
     siledStart = "";
     siledEnd = "";
     filterList = [EFilter.alarm.name, EFilter.noAlarm.name, EFilter.warning.name];
   }
 
-  static Future<bool> setParametr(
-      {String? subscribeRegionParam,
-      String? alarmSongParam,
-      String? cancelSongParam,
-      String? siledStartParam,
-      String? siledEndParam,
-      bool? isAutoSearchParam,
-      List<String>? filterListParam}) async {
-    subscribeRegion = subscribeRegionParam ?? subscribeRegion;
-    alarmSoundFilaName = alarmSongParam ?? alarmSoundFilaName;
-    cancelSoundFilaName = cancelSongParam ?? cancelSoundFilaName;
+  static Future<bool> setParametr({
+    List<SubscribeAlertModel>? subscribeRegionsParam,
+    String? siledStartParam,
+    String? siledEndParam,
+    bool? isAutoSearchParam,
+    List<String>? filterListParam,
+  }) async {
+    subscribeRegions = subscribeRegionsParam ?? subscribeRegions;
     siledStart = siledStartParam ?? siledStart;
     siledEnd = siledEndParam ?? siledEnd;
     isAutoSearch = isAutoSearchParam ?? isAutoSearch;
@@ -43,9 +36,7 @@ class SettingsService {
 
   static Map<String, Object?> toJson() {
     return {
-      "subscribeRegion": subscribeRegion,
-      "alarmSong": alarmSoundFilaName,
-      "cancelSong": cancelSoundFilaName,
+      "subscribeRegionList": subscribeRegions?.map((e) => e.toJson()).toList(),
       "isAutoSearch": isAutoSearch,
       "siledStart": siledStart,
       "siledEnd": siledEnd,
@@ -54,9 +45,7 @@ class SettingsService {
   }
 
   static void fromJson(Map<String, dynamic> json) {
-    subscribeRegion = json['subscribeRegion'];
-    alarmSoundFilaName = json['alarmSong'];
-    cancelSoundFilaName = json['cancelSong'];
+    subscribeRegions = (json['subscribeRegionList'] as List<dynamic>).map((e) => SubscribeAlertModel.fromJson(e as Map<String, dynamic>)).toList();
     isAutoSearch = json['isAutoSearch'];
     siledEnd = json['siledEnd'];
     siledStart = json['siledStart'];

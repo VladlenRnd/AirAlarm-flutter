@@ -1,9 +1,11 @@
 import 'package:alarm/service/settings_service.dart';
+import 'package:collection/collection.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../models/alert_setting_model.dart';
 import '../tools/notification_tools.dart';
 import 'abstract_service.dart';
 import 'notification_service.dart';
@@ -24,7 +26,11 @@ class FirebaseNotificationService implements AService {
       await Firebase.initializeApp();
       _initOnMessage();
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-      FirebaseMessaging.instance.subscribeToTopic(SettingsService.subscribeRegion!);
+
+      for (var e in SettingsService.subscribeRegions ?? []) {
+        FirebaseMessaging.instance.subscribeToTopic(e);
+      }
+
       FirebaseMessaging.instance.subscribeToTopic("update");
 
       if (kDebugMode) {
@@ -75,33 +81,42 @@ T? getValue<T>(dynamic data) {
 
 //============Message logic ======================
 Future<void> _messageCallBack(RemoteMessage message) async {
-  String alertSong = SettingsService.alarmSoundFilaName!;
-  String cancelSong = SettingsService.cancelSoundFilaName!;
+  SubscribeAlertModel? model = SettingsService.subscribeRegions?.firstWhereOrNull((e) => e.regionUID == message.data["id"]);
 
-  if (message.data.isNotEmpty) {
-    if (getValue<bool>(message.data["isTest"]) ?? false) {
-      testNotification(message.data);
-      return;
-    }
+  String alertSong = "";
+  String cancelSong = "";
+  bool isMuted = false;
 
-    if (getValue<bool>(message.data["isUpdate"]) ?? false) {
-      PackageInfo infoApp = await PackageInfo.fromPlatform();
-      if (infoApp.version != message.data["newVersion"]) {
-        NotificationService.showUpdateNotification(notificationId: 222, body: "${message.data["newVersion"]}");
-      }
-      return;
-    }
+  if (model != null) {
+    alertSong = model.alarmSoundFilaName;
+    cancelSong = model.cancelSoundFilaName;
+    isMuted = model.isMuted;
+  }
 
-    if (message.data["isAlarm"] != null) {
-      NotificationService.showNotification(
-          getValue<bool>(message.data["isAlarm"])!,
-          message.data["region"] ?? "",
-          alertSong,
-          cancelSong,
-          isSoundNotification(
+  switch (message.data["noti_type"]) {
+    case "isAlert":
+      if (isMuted) return;
+      await NotificationService.showNotification(
+          id: message.data["id"],
+          alertType: message.data["type"],
+          isAlarm: getValue<bool>(message.data["isAlarm"])!,
+          region: message.data["region"] ?? "",
+          alarmPath: alertSong,
+          cancelPath: cancelSong,
+          isSound: isSoundNotification(
             DateTime.tryParse(SettingsService.siledStart ?? ""),
             DateTime.tryParse(SettingsService.siledEnd ?? ""),
           ));
-    }
+
+      break;
+    case "isUpdate":
+      PackageInfo infoApp = await PackageInfo.fromPlatform();
+      if (infoApp.version != message.data["newVersion"]) {
+        await NotificationService.showUpdateNotification(notificationId: 123321, body: "${message.data["newVersion"]}");
+      }
+      break;
+    case "isTest":
+      testNotification(message.data);
+      break;
   }
 }

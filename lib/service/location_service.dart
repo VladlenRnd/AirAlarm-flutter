@@ -126,12 +126,12 @@ class LocationService implements AService {
       if (placemarks.isNotEmpty) {
         String? regionUID = _getRegionByGeolocation(placemarks[0].administrativeArea ?? "", placemarks[0].locality ?? "");
         if (regionUID != null) {
-          if (SettingsService.subscribeRegion! != regionUID) {
-            await FirebaseMessaging.instance.unsubscribeFromTopic(SettingsService.subscribeRegion!);
+          if (SettingsService.subscribeRegions! != regionUID) {
+            //  await FirebaseMessaging.instance.unsubscribeFromTopic(SettingsService.subscribeRegions!);
           }
 
           await FirebaseMessaging.instance.subscribeToTopic(regionUID);
-          await SettingsService.setParametr(subscribeRegionParam: regionUID);
+          // await SettingsService.setParametr(subscribeRegionParam: regionUID);
 
           return true;
         } else {

@@ -43,6 +43,11 @@ class MyApp extends StatelessWidget {
   ThemeData _getTheme() {
     return ThemeData(
       fontFamily: "Roboto",
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: CustomColor.textColor,
+        ),
+      ),
       dialogTheme: DialogThemeData(
           backgroundColor: CustomColor.backgroundCard,
           shape: RoundedRectangleBorder(

@@ -155,11 +155,11 @@ enum ELocationType {
 }
 
 enum EAlertType {
-  airRaid("Авиационная\nтревога", "assets/icons/air_raid.svg", CustomColor.airAlert),
-  artilleryShelling("Артиллерийский\nобстрел", "assets/icons/artillery_shelling.svg", CustomColor.artilleryShelling),
+  airRaid("Авиационная тревога", "assets/icons/air_raid.svg", CustomColor.airAlert),
+  artilleryShelling("Артиллерийский обстрел", "assets/icons/artillery_shelling.svg", CustomColor.artilleryShelling),
   urbanFights("Бои в городе", "assets/icons/urban_fights.svg", CustomColor.urbanFights),
-  chemical("Химическая\nугроза", "assets/icons/chemical.svg", CustomColor.chemical),
-  nuclea("Ядерная\nугроза", "assets/icons/nuclear.svg", CustomColor.nuclear),
+  chemical("Химическая угроза", "assets/icons/chemical.svg", CustomColor.chemical),
+  nuclea("Ядерная угроза", "assets/icons/nuclear.svg", CustomColor.nuclear),
   unknown("", "", CustomColor.airAlert);
 
   const EAlertType(this.title, this.svgPath, this.colorAlert);

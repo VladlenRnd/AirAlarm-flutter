@@ -1,9 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../../models/alert_setting_model.dart';
 import '../../../models/sound_model.dart';
 import '../../../service/location_service.dart';
 import '../../../service/settings_service.dart';
@@ -18,13 +20,16 @@ class SettingsCubit extends Cubit<SettingsState> {
   void _initSettings() async {
     PackageInfo infoApp = await PackageInfo.fromPlatform();
 
-    emit(SettingsDataLoad(
+    emit(SettingsDataLoaded(
       version: infoApp.version,
       autoSearch: SettingsService.isAutoSearch ?? false,
-      alarmSoundSelect:
-          SoundService.getModelByFileName(SettingsService.alarmSoundFilaName ?? "", SoundService.alarmSounds) ?? SoundService.alarmSounds[0],
-      cancelSoundSelect:
-          SoundService.getModelByFileName(SettingsService.cancelSoundFilaName ?? "", SoundService.cancelSounds) ?? SoundService.cancelSounds[0],
+      subscribeList: SettingsService.subscribeRegions ?? [],
+
+      // alarmSoundSelect:
+      //     SoundService.getModelByFileName(SettingsService.alarmSoundFilaName ?? "", SoundService.alarmSounds) ?? SoundService.alarmSounds[0],
+      // cancelSoundSelect:
+      //     SoundService.getModelByFileName(SettingsService.cancelSoundFilaName ?? "", SoundService.cancelSounds) ?? SoundService.cancelSounds[0],
+
       silenceTime:
           _getSilenceTimeStr(start: DateTime.tryParse(SettingsService.siledStart ?? ""), end: DateTime.tryParse(SettingsService.siledEnd ?? "")),
     ));
@@ -47,14 +52,46 @@ class SettingsCubit extends Cubit<SettingsState> {
     return true;
   }
 
-  void setAlarmSound(SoundModel as) async {
-    await SettingsService.setParametr(alarmSongParam: as.fileName);
-    _setEmit(alarmSoundSelect: as);
+  void setAlarmSound({required String uid, required SoundModel sound}) async {
+    List<SubscribeAlertModel> list = List<SubscribeAlertModel>.from(SettingsService.subscribeRegions ?? []);
+
+    final index = list.indexWhere((e) => e.regionUID == uid);
+    if (index == -1) return;
+    list[index] = list[index].copyWith(alarmSoundFilaName: sound.fileName);
+
+    _setEmit(subscribeAlert: list);
+    await SettingsService.setParametr(subscribeRegionsParam: list);
   }
 
-  void setCancelSound(SoundModel as) async {
-    await SettingsService.setParametr(cancelSongParam: as.fileName);
-    _setEmit(cancelSoundSelect: as);
+  void setCancelSound({required String uid, required SoundModel sound}) async {
+    List<SubscribeAlertModel> list = List<SubscribeAlertModel>.from(SettingsService.subscribeRegions ?? []);
+
+    final index = list.indexWhere((e) => e.regionUID == uid);
+    if (index == -1) return;
+    list[index] = list[index].copyWith(cancelSoundFilaName: sound.fileName);
+
+    _setEmit(subscribeAlert: list);
+    await SettingsService.setParametr(subscribeRegionsParam: list);
+  }
+
+  Future<void> setNewPosition({required List<SubscribeAlertModel> newPosition}) async {
+    _setEmit(subscribeAlert: newPosition);
+
+    await SettingsService.setParametr(
+      subscribeRegionsParam: newPosition,
+    );
+  }
+
+  void setMuteMode({required String uid, required bool isMuted}) async {
+    List<SubscribeAlertModel> list = List<SubscribeAlertModel>.from(SettingsService.subscribeRegions ?? []);
+
+    final index = list.indexWhere((e) => e.regionUID == uid);
+    if (index == -1) return;
+
+    list[index] = list[index].copyWith(isMuted: isMuted);
+
+    _setEmit(subscribeAlert: list);
+    await SettingsService.setParametr(subscribeRegionsParam: list);
   }
 
   void removeSilenceTime() {
@@ -74,14 +111,13 @@ class SettingsCubit extends Cubit<SettingsState> {
     _setEmit(silenceTime: _getSilenceTimeStr(start: dateStart, end: dateEnd));
   }
 
-  void _setEmit({bool? autoSearch, SoundModel? alarmSoundSelect, SoundModel? cancelSoundSelect, String? silenceTime}) {
-    SettingsDataLoad oldState = state as SettingsDataLoad;
+  void _setEmit({bool? autoSearch, String? silenceTime, List<SubscribeAlertModel>? subscribeAlert}) {
+    SettingsDataLoaded oldState = state as SettingsDataLoaded;
 
-    emit(SettingsDataLoad(
+    emit(SettingsDataLoaded(
       version: oldState.version,
       autoSearch: autoSearch ?? oldState.autoSearch,
-      alarmSoundSelect: alarmSoundSelect ?? oldState.alarmSoundSelect,
-      cancelSoundSelect: cancelSoundSelect ?? oldState.cancelSoundSelect,
+      subscribeList: subscribeAlert ?? oldState.subscribeList,
       silenceTime: silenceTime ?? oldState.silenceTime,
     ));
   }

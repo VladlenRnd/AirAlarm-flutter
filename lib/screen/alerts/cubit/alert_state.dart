@@ -13,11 +13,11 @@ final class AlertErrorDataState extends AlertState {}
 
 final class AlertLoadedDataState extends AlertState {
   final List<RegionModel> regionList;
-  final RegionModel? subscribeRegion;
+  final List<RegionModel>? subscribeRegions;
   final RegionModel? selectRegion;
 
-  const AlertLoadedDataState({required this.regionList,required this.subscribeRegion,required this.selectRegion});
+  const AlertLoadedDataState({required this.regionList, required this.subscribeRegions, required this.selectRegion});
 
   @override
-  List<Object?> get props => [regionList,subscribeRegion,selectRegion];
+  List<Object?> get props => [regionList, subscribeRegions, selectRegion];
 }

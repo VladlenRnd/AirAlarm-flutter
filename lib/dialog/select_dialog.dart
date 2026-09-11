@@ -19,7 +19,7 @@ class _SelectDialog<T> extends StatelessWidget {
       filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
       child: AlertDialog(
           contentPadding: const EdgeInsets.only(top: 15),
-          titlePadding: const EdgeInsets.only(top: 20, right: 24, left: 24),
+          titlePadding: const EdgeInsets.only(top: 20, right: 5, left: 5),
           titleTextStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           actions: [
             TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("ЗАКРЫТЬ", style: TextStyle(color: CustomColor.textColor)))

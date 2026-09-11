@@ -60,7 +60,7 @@ class Config {
   Config.init() {
     isTechnicalWork = FirebaseConfigService.getBool(EConfigKey.isTechnicalWork);
     isWar = FirebaseConfigService.getBool(EConfigKey.isWar);
-    baseUrl = FirebaseConfigService.getString(EConfigKey.baseUrl);
+    baseUrl = FirebaseConfigService.getString(EConfigKey.baseUrl); //For Desctop http://178.219.87.46:224/
     watNew = WatNewModel.fromJson(jsonDecode(FirebaseConfigService.getString(EConfigKey.watNew)));
     startWarDate = DateTime.tryParse(FirebaseConfigService.getString(EConfigKey.startWarDate));
     endWarDate = DateTime.tryParse(FirebaseConfigService.getString(EConfigKey.endWarDate));
