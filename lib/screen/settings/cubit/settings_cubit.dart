@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,12 +23,6 @@ class SettingsCubit extends Cubit<SettingsState> {
       version: infoApp.version,
       autoSearch: SettingsService.isAutoSearch ?? false,
       subscribeList: SettingsService.subscribeRegions ?? [],
-
-      // alarmSoundSelect:
-      //     SoundService.getModelByFileName(SettingsService.alarmSoundFilaName ?? "", SoundService.alarmSounds) ?? SoundService.alarmSounds[0],
-      // cancelSoundSelect:
-      //     SoundService.getModelByFileName(SettingsService.cancelSoundFilaName ?? "", SoundService.cancelSounds) ?? SoundService.cancelSounds[0],
-
       silenceTime:
           _getSilenceTimeStr(start: DateTime.tryParse(SettingsService.siledStart ?? ""), end: DateTime.tryParse(SettingsService.siledEnd ?? "")),
     ));

@@ -46,6 +46,37 @@ class UiTools {
     return 0;
   }
 
+  static (Color, bool) getMapColorRegion({required List<RegionModel> allDistrict, required bool isGlobalAlert}) {
+    if (isGlobalAlert) {
+      return (CustomColor.airAlert, false);
+    }
+
+    if (allDistrict.isEmpty) {
+      return (CustomColor.noAlert, false);
+    }
+
+    final alarmCount = allDistrict.where((e) => e.isAlert).length;
+
+    if (alarmCount == 0) {
+      return (CustomColor.noAlert, false);
+    }
+
+    final ratio = alarmCount / allDistrict.length;
+
+    if (alarmCount == allDistrict.length) {
+      return (CustomColor.airAlert, false);
+    }
+
+    return (
+      Color.lerp(
+        CustomColor.airAlertLow,
+        CustomColor.airAlert,
+        ratio,
+      )!,
+      true
+    );
+  }
+
   static Color? getAlarmColor(RegionModel model, {bool returnNullIfDistrict = false}) {
     return model.isAlert
         ? model.alertType?.colorAlert ?? CustomColor.airAlert

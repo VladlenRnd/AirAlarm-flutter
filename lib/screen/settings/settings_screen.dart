@@ -88,10 +88,9 @@ class SettingsScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final sub = state.subscribeList[index];
                             final card = _buildSubCard(context, sub: sub, isDrag: state.subscribeList.length > 1);
-
                             return KeyedSubtree(
                               key: ValueKey(sub.regionUID),
-                              child: state.subscribeList.length > 1 ? ReorderableDragStartListener(index: index, child: card) : card,
+                              child: state.subscribeList.length > 1 ? ReorderableDelayedDragStartListener(index: index, child: card) : card,
                             );
                           },
                         ),

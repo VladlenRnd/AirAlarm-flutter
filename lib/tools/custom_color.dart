@@ -14,7 +14,11 @@ class CustomColor {
   //static const Color wihteGreen = Color.fromARGB(255, 68, 204, 120);
   static const Color atantion = Color(0xFFFFAD2C);
 
+  static const Color redAlert = Color(0xFFD64545);
+  static const Color yellowAlert = Color.fromARGB(255, 255, 235, 55);
+
   static const Color airAlert = Color(0xFFD64545); // кораллово-красный
+  static const Color airAlertLow = Color.fromARGB(255, 255, 172, 172); // кораллово-красный
   static const Color artilleryShelling = Color(0xFFD9822B); // тёмно-оранжевый
   static const Color urbanFights = Color.fromARGB(255, 67, 146, 236); // баклажановый
   static const Color chemical = Color.fromARGB(255, 255, 241, 114); // оливково-жёлтый

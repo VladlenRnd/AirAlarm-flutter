@@ -27,44 +27,10 @@ class RegionModel extends Equatable {
   final String? locationRaion;
   final String? notes;
   final bool? calculated;
-  final List<RegionModel>? listDistrict;
+  final EAlertLevel? alertLevel;
+  final List<ThreatModel>? threats;
 
-  RegionModel copyWith({
-    bool? isAlert,
-    EAlertType? alertType,
-    bool? calculated,
-    DateTime? startedAt,
-    String? startedAtEstimate,
-    DateTime? finishedAt,
-    String? finishedAtEstimate,
-    String? locationOblast,
-    int? locationOblastUid,
-    String? locationRaion,
-    //String? title,
-    ELocationType? locationType,
-    String? uid,
-    String? notes,
-    DateTime? updatedAt,
-    List<RegionModel>? listDistrict,
-  }) {
-    return RegionModel(
-      isAlert: isAlert ?? false,
-      alertType: alertType,
-      calculated: calculated,
-      finishedAt: finishedAt,
-      id: id,
-      listDistrict: listDistrict ?? this.listDistrict,
-      locationOblast: locationOblast,
-      locationOblastUid: locationOblastUid,
-      locationRaion: locationRaion,
-      title: title,
-      locationType: locationType ?? this.locationType,
-      uid: uid ?? this.uid,
-      notes: notes,
-      startedAt: startedAt,
-      updatedAt: updatedAt,
-    );
-  }
+  final List<RegionModel>? listDistrict;
 
   RegionModel({
     required this.isAlert,
@@ -82,6 +48,8 @@ class RegionModel extends Equatable {
     this.notes,
     this.calculated,
     this.listDistrict,
+    this.alertLevel,
+    this.threats,
   })  : finishedAtEstimate = UiTools.getElapsedTimeFormatted(finishedAt),
         startedAtEstimate = UiTools.getElapsedTimeFormatted(startedAt),
         isAlertDistrict = listDistrict?.firstWhereOrNull((e) => e.isAlert) != null;
@@ -102,8 +70,51 @@ class RegionModel extends Equatable {
       locationRaion: json['locationRaion'] as String?,
       notes: json['notes'] as String?,
       calculated: json['calculated'] as bool?,
+      alertLevel: EAlertLevel.getEnumByType(type: json['alertLevel']),
+      threats: (json['threats'] as List<dynamic>?)?.map((e) => ThreatModel.fromJson(e as Map<String, dynamic>)).toList(),
       listDistrict:
           json['listDistrict'] != null ? (json['listDistrict'] as List).map((e) => RegionModel.fromJson(e as Map<String, dynamic>)).toList() : null,
+    );
+  }
+
+  RegionModel copyWith({
+    bool? isAlert,
+    EAlertType? alertType,
+    bool? calculated,
+    DateTime? startedAt,
+    String? startedAtEstimate,
+    DateTime? finishedAt,
+    String? finishedAtEstimate,
+    String? locationOblast,
+    int? locationOblastUid,
+    String? locationRaion,
+    //String? title,
+    ELocationType? locationType,
+    String? uid,
+    String? notes,
+    DateTime? updatedAt,
+    EAlertLevel? alertLevel,
+    List<ThreatModel>? threats,
+    List<RegionModel>? listDistrict,
+  }) {
+    return RegionModel(
+      isAlert: isAlert ?? false,
+      alertType: alertType,
+      calculated: calculated,
+      finishedAt: finishedAt,
+      id: id,
+      listDistrict: listDistrict ?? this.listDistrict,
+      threats: threats ?? this.threats,
+      alertLevel: alertLevel ?? this.alertLevel,
+      locationOblast: locationOblast,
+      locationOblastUid: locationOblastUid,
+      locationRaion: locationRaion,
+      title: title,
+      locationType: locationType ?? this.locationType,
+      uid: uid ?? this.uid,
+      notes: notes,
+      startedAt: startedAt,
+      updatedAt: updatedAt,
     );
   }
 
@@ -126,8 +137,42 @@ class RegionModel extends Equatable {
         notes,
         calculated,
         listDistrict,
+        threats,
+        alertLevel,
       ];
 }
+
+class ThreatModel extends Equatable {
+  final EThreatType? threatType;
+  final EAlertLevel? level;
+  final DateTime? startedAt;
+  final String? sourceMessage;
+  final String? customMessage;
+
+  const ThreatModel({this.threatType, this.level, this.startedAt, this.sourceMessage, this.customMessage});
+
+  factory ThreatModel.fromJson(Map<String, dynamic> json) {
+    EThreatType tp = EThreatType.getEnumByType(type: json['threatType'] as String?);
+    return ThreatModel(
+      threatType: tp,
+      level: EAlertLevel.getEnumByType(type: json['level']),
+      startedAt: json['started_at'] != null ? DateTime.tryParse(json['startedAt']) : null,
+      sourceMessage: json['sourceMessage'] as String?,
+      customMessage: json['customMessage'] as String?,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        threatType,
+        level,
+        startedAt,
+        sourceMessage,
+        customMessage,
+      ];
+}
+
+//====== ENUM =======
 
 enum ELocationType {
   oblast,
@@ -182,6 +227,80 @@ enum EAlertType {
         return EAlertType.nuclea;
       default:
         return EAlertType.unknown;
+    }
+  }
+}
+
+enum EAlertLevel {
+  red,
+  yellow;
+
+  Color getAlertColor() {
+    switch (this) {
+      case EAlertLevel.red:
+        return CustomColor.redAlert;
+      case EAlertLevel.yellow:
+        return CustomColor.yellowAlert;
+    }
+  }
+
+  static EAlertLevel? getEnumByType({required String? type}) {
+    switch (type) {
+      case "red":
+        return EAlertLevel.red;
+      case "yellow":
+        return EAlertLevel.yellow;
+      default:
+        return null;
+    }
+  }
+
+  String getMsg() {
+    switch (this) {
+      case EAlertLevel.red:
+        return "Красный";
+      case EAlertLevel.yellow:
+        return "Жёлтый";
+    }
+  }
+}
+
+enum EThreatType {
+  tacticAircraftActivity,
+  strategicAircraftActivity,
+  mig31kDeparture,
+  ballisticMissiles,
+  cruiseMissiles,
+  unspecifiedMissiles,
+  drones,
+  guidedAerialBombs,
+  airDefense,
+  unknown;
+
+  static EThreatType getEnumByType({required String? type}) {
+    switch (type) {
+      case "tacticAircraftActivity":
+        return EThreatType.tacticAircraftActivity;
+      case "strategicAircraftActivity":
+        return EThreatType.strategicAircraftActivity;
+      case "mig31kDeparture":
+        return EThreatType.mig31kDeparture;
+      case "ballisticMissiles":
+        return EThreatType.ballisticMissiles;
+      case "cruiseMissiles":
+        return EThreatType.cruiseMissiles;
+      case "unspecifiedMissiles":
+        return EThreatType.unspecifiedMissiles;
+      case "drones":
+        return EThreatType.drones;
+      case "guidedAerialBombs":
+        return EThreatType.guidedAerialBombs;
+      case "airDefense":
+        return EThreatType.airDefense;
+      case "unknown":
+        return EThreatType.unknown;
+      default:
+        return EThreatType.unknown;
     }
   }
 }

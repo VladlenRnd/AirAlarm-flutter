@@ -16,7 +16,7 @@ class Connection {
 
   static Future<List<RegionModel>> getAllAlert() async {
     if (_isMockData) {
-      return (jsonDecode(alertJson) as List).map((item) => RegionModel.fromJson(item)).toList();
+      return lastUpdateRegion = (jsonDecode(alertJson) as List).map((item) => RegionModel.fromJson(item)).toList();
     }
 
     final response = await _get(Uri.parse("${Config.baseUrl}/getAlert"));

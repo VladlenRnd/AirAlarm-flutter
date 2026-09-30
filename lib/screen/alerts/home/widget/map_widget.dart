@@ -34,7 +34,8 @@ class MapWidget extends StatelessWidget {
                   bottom: 0,
                   child: SvgPicture.string(
                     fit: BoxFit.fitWidth,
-                    UkrainSvg.getSvgStr(regions: [], defaultColor: CustomColor.colorMapEmbossing, strokeColor: CustomColor.colorMapEmbossing),
+                    UkrainSvg.getSvgStr(
+                        regions: [], defaultColor: (CustomColor.colorMapEmbossing, false), strokeColor: CustomColor.colorMapEmbossing),
                     placeholderBuilder: (BuildContext context) => const SizedBox.shrink(),
                   ),
                 ),
